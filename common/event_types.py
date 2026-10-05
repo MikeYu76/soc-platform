@@ -21,3 +21,5 @@ DNS_QUERY = "dns_query"
 WEB_REQUEST = "web_request"
 
 FIREWALL_DENY = "firewall_deny"
+
+UNKNOWN = "unknown"
