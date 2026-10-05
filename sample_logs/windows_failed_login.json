@@ -1,0 +1,10 @@
+[
+    {
+        "EventID": 4625,
+        "TimeCreated": "2026-10-05T10:15:30Z",
+        "Computer": "DC01",
+        "TargetUserName": "administrator",
+        "IpAddress": "192.168.1.50",
+        "Message": "An account failed to log on."
+    }
+]
