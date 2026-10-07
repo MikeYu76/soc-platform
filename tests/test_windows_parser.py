@@ -1,5 +1,5 @@
 from normalization.windows import WindowsParser
-from common import event_types
+from common.event_types import EventType
 
 def test_maps_failed_login_event():
     raw_log = {
@@ -14,3 +14,9 @@ def test_maps_failed_login_event():
 
     parser = WindowsParser()
     event = parser.parse(raw_log)
+
+    assert event.event_type == EventType.AUTHENTICATION_FAILED
+    assert event.hostname == "DC01"
+    assert event.username == "administrator"
+    assert str(event.source_ip) == "192.168.1.50"
+    assert event.event_id == 4625
