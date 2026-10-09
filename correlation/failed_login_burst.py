@@ -5,9 +5,10 @@ from uuid import uuid4
 from common.event import Event
 from common.event_types import EventType
 from correlation.models import CorrelationResult
+from correlation.base import CorrelationRule
 
 
-class FailedLoginBurstRule:
+class FailedLoginBurstRule(CorrelationRule):
     """Detect repeated failed logins from the same source IP."""
 
     def __init__(
