@@ -1,9 +1,8 @@
 import pytest
 
-from common.detection import Detection
+from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-from common.severity import Severity
 
 from detection.base import DetectionRule
 from detection.engine import DetectionEngine
