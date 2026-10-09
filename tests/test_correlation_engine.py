@@ -1,25 +1,31 @@
 from datetime import UTC, datetime
 
-from common.event import Event
 from correlation.base import CorrelationRule
 from correlation.engine import CorrelationEngine
 from correlation.models import CorrelationResult
+from enrichment.models import EnrichedDetection
 
 
 class NoMatchRule(CorrelationRule):
-    def correlate(self, events: list[Event]) -> list[CorrelationResult]:
+    def correlate(
+        self,
+        detections: list[EnrichedDetection],
+    ) -> list[CorrelationResult]:
         return []
 
 
 class MatchRule(CorrelationRule):
-    def correlate(self, events: list[Event]) -> list[CorrelationResult]:
+    def correlate(
+        self,
+        detections: list[EnrichedDetection],
+    ) -> list[CorrelationResult]:
         return [
             CorrelationResult(
                 correlation_id="corr-001",
                 rule_id="TEST-001",
                 title="Test Correlation",
                 matched_at=datetime.now(UTC),
-                events=[],
+                detections=[],
                 metadata={},
             )
         ]

@@ -1,16 +1,16 @@
-
 from datetime import datetime
+
 from pydantic import BaseModel, Field
 
-from common.event import Event
-
+from enrichment.models import EnrichedDetection
 
 class CorrelationResult(BaseModel):
-    """A pattern identified across multiple security events."""
+    """A pattern identified across multiple enriched detections."""
 
     correlation_id: str
     rule_id: str
     title: str
     matched_at: datetime
-    events: list[Event] = Field(default_factory=list)
+    detections: list[EnrichedDetection] = Field(default_factory=list)
     metadata: dict = Field(default_factory=dict)
+

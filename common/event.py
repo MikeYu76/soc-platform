@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, IPvAnyAddress
-
+from common.event_types import EventType
 
 class Event(BaseModel):
     """Canonical normalized security event."""
@@ -10,11 +10,10 @@ class Event(BaseModel):
     # Required
     timestamp: datetime
     log_source: str
-    event_type: str
+    event_type: EventType
     message: str
     raw_message: str
 
-    # Optional
     hostname: str | None = None
     username: str | None = None
 
@@ -27,3 +26,4 @@ class Event(BaseModel):
     command_line: str | None = None
 
     vendor_fields: dict[str, Any] = Field(default_factory=dict)
+    enrichment: dict[str, Any] = Field(default_factory=dict)

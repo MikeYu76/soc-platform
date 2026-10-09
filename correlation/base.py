@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from common.event import Event
 from correlation.models import CorrelationResult
+from enrichment.models import EnrichedDetection
 
 
 class CorrelationRule(ABC):
@@ -10,7 +10,7 @@ class CorrelationRule(ABC):
     @abstractmethod
     def correlate(
         self,
-        events: list[Event],
+        detections: list[EnrichedDetection],
     ) -> list[CorrelationResult]:
-        """Return any correlation results for the supplied events."""
+        """Return correlation results for the supplied enriched detections."""
         raise NotImplementedError

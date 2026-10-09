@@ -1,11 +1,10 @@
-
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from common.event import Event
 from common.event_types import EventType
-from correlation.models import CorrelationResult
 from correlation.base import CorrelationRule
+from correlation.models import CorrelationResult
+from enrichment.models import EnrichedDetection
 
 
 class FailedLoginBurstRule(CorrelationRule):
@@ -27,37 +26,49 @@ class FailedLoginBurstRule(CorrelationRule):
 
     def correlate(
         self,
-        events: list[Event],
+        detections: list[EnrichedDetection],
     ) -> list[CorrelationResult]:
-        failed_events = [
-            event
-            for event in events
-            if event.event_type == EventType.AUTHENTICATION_FAILED
-            and event.source_ip is not None
+
+        failed_detections = [
+            detection
+            for detection in detections
+            if (
+                detection.detection.event.event_type
+                == EventType.AUTHENTICATION_FAILED
+                and detection.detection.event.source_ip is not None
+            )
         ]
 
-        events_by_ip: dict[str, list[Event]] = {}
+        detections_by_ip: dict[str, list[EnrichedDetection]] = {}
 
-        for event in failed_events:
-            ip = str(event.source_ip)
-            events_by_ip.setdefault(ip, []).append(event)
+        for detection in failed_detections:
+            ip = str(detection.detection.event.source_ip)
+            detections_by_ip.setdefault(ip, []).append(detection)
 
         results: list[CorrelationResult] = []
 
-        for ip, ip_events in events_by_ip.items():
-            ip_events.sort(key=lambda event: event.timestamp)
+        for ip, ip_detections in detections_by_ip.items():
 
-            for start_index, start_event in enumerate(ip_events):
-                matching_events = [
-                    event
-                    for event in ip_events[start_index:]
-                    if event.timestamp - start_event.timestamp <= self.window
+            ip_detections.sort(
+                key=lambda detection: detection.detection.event.timestamp
+            )
+
+            for start_index, start_detection in enumerate(ip_detections):
+
+                matching = [
+                    detection
+                    for detection in ip_detections[start_index:]
+                    if (
+                        detection.detection.event.timestamp
+                        - start_detection.detection.event.timestamp
+                        <= self.window
+                    )
                 ]
 
-                if len(matching_events) < self.threshold:
+                if len(matching) < self.threshold:
                     continue
 
-                matched_events = matching_events[:self.threshold]
+                matched = matching[: self.threshold]
 
                 results.append(
                     CorrelationResult(
@@ -65,17 +76,17 @@ class FailedLoginBurstRule(CorrelationRule):
                         rule_id="CORR-AUTH-001",
                         title="Repeated Failed Login Attempts",
                         matched_at=datetime.now(UTC),
-                        events=matched_events,
+                        detections=matched,
                         metadata={
                             "source_ip": ip,
-                            "attempt_count": len(matched_events),
+                            "attempt_count": len(matched),
                             "threshold": self.threshold,
                             "window_minutes": self.window.total_seconds() / 60,
                         },
                     )
                 )
 
-                # One result per source IP for this initial implementation.
+                # One result per source IP for this implementation.
                 break
 
         return results

@@ -1,6 +1,6 @@
 from correlation.base import CorrelationRule
 from correlation.models import CorrelationResult
-from common.event import Event
+from enrichment.models import EnrichedDetection
 
 
 class CorrelationEngine:
@@ -14,12 +14,12 @@ class CorrelationEngine:
 
     def correlate(
         self,
-        events: list[Event],
+        detections: list[EnrichedDetection],
     ) -> list[CorrelationResult]:
 
         results: list[CorrelationResult] = []
 
         for rule in self.rules:
-            results.extend(rule.correlate(events))
+            results.extend(rule.correlate(detections))
 
         return results
