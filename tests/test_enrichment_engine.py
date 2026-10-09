@@ -1,9 +1,11 @@
+
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
 
 from enrichment.base import Enricher
 from enrichment.engine import EnrichmentEngine
+from enrichment.ip_context import IPContextEnricher
 from enrichment.models import Enrichment
 
 
@@ -48,6 +50,7 @@ def create_test_detection() -> Detection:
             event_type=EventType.AUTHENTICATION_FAILED,
             message="Failed login attempt",
             raw_message="Sample Windows failed login event",
+            source_ip="192.168.1.50",
         ),
     )
 
@@ -107,3 +110,28 @@ def test_enrichment_engine_preserves_original_detection():
     result = engine.process(detection)
 
     assert result.detection is detection
+
+ 
+def test_enrichment_engine_integrates_ip_context_enricher():
+    detection = create_test_detection()
+
+    ip_context = {
+        "192.168.1.50": {
+            "label": "known_test_host",
+            "risk": "low",
+        }
+    }
+
+    enricher = IPContextEnricher(ip_context)
+    engine = EnrichmentEngine([enricher])
+
+    result = engine.process(detection)
+
+    assert result.enrichment.data == {
+        "ip_context": {
+            "source_ip": "192.168.1.50",
+            "label": "known_test_host",
+            "risk": "low",
+        }
+    }
+    assert result.detection is detection   
