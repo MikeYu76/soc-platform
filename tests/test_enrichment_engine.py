@@ -7,6 +7,7 @@ from enrichment.base import Enricher
 from enrichment.engine import EnrichmentEngine
 from enrichment.ip_context import IPContextEnricher
 from enrichment.models import Enrichment
+from enrichment.ip_classification import IPClassificationEnricher
 
 
 class GeoIPTestEnricher(Enricher):
@@ -134,4 +135,23 @@ def test_enrichment_engine_integrates_ip_context_enricher():
             "risk": "low",
         }
     }
-    assert result.detection is detection   
+    assert result.detection is detection 
+
+ 
+def test_enrichment_engine_integrates_ip_classification_enricher():
+    detection = create_test_detection()
+    enricher = IPClassificationEnricher()
+    engine = EnrichmentEngine([enricher])
+
+    result = engine.process(detection)
+
+    assert result.enrichment.data == {
+        "ip_classification": {
+            "source_ip": "192.168.1.50",
+            "is_private": True,
+            "is_loopback": False,
+            "is_link_local": False,
+            "is_global": False,
+        }
+    }
+    assert result.detection is detection     
