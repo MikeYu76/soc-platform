@@ -14,6 +14,7 @@ from case.domain.timeline import (
 )
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
+from case.domain.evidence import CaseEvidence
 
 
 class Case(BaseModel):
@@ -46,6 +47,8 @@ class Case(BaseModel):
     timeline: list[CaseTimelineEvent] = Field(default_factory=list)
 
     comments: list[CaseComment] = Field(default_factory=list)
+
+    evidence: list[CaseEvidence] = Field(default_factory=list)
 
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -80,3 +83,24 @@ class Case(BaseModel):
                 actor=author,
             )
         )
+
+    def add_evidence(
+        self,
+        name: str,
+        description: str,
+        source: str,
+    ) -> None:
+        evidence = CaseEvidence(
+            name=name,
+            description=description,
+            source=source,
+        )
+
+        self.evidence.append(evidence)
+
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=CaseTimelineEventType.EVIDENCE_ADDED,
+                description=f"Evidence '{name}' added.",
+            )
+        )    
