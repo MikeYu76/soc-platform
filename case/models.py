@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, model_validator
 
 from alert.models import Alert
+from case.domain.comment import CaseComment
 from case.domain.timeline import (
     CaseTimelineEvent,
     CaseTimelineEventType,
@@ -44,6 +45,8 @@ class Case(BaseModel):
 
     timeline: list[CaseTimelineEvent] = Field(default_factory=list)
 
+    comments: list[CaseComment] = Field(default_factory=list)
+
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
@@ -57,3 +60,23 @@ class Case(BaseModel):
             )
 
         return self
+
+    def add_comment(
+        self,
+        author: str,
+        message: str,
+    ) -> None:
+        comment = CaseComment(
+            author=author,
+            message=message,
+        )
+
+        self.comments.append(comment)
+
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=CaseTimelineEventType.COMMENT_ADDED,
+                description=f"Comment added by {author}.",
+                actor=author,
+            )
+        )
