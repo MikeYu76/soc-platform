@@ -7,14 +7,15 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, model_validator
 
 from alert.models import Alert
+from case.domain.assignment import CaseAssignment
 from case.domain.comment import CaseComment
+from case.domain.evidence import CaseEvidence
 from case.domain.timeline import (
     CaseTimelineEvent,
     CaseTimelineEventType,
 )
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
-from case.domain.evidence import CaseEvidence
 
 
 class Case(BaseModel):
@@ -40,6 +41,8 @@ class Case(BaseModel):
 
     assigned_at: datetime | None = None
 
+    assignment: CaseAssignment | None = None
+
     closed_at: datetime | None = None
 
     resolution: str | None = None
@@ -61,7 +64,6 @@ class Case(BaseModel):
                     description="Case created.",
                 )
             )
-
         return self
 
     def add_comment(
@@ -103,4 +105,28 @@ class Case(BaseModel):
                 event_type=CaseTimelineEventType.EVIDENCE_ADDED,
                 description=f"Evidence '{name}' added.",
             )
-        )    
+        )
+
+    def assign(
+        self,
+        team: str,
+        assigned_by: str,
+        reason: str,
+    ) -> None:
+        assignment = CaseAssignment(
+            team=team,
+            assigned_by=assigned_by,
+            reason=reason,
+        )
+
+        self.assignment = assignment
+        self.assigned_to = team
+        self.assigned_at = assignment.assigned_at
+
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=CaseTimelineEventType.ASSIGNED,
+                description=f"Assigned to {team}.",
+                actor=assigned_by,
+            )
+        )

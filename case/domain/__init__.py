@@ -1,3 +1,4 @@
+from case.domain.assignment import CaseAssignment
 from case.domain.comment import CaseComment
 from case.domain.evidence import CaseEvidence
 from case.domain.timeline import (
@@ -6,6 +7,7 @@ from case.domain.timeline import (
 )
 
 __all__ = [
+    "CaseAssignment",
     "CaseComment",
     "CaseEvidence",
     "CaseTimelineEvent",

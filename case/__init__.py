@@ -1,9 +1,9 @@
-from .base import CaseRule
-from .engine import CaseEngine
-from .immediate_case import ImmediateCaseRule
-from .models import Case
+from case.base import CaseRule
+from case.engine import CaseEngine
+from case.immediate_case import ImmediateCaseRule
+from case.models import Case
 
-from .processing import (
+from case.processing import (
     CaseAssignmentProcessor,
     CaseProcessingEngine,
     CaseProcessor,

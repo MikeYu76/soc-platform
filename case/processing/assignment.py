@@ -7,8 +7,6 @@ from common.detection import Severity
 class CaseAssignmentProcessor(CaseProcessor):
     """
     Assign newly created cases to an operational team.
-
-    Current policy routes based on alert severity.
     """
 
     TEAM_MAPPING = {
@@ -23,8 +21,10 @@ class CaseAssignmentProcessor(CaseProcessor):
         cases: list[Case],
     ) -> list[Case]:
         for case in cases:
-            case.metadata["assigned_team"] = (
-                self.TEAM_MAPPING[case.alert.severity]
+            case.assign(
+                team=self.TEAM_MAPPING[case.alert.severity],
+                assigned_by="AssignmentProcessor",
+                reason="Severity routing",
             )
 
         return cases
