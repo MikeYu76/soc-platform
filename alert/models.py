@@ -7,7 +7,6 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 
 from common.alert_status import AlertStatus
-from common.detection import Detection
 from common.detection import Detection, Severity
 from correlation.models import CorrelationResult
 
