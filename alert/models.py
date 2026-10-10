@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID, uuid4
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from common.alert_status import AlertStatus
 from common.detection import Detection
-from common.severity import Severity
+from common.detection import Detection, Severity
 from correlation.models import CorrelationResult
 
 
@@ -27,7 +27,7 @@ class Alert(BaseModel):
 
     severity: Severity
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     status: AlertStatus = AlertStatus.NEW
 
