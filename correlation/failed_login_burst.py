@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+from common.detection import Severity
 from common.event_types import EventType
 from correlation.base import CorrelationRule
 from correlation.models import CorrelationResult
@@ -75,6 +76,7 @@ class FailedLoginBurstRule(CorrelationRule):
                         correlation_id=str(uuid4()),
                         rule_id="CORR-AUTH-001",
                         title="Repeated Failed Login Attempts",
+                        severity=Severity.HIGH,
                         matched_at=datetime.now(UTC),
                         detections=matched,
                         metadata={

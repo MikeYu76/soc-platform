@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from common.detection import Severity
 from correlation.base import CorrelationRule
 from correlation.engine import CorrelationEngine
 from correlation.models import CorrelationResult
@@ -24,6 +25,7 @@ class MatchRule(CorrelationRule):
                 correlation_id="corr-001",
                 rule_id="TEST-001",
                 title="Test Correlation",
+                severity=Severity.HIGH,
                 matched_at=datetime.now(UTC),
                 detections=[],
                 metadata={},
