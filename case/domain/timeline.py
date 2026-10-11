@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 class CaseTimelineEventType(StrEnum):
     CASE_CREATED = "CASE_CREATED"
     ASSIGNED = "ASSIGNED"
+    ESCALATED = "ESCALATED"
     COMMENT_ADDED = "COMMENT_ADDED"
     EVIDENCE_ADDED = "EVIDENCE_ADDED"
     PRIORITY_CHANGED = "PRIORITY_CHANGED"

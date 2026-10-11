@@ -7,17 +7,18 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, model_validator
 
 from alert.models import Alert
-from case.domain.resolution import CaseResolution
 from case.domain.assignment import CaseAssignment
 from case.domain.comment import CaseComment
 from case.domain.evidence import CaseEvidence
+from case.domain.escalation import CaseEscalation
+from case.domain.resolution import CaseResolution
+from case.domain.sla import CaseSLA
 from case.domain.timeline import (
     CaseTimelineEvent,
     CaseTimelineEventType,
 )
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
-from case.domain.sla import CaseSLA
 
 
 class Case(BaseModel):
@@ -44,6 +45,8 @@ class Case(BaseModel):
     assigned_at: datetime | None = None
 
     assignment: CaseAssignment | None = None
+
+    escalation: CaseEscalation | None = None
 
     closed_at: datetime | None = None
 
@@ -134,6 +137,30 @@ class Case(BaseModel):
                 actor=assigned_by,
             )
         )
+
+    def escalate(
+        self,
+        level: int,
+        team: str,
+        reason: str,
+    ) -> None:
+        escalation = CaseEscalation(
+            level=level,
+            team=team,
+            reason=reason,
+        )
+
+        self.escalation = escalation
+        self.assigned_to = team
+        self.assigned_at = escalation.escalated_at
+
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=CaseTimelineEventType.ESCALATED,
+                description=f"Escalated to {team} (Level {level}).",
+            )
+        )
+
     def resolve(
         self,
         resolution_type: str,
