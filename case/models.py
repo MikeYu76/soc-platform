@@ -65,13 +65,29 @@ class Case(BaseModel):
     @model_validator(mode="after")
     def initialize_timeline(self) -> "Case":
         if not self.timeline:
-            self.timeline.append(
-                CaseTimelineEvent(
-                    event_type=CaseTimelineEventType.CASE_CREATED,
-                    description="Case created.",
-                )
+            self._add_timeline_event(
+                event_type=CaseTimelineEventType.CASE_CREATED,
+                description="Case created.",
             )
+
         return self
+
+    def _add_timeline_event(
+        self,
+        event_type: CaseTimelineEventType,
+        description: str,
+        actor: str | None = None,
+    ) -> None:
+        """
+        Records a timeline event for the case.
+        """
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=event_type,
+                description=description,
+                actor=actor,
+            )
+        )
 
     def add_comment(
         self,
@@ -85,12 +101,10 @@ class Case(BaseModel):
 
         self.comments.append(comment)
 
-        self.timeline.append(
-            CaseTimelineEvent(
-                event_type=CaseTimelineEventType.COMMENT_ADDED,
-                description=f"Comment added by {author}.",
-                actor=author,
-            )
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.COMMENT_ADDED,
+            description=f"Comment added by {author}.",
+            actor=author,
         )
 
     def add_evidence(
@@ -107,11 +121,9 @@ class Case(BaseModel):
 
         self.evidence.append(evidence)
 
-        self.timeline.append(
-            CaseTimelineEvent(
-                event_type=CaseTimelineEventType.EVIDENCE_ADDED,
-                description=f"Evidence '{name}' added.",
-            )
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.EVIDENCE_ADDED,
+            description=f"Evidence '{name}' added.",
         )
 
     def assign(
@@ -130,12 +142,10 @@ class Case(BaseModel):
         self.assigned_to = team
         self.assigned_at = assignment.assigned_at
 
-        self.timeline.append(
-            CaseTimelineEvent(
-                event_type=CaseTimelineEventType.ASSIGNED,
-                description=f"Assigned to {team}.",
-                actor=assigned_by,
-            )
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.ASSIGNED,
+            description=f"Assigned to {team}.",
+            actor=assigned_by,
         )
 
     def escalate(
@@ -154,11 +164,9 @@ class Case(BaseModel):
         self.assigned_to = team
         self.assigned_at = escalation.escalated_at
 
-        self.timeline.append(
-            CaseTimelineEvent(
-                event_type=CaseTimelineEventType.ESCALATED,
-                description=f"Escalated to {team} (Level {level}).",
-            )
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.ESCALATED,
+            description=f"Escalated to {team} (Level {level}).",
         )
 
     def resolve(
@@ -177,10 +185,8 @@ class Case(BaseModel):
         self.status = CaseStatus.RESOLVED
         self.closed_at = resolution.resolved_at
 
-        self.timeline.append(
-            CaseTimelineEvent(
-                event_type=CaseTimelineEventType.RESOLVED,
-                description=f"Case resolved: {resolution_type}.",
-                actor=resolved_by,
-            )
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.RESOLVED,
+            description=f"Case resolved: {resolution_type}.",
+            actor=resolved_by,
         )
