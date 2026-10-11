@@ -17,6 +17,7 @@ from case.domain.timeline import (
 )
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
+from case.domain.sla import CaseSLA
 
 
 class Case(BaseModel):
@@ -47,6 +48,8 @@ class Case(BaseModel):
     closed_at: datetime | None = None
 
     resolution: CaseResolution | None = None
+
+    sla: CaseSLA | None = None
 
     timeline: list[CaseTimelineEvent] = Field(default_factory=list)
 
