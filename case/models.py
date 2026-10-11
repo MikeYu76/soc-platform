@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, model_validator
 
 from alert.models import Alert
+from case.domain.resolution import CaseResolution
 from case.domain.assignment import CaseAssignment
 from case.domain.comment import CaseComment
 from case.domain.evidence import CaseEvidence
@@ -45,7 +46,7 @@ class Case(BaseModel):
 
     closed_at: datetime | None = None
 
-    resolution: str | None = None
+    resolution: CaseResolution | None = None
 
     timeline: list[CaseTimelineEvent] = Field(default_factory=list)
 
@@ -128,5 +129,28 @@ class Case(BaseModel):
                 event_type=CaseTimelineEventType.ASSIGNED,
                 description=f"Assigned to {team}.",
                 actor=assigned_by,
+            )
+        )
+    def resolve(
+        self,
+        resolution_type: str,
+        summary: str,
+        resolved_by: str,
+    ) -> None:
+        resolution = CaseResolution(
+            resolution_type=resolution_type,
+            summary=summary,
+            resolved_by=resolved_by,
+        )
+
+        self.resolution = resolution
+        self.status = CaseStatus.RESOLVED
+        self.closed_at = resolution.resolved_at
+
+        self.timeline.append(
+            CaseTimelineEvent(
+                event_type=CaseTimelineEventType.RESOLVED,
+                description=f"Case resolved: {resolution_type}.",
+                actor=resolved_by,
             )
         )
