@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-from correlation.failed_login_burst import FailedLoginBurstRule
+from correlation.rules.failed_login_burst import FailedLoginBurstRule
 from enrichment.models import EnrichedDetection, Enrichment
 
 

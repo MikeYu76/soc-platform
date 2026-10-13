@@ -4,7 +4,7 @@ from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
 from enrichment.models import EnrichedDetection, Enrichment
-from correlation.impossible_travel import ImpossibleTravelRule
+from correlation.rules.impossible_travel import ImpossibleTravelRule
 
 
 def make_auth_detection(
@@ -154,7 +154,7 @@ def test_ignores_failed_authentications():
     rule = ImpossibleTravelRule(window_hours=2)
 
     assert rule.correlate(detections) == []
-    
+
 
 def test_handles_unordered_input():
     start = datetime(2026, 10, 9, 10, 0, tzinfo=UTC)
