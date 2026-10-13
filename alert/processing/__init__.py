@@ -9,4 +9,5 @@ __all__ = [
     "AlertProcessingEngine",
     "DeduplicationProcessor",
     "AlertGroupingProcessor",
+    "AlertRoutingProcessor",
 ]
