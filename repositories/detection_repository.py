@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from collections.abc import Iterable
 
 from common.detection import Detection, Severity
 
@@ -15,6 +16,19 @@ class DetectionRepository(ABC):
         detection: Detection,
     ) -> None:
         raise NotImplementedError
+
+    def save_all(
+        self,
+        detections: Iterable[Detection],
+    ) -> None:
+        """
+        Persist multiple detections.
+
+        Repositories may override this with a more efficient
+        implementation.
+        """
+        for detection in detections:
+            self.save(detection)
 
     @abstractmethod
     def get(

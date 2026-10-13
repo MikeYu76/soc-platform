@@ -2,16 +2,19 @@ from __future__ import annotations
 
 import sqlite3
 from collections.abc import Mapping
-from typing import Any, TypeVar
-
-from pydantic import BaseModel
-
-T = TypeVar("T", bound=BaseModel)
+from typing import Any
 
 
 class SQLiteRepository:
     """
     Shared functionality for SQLite repository implementations.
+
+    This class provides generic SQL helpers that operate on a shared
+    SQLite connection managed by the UnitOfWork.
+
+    Table and column names supplied to these helpers must be trusted
+    constants defined by repository implementations. They must never
+    originate from user input.
     """
 
     def __init__(
@@ -21,22 +24,14 @@ class SQLiteRepository:
         self._connection = connection
 
     @staticmethod
-    def _serialize(
-        model: BaseModel,
-    ) -> str:
-        return model.model_dump_json()
-
-    @staticmethod
-    def _deserialize(
-        model_type: type[T],
-        payload: str,
-    ) -> T:
-        return model_type.model_validate_json(payload)
-
-    @staticmethod
     def _row_to_dict(
         row: sqlite3.Row | None,
     ) -> dict[str, Any] | None:
+        """
+        Convert a sqlite3.Row into a dictionary.
+
+        Returns None if the supplied row is None.
+        """
         if row is None:
             return None
 
@@ -47,7 +42,13 @@ class SQLiteRepository:
         query: str,
         parameters: tuple[Any, ...] = (),
     ) -> sqlite3.Row | None:
-        cursor = self._connection.execute(query, parameters)
+        """
+        Execute a query expected to return at most one row.
+        """
+        cursor = self._connection.execute(
+            query,
+            parameters,
+        )
         return cursor.fetchone()
 
     def _fetch_all(
@@ -55,8 +56,14 @@ class SQLiteRepository:
         query: str,
         parameters: tuple[Any, ...] = (),
     ) -> list[sqlite3.Row]:
-        cursor = self._connection.execute(query, parameters)
-        return list(cursor.fetchall())
+        """
+        Execute a query returning zero or more rows.
+        """
+        cursor = self._connection.execute(
+            query,
+            parameters,
+        )
+        return cursor.fetchall()
 
     def _fetch_by_column(
         self,
@@ -65,6 +72,9 @@ class SQLiteRepository:
         column: str,
         value: Any,
     ) -> list[sqlite3.Row]:
+        """
+        Fetch all rows where a column matches a value.
+        """
         query = f"""
             SELECT *
             FROM {table}
@@ -83,6 +93,9 @@ class SQLiteRepository:
         id_column: str,
         id_value: Any,
     ) -> None:
+        """
+        Delete a row by its identifier.
+        """
         self._connection.execute(
             f"""
             DELETE FROM {table}
@@ -97,9 +110,18 @@ class SQLiteRepository:
         table: str,
         values: Mapping[str, Any],
     ) -> None:
+        """
+        Insert or update a row using SQLite's ON CONFLICT support.
+
+        The supplied mapping must include an ``id`` column that serves
+        as the table's primary key.
+        """
         columns = list(values.keys())
 
-        placeholders = ", ".join("?" for _ in columns)
+        placeholders = ", ".join(
+            "?"
+            for _ in columns
+        )
 
         assignments = ", ".join(
             f"{column}=excluded.{column}"
@@ -118,5 +140,8 @@ class SQLiteRepository:
 
         self._connection.execute(
             sql,
-            tuple(values[column] for column in columns),
+            tuple(
+                values[column]
+                for column in columns
+            ),
         )

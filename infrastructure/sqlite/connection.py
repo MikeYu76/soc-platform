@@ -13,26 +13,38 @@ class SQLiteConnectionFactory:
     Automatically initializes the database schema.
     """
 
-    def __init__(self, database: str = ":memory:") -> None:
+    def __init__(
+        self,
+        database: str = ":memory:",
+    ) -> None:
         self._database = database
 
     @property
-    def database(self) -> str:
+    def database(
+        self,
+    ) -> str:
         return self._database
 
-    def connect(self) -> sqlite3.Connection:
+    def connect(
+        self,
+    ) -> sqlite3.Connection:
         """
         Create and configure a SQLite connection.
         """
 
         if self._database != ":memory:":
-            Path(self._database).parent.mkdir(parents=True, exist_ok=True)
+            Path(self._database).parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
         connection = sqlite3.connect(self._database)
 
         connection.row_factory = sqlite3.Row
 
-        connection.execute("PRAGMA foreign_keys = ON")
+        connection.execute(
+            "PRAGMA foreign_keys = ON",
+        )
 
         initialize_schema(connection)
 

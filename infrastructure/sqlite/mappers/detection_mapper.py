@@ -33,5 +33,5 @@ class DetectionMapper(BaseMapper):
     ) -> Detection:
         return cls.deserialize(
             Detection,
-            str(record["data"]),
+            record["data"],
         )

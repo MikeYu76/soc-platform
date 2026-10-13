@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
+from collections.abc import Iterable
+
 from case.models import Case
 
 from common.case_priority import CasePriority
@@ -18,6 +20,19 @@ class CaseRepository(ABC):
         case: Case,
     ) -> None:
         raise NotImplementedError
+
+    def save_all(
+        self,
+        cases: Iterable[Case],
+    ) -> None:
+        """
+        Persist multiple cases.
+
+        Repositories may override this with a more efficient
+        implementation.
+        """
+        for case in cases:
+            self.save(case)
 
     @abstractmethod
     def get(

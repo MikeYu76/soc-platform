@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
+from collections.abc import Iterable
 
 from alert.models import Alert
 
@@ -18,6 +19,19 @@ class AlertRepository(ABC):
         alert: Alert,
     ) -> None:
         raise NotImplementedError
+
+    def save_all(
+        self,
+        alerts: Iterable[Alert],
+    ) -> None:
+        """
+        Persist multiple alerts.
+
+        Repositories may override this with a more efficient
+        implementation.
+        """
+        for alert in alerts:
+            self.save(alert)
 
     @abstractmethod
     def get(

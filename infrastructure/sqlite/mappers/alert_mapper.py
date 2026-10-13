@@ -29,9 +29,9 @@ class AlertMapper(BaseMapper):
     @classmethod
     def from_record(
         cls,
-        record: Mapping[str, Any],
+        record: dict[str, Any],
     ) -> Alert:
         return cls.deserialize(
             Alert,
-            str(record["data"]),
+            record["data"],
         )

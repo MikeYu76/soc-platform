@@ -35,9 +35,9 @@ class CaseMapper(BaseMapper):
     @classmethod
     def from_record(
         cls,
-        record: Mapping[str, Any],
+        record: dict[str, Any],
     ) -> Case:
         return cls.deserialize(
             Case,
-            str(record["data"]),
+            record["data"],
         )

@@ -20,9 +20,9 @@ class EventMapper(BaseMapper):
     ) -> dict[str, Any]:
         return {
             "id": str(event.event_id),
+            "timestamp": event.timestamp.isoformat(),
             "log_source": event.log_source,
             "event_type": event.event_type.value,
-            "timestamp": event.timestamp.isoformat(),
             "data": cls.serialize(event),
         }
 
@@ -33,5 +33,5 @@ class EventMapper(BaseMapper):
     ) -> Event:
         return cls.deserialize(
             Event,
-            str(record["data"]),
+            record["data"],
         )
