@@ -167,7 +167,7 @@ def test_process_security_event(
     )
 
     with SQLiteUnitOfWork(connection_factory) as uow:
-        loaded_event = uow.events.get(event.event_id)
+        loaded_event = uow.events.get(event.id)
 
         loaded_detections = uow.detections.list_by_rule(
             "TEST-001",

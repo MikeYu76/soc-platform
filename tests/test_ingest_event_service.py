@@ -41,7 +41,7 @@ def test_ingest_event() -> None:
         result = service.execute(request)
 
         with SQLiteUnitOfWork(factory) as uow:
-            loaded = uow.events.get(event.event_id)
+            loaded = uow.events.get(event.id)
 
         assert result == event
         assert loaded == event

@@ -73,7 +73,7 @@ def test_event_roundtrip(
         uow.events.save(event)
 
     with SQLiteUnitOfWork(connection_factory) as uow:
-        loaded = uow.events.get(event.event_id)
+        loaded = uow.events.get(event.id)
 
     assert loaded is not None
     assert loaded == event    

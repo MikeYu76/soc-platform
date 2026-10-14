@@ -19,7 +19,7 @@ class EventMapper(BaseMapper):
         event: Event,
     ) -> dict[str, Any]:
         return {
-            "id": str(event.event_id),
+            "id": event.id,
             "timestamp": event.timestamp.isoformat(),
             "log_source": event.log_source,
             "event_type": event.event_type.value,
