@@ -1,48 +1,144 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from alert.factory import AlertFactory
+from alert.processing import (
+    AlertGroupingProcessor,
+    AlertProcessingEngine,
+    AlertRoutingProcessor,
+    DeduplicationProcessor,
+)
 
-from application.composition.settings import Settings
+from application.composition.settings import (
+    Settings,
+    get_settings,
+)
+from application.services.process_security_event import (
+    ProcessSecurityEventService,
+)
 
 from case.factory import CaseFactory
+from case.processing import (
+    CaseAssignmentProcessor,
+    CaseEscalationProcessor,
+    CaseProcessingEngine,
+    CaseSLABreachProcessor,
+    CaseSLAProcessor,
+)
 
-from infrastructure.sqlite.connection import SQLiteConnectionFactory
-from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from correlation.engine import CorrelationEngine
+from correlation.rules import (
+    FailedLoginBurstRule,
+    ImpossibleTravelRule,
+    LateralMovementRule,
+    PrivilegeEscalationRule,
+)
 
-from repositories.unit_of_work import UnitOfWork
+from detection.engine import DetectionEngine
+from detection.rules.failed_login import FailedLoginRule
+
+from enrichment.engine import EnrichmentEngine
+from enrichment.ip_classification import (
+    IPClassificationEnricher,
+)
+from enrichment.ip_context import (
+    IPContextEnricher,
+)
+
+from infrastructure.sqlite.connection import (
+    SQLiteConnectionFactory,
+)
+from infrastructure.sqlite.sqlite_unit_of_work import (
+    SQLiteUnitOfWork,
+)
 
 
-class Dependencies:
-    """
-    Shared application dependencies.
+settings: Settings = get_settings()
 
-    This class owns infrastructure components and reusable
-    factories. Higher-level services compose these dependencies
-    into complete application services.
-    """
 
-    def __init__(
-        self,
-        settings: Settings | None = None,
-    ) -> None:
-        self.settings = settings or Settings()
+connection_factory = SQLiteConnectionFactory(
+    settings.database_path,
+)
 
-        self.connection_factory = SQLiteConnectionFactory(
-            str(self.settings.database_path),
-        )
 
-        self.alert_factory = AlertFactory()
+#
+# Shared enrichment data.
+#
+# In production this can later be replaced with MaxMind,
+# OpenSearch, MISP, AbuseIPDB, etc.
+#
+ip_context: dict[str, dict[str, str]] = {
+    "8.8.8.8": {
+        "country": "United States",
+        "organization": "Google",
+    },
+    "1.1.1.1": {
+        "country": "Australia",
+        "organization": "Cloudflare",
+    },
+}
 
-        self.case_factory = CaseFactory()
 
-    def unit_of_work_factory(
-        self,
-    ) -> UnitOfWork:
-        """
-        Create a new Unit of Work.
-        """
-        return SQLiteUnitOfWork(
-            self.connection_factory,
-        )
+detection_engine = DetectionEngine(
+    [
+        FailedLoginRule(),
+    ]
+)
+
+
+enrichment_engine = EnrichmentEngine(
+    [
+        IPContextEnricher(
+            ip_context=ip_context,
+        ),
+        IPClassificationEnricher(),
+    ]
+)
+
+
+correlation_engine = CorrelationEngine(
+    [
+        FailedLoginBurstRule(),
+        ImpossibleTravelRule(),
+        LateralMovementRule(),
+        PrivilegeEscalationRule(),
+    ]
+)
+
+
+alert_factory = AlertFactory()
+
+
+alert_processing_engine = AlertProcessingEngine(
+    [
+        DeduplicationProcessor(),
+        AlertGroupingProcessor(),
+        AlertRoutingProcessor(),
+    ]
+)
+
+
+case_factory = CaseFactory()
+
+
+case_processing_engine = CaseProcessingEngine(
+    [
+        CaseAssignmentProcessor(),
+        CaseSLAProcessor(),
+        CaseSLABreachProcessor(),
+        CaseEscalationProcessor(),
+    ]
+)
+
+
+process_security_event_service = ProcessSecurityEventService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+    detection_engine=detection_engine,
+    enrichment_engine=enrichment_engine,
+    correlation_engine=correlation_engine,
+    alert_factory=alert_factory,
+    alert_processing_engine=alert_processing_engine,
+    case_factory=case_factory,
+    case_processing_engine=case_processing_engine,
+)

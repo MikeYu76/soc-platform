@@ -1,12 +1,28 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from api.routes import (
+    alerts_router,
+    cases_router,
+    events_router,
+)
+
+app = FastAPI(
+    title="SOC Platform",
+    version="0.1.0",
+)
+
+app.include_router(events_router)
+app.include_router(alerts_router)
+app.include_router(cases_router)
 
 
 @app.get("/health")
-def health():
+def health() -> dict[str, str]:
+    """
+    Health check endpoint.
+    """
     return {
         "status": "healthy",
         "service": "SOC Platform",
-        "version": "0.1.0"
+        "version": "0.1.0",
     }
