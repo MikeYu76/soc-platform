@@ -37,12 +37,12 @@ class CaseRepository(ABC):
     @abstractmethod
     def get(
         self,
-        case_id: UUID,
+        id: UUID,
     ) -> Case | None:
         raise NotImplementedError
 
     @abstractmethod
-    def list_open(
+    def list_active(
         self,
     ) -> list[Case]:
         raise NotImplementedError
@@ -71,6 +71,6 @@ class CaseRepository(ABC):
     @abstractmethod
     def delete(
         self,
-        case_id: UUID,
+        id: UUID,
     ) -> None:
         raise NotImplementedError

@@ -19,7 +19,7 @@ class CaseMapper(BaseMapper):
         case: Case,
     ) -> dict[str, Any]:
         return {
-            "id": str(case.case_id),
+            "id": str(case.id),
             "status": case.status.value,
             "priority": case.priority.value,
             "assigned_to": case.assigned_to,

@@ -19,7 +19,7 @@ class DetectionMapper(BaseMapper):
         detection: Detection,
     ) -> dict[str, Any]:
         return {
-            "id": detection.detection_id,
+            "id": detection.id,
             "rule_id": detection.rule_id,
             "severity": detection.severity.value,
             "matched_at": detection.matched_at.isoformat(),

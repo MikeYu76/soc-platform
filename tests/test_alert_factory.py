@@ -37,7 +37,7 @@ def test_alert_factory_creates_alert() -> None:
     assert alert.source == correlation
 
 
-def test_alert_factory_generates_alert_id() -> None:
+def test_alert_factory_generates_id() -> None:
     # Arrange
     factory = AlertFactory()
     correlation = build_correlation_result()
@@ -46,7 +46,7 @@ def test_alert_factory_generates_alert_id() -> None:
     alert = factory.create(correlation)
 
     # Assert
-    assert isinstance(alert.alert_id, UUID)
+    assert isinstance(alert.id, UUID)
 
 
 def test_alert_factory_sets_default_values() -> None:

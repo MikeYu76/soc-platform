@@ -34,7 +34,7 @@ class SQLiteAlertRepository(
 
     def get(
         self,
-        alert_id: UUID,
+        id: UUID,
     ) -> Alert | None:
         row = self._fetch_one(
             """
@@ -42,7 +42,7 @@ class SQLiteAlertRepository(
             FROM alerts
             WHERE id = ?
             """,
-            (str(alert_id),),
+            (str(id),),
         )
 
         if row is None:
@@ -107,10 +107,10 @@ class SQLiteAlertRepository(
 
     def delete(
         self,
-        alert_id: UUID,
+        id: UUID,
     ) -> None:
         self._delete(
             table=self.TABLE,
             id_column="id",
-            id_value=str(alert_id),
+            id_value=str(id),
         )

@@ -20,7 +20,7 @@ class Alert(BaseModel):
     should be investigated by a security analyst.
     """
 
-    alert_id: UUID = Field(default_factory=uuid4)
+    id: UUID = Field(default_factory=uuid4)
 
     title: str
 

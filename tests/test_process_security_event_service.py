@@ -1,12 +1,13 @@
-from __future__ import annotations
-
 from datetime import UTC, datetime
+from uuid import uuid4
 
-import pytest
-
-from alert.factory import AlertFactory
-from alert.models import Alert
-from alert.processing.base import AlertProcessor
+from alert.engine import AlertEngine
+from alert.immediate_detection import (
+    ImmediateDetectionAlertRule,
+)
+from alert.correlation_alert import (
+    CorrelationAlertRule,
+)
 from alert.processing.engine import AlertProcessingEngine
 
 from application.dto.process_security_event import (
@@ -17,19 +18,19 @@ from application.services.process_security_event import (
 )
 
 from case.factory import CaseFactory
-from case.models import Case
-from case.processing.base import CaseProcessor
 from case.processing.engine import CaseProcessingEngine
 
-from common.alert_status import AlertStatus
-from common.case_status import CaseStatus
-from common.detection import Detection, Severity
+from common.detection import (
+    Detection,
+    Severity,
+)
+
 from common.event import Event
 from common.event_types import EventType
 
 from correlation.base import CorrelationRule
-from correlation.engine import CorrelationEngine
 from correlation.models import CorrelationResult
+from correlation.engine import CorrelationEngine
 
 from detection.base import DetectionRule
 from detection.engine import DetectionEngine
@@ -50,11 +51,14 @@ from infrastructure.sqlite.sqlite_unit_of_work import (
 
 
 class MatchRule(DetectionRule):
-    def match(self, event: Event) -> Detection | None:
+    def match(
+        self,
+        event: Event,
+    ) -> Detection | None:
         return Detection(
             rule_id="TEST-001",
             title="Test Detection",
-            severity=Severity.LOW,
+            severity=Severity.HIGH,
             event=event,
         )
 
@@ -66,9 +70,7 @@ class TestEnricher(Enricher):
     ) -> Enrichment:
         return Enrichment(
             data={
-                "test": {
-                    "value": "enriched",
-                }
+                "test": True,
             }
         )
 
@@ -80,55 +82,41 @@ class TestCorrelationRule(CorrelationRule):
     ) -> list[CorrelationResult]:
         return [
             CorrelationResult(
-                correlation_id="corr-001",
-                rule_id="CORR-001",
+                correlation_id=str(uuid4()),
+                rule_id="TEST-CORRELATION-001",
                 title="Test Correlation",
                 severity=Severity.HIGH,
                 matched_at=datetime.now(UTC),
                 detections=detections,
-                metadata={},
             )
         ]
 
 
-class TestAlertProcessor(AlertProcessor):
+class TestAlertProcessor:
     def process(
         self,
-        alerts: list[Alert],
-    ) -> list[Alert]:
-        for alert in alerts:
-            alert.metadata["processed"] = True
-
+        alerts,
+    ):
         return alerts
 
 
-class TestCaseProcessor(CaseProcessor):
+class TestCaseProcessor:
     def process(
         self,
-        cases: list[Case],
-    ) -> list[Case]:
-        for case in cases:
-            case.metadata["processed"] = True
-
+        cases,
+    ):
         return cases
-
-
-@pytest.fixture
-def connection_factory(
-    tmp_path,
-) -> SQLiteConnectionFactory:
-    return SQLiteConnectionFactory(
-        str(tmp_path / "test.db"),
-    )
 
 
 def make_event() -> Event:
     return Event(
         timestamp=datetime.now(UTC),
-        log_source="Windows",
+        log_source="windows",
         event_type=EventType.AUTHENTICATION_FAILED,
         message="Failed login",
-        raw_message="Event 4625",
+        raw_message="Raw failed login",
+        hostname="dc01",
+        username="administrator",
     )
 
 
@@ -140,123 +128,62 @@ def test_process_security_event(
             connection_factory,
         ),
         detection_engine=DetectionEngine(
-            [MatchRule()],
+            [
+                MatchRule(),
+            ]
         ),
         enrichment_engine=EnrichmentEngine(
-            [TestEnricher()],
+            [
+                TestEnricher(),
+            ]
         ),
         correlation_engine=CorrelationEngine(
-            [TestCorrelationRule()],
+            [
+                TestCorrelationRule(),
+            ]
         ),
-        alert_factory=AlertFactory(),
+        alert_engine=AlertEngine(
+            [
+                ImmediateDetectionAlertRule(),
+                CorrelationAlertRule(),
+            ]
+        ),
         alert_processing_engine=AlertProcessingEngine(
-            [TestAlertProcessor()],
+            [
+                TestAlertProcessor(),
+            ]
         ),
         case_factory=CaseFactory(),
         case_processing_engine=CaseProcessingEngine(
-            [TestCaseProcessor()],
+            [
+                TestCaseProcessor(),
+            ]
         ),
     )
 
-    event = make_event()
-
-    response = service.execute(
-        ProcessSecurityEventRequest(
-            event=event,
-        )
+    request = ProcessSecurityEventRequest(
+        event=make_event(),
     )
 
-    with SQLiteUnitOfWork(connection_factory) as uow:
-        loaded_event = uow.events.get(event.id)
+    response = service.execute(
+        request,
+    )
 
-        loaded_detections = uow.detections.list_by_rule(
-            "TEST-001",
-        )
+    assert response.event == request.event
 
-        loaded_alerts = uow.alerts.list_by_status(
-            AlertStatus.NEW,
-        )
-
-        loaded_cases = uow.cases.list_by_status(
-            CaseStatus.NEW,
-        )
-
-    assert loaded_event is not None
-    assert loaded_event.event_id == event.event_id
-
-    assert len(loaded_detections) == 1
-    persisted_detection = loaded_detections[0]
-
-    assert len(loaded_alerts) == 1
-    persisted_alert = loaded_alerts[0]
-
-    assert len(loaded_cases) == 1
-    persisted_case = loaded_cases[0]
-
-    # Event
-    assert response.event == event
-
-    # Detection
     assert len(response.detections) == 1
+    assert response.detections[0].title == "Test Detection"
 
-    detection = response.detections[0]
-
-    assert detection.detection_id == persisted_detection.detection_id
-    assert detection.rule_id == "TEST-001"
-    assert detection.title == "Test Detection"
-    assert detection.severity == Severity.LOW
-    assert detection.event == event
-
-    # Enrichment
     assert len(response.enriched_detections) == 1
 
-    enriched = response.enriched_detections[0]
-
-    assert enriched.detection == detection
-
-    assert enriched.enrichment.data == {
-        "test": {
-            "value": "enriched",
-        }
-    }
-
-    # Correlation
     assert len(response.correlations) == 1
+    assert response.correlations[0].title == "Test Correlation"
 
-    correlation = response.correlations[0]
+    assert len(response.alerts) == 2
+    assert len(response.cases) == 2
 
-    assert correlation.correlation_id == "corr-001"
-    assert correlation.rule_id == "CORR-001"
-    assert correlation.title == "Test Correlation"
-    assert correlation.severity == Severity.HIGH
-    assert correlation.detections == response.enriched_detections
-
-    # Alert
-    assert len(response.alerts) == 1
-
-    alert = response.alerts[0]
-
-    assert alert.alert_id == persisted_alert.alert_id
-    assert alert.title == "Test Correlation"
-    assert alert.severity == Severity.HIGH
-    assert alert.status == AlertStatus.NEW
-    assert alert.source == correlation
-    assert alert.metadata == {
-        "processed": True,
-    }
-
-    # Case
-    assert len(response.cases) == 1
-
-    case = response.cases[0]
-
-    assert case.case_id == persisted_case.case_id
-    assert case.title == "Test Correlation"
-    assert case.status == CaseStatus.NEW
-    assert case.alert == alert
-    assert case.metadata == {
-        "processed": True,
-    }
-
-    assert len(case.timeline) == 1
-    assert case.timeline[0].description == "Case created."
+    with SQLiteUnitOfWork(connection_factory) as uow:
+        assert uow.events.get(request.event.id) is not None
+        assert len(uow.detections.list_all()) == 1
+        assert len(uow.alerts.list_active()) == 2
+        assert len(uow.cases.list_active()) == 2

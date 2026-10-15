@@ -19,7 +19,7 @@ class AlertMapper(BaseMapper):
         alert: Alert,
     ) -> dict[str, Any]:
         return {
-            "id": str(alert.alert_id),
+            "id": str(alert.id),
             "status": alert.status.value,
             "severity": alert.severity.value,
             "created_at": alert.created_at.isoformat(),

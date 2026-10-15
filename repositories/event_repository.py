@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from datetime import datetime
 
 from common.event import Event
-from common.event_types import EventType
 
 
 class EventRepository(ABC):
@@ -18,6 +16,9 @@ class EventRepository(ABC):
         self,
         event: Event,
     ) -> None:
+        """
+        Persist a single event.
+        """
         raise NotImplementedError
 
     def save_all(
@@ -36,6 +37,18 @@ class EventRepository(ABC):
     @abstractmethod
     def get(
         self,
-        event_id: str | int,
+        id: str,
     ) -> Event | None:
+        """
+        Retrieve an event by its internal identifier.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def list(
+        self,
+    ) -> list[Event]:
+        """
+        Return all persisted events.
+        """
         raise NotImplementedError

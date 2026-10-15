@@ -34,7 +34,7 @@ class SQLiteCaseRepository(
 
     def get(
         self,
-        case_id: UUID,
+        id: UUID,
     ) -> Case | None:
         row = self._fetch_one(
             """
@@ -42,7 +42,7 @@ class SQLiteCaseRepository(
             FROM cases
             WHERE id = ?
             """,
-            (str(case_id),),
+            (str(id),),
         )
 
         if row is None:
@@ -52,7 +52,7 @@ class SQLiteCaseRepository(
             self._row_to_dict(row),
         )
 
-    def list_open(
+    def list_active(
         self,
     ) -> list[Case]:
         rows = self._fetch_all(
@@ -124,10 +124,10 @@ class SQLiteCaseRepository(
 
     def delete(
         self,
-        case_id: UUID,
+        id: UUID,
     ) -> None:
         self._delete(
             table=self.TABLE,
             id_column="id",
-            id_value=str(case_id),
+            id_value=str(id),
         )

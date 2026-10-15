@@ -70,10 +70,10 @@ def test_save_and_get_case(
         uow.cases.save(case)
 
     with SQLiteUnitOfWork(connection_factory) as uow:
-        loaded = uow.cases.get(case.case_id)
+        loaded = uow.cases.get(case.id)
 
     assert loaded is not None
-    assert loaded.case_id == case.case_id
+    assert loaded.id == case.id
     assert loaded.title == case.title
     assert loaded.status == case.status
     assert loaded.priority == case.priority

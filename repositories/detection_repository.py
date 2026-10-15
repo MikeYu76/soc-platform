@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from collections.abc import Iterable
+from datetime import datetime
 
 from common.detection import Detection, Severity
 
@@ -33,8 +33,14 @@ class DetectionRepository(ABC):
     @abstractmethod
     def get(
         self,
-        detection_id: str,
+        id: str,
     ) -> Detection | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_all(
+        self,
+    ) -> list[Detection]:
         raise NotImplementedError
 
     @abstractmethod

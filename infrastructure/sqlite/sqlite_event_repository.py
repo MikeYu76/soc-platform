@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-
 from common.event import Event
-from common.event_types import EventType
 
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.event_mapper import EventMapper
@@ -32,7 +29,7 @@ class SQLiteEventRepository(
 
     def get(
         self,
-        event_id: str | int,
+        id: str,
     ) -> Event | None:
         row = self._fetch_one(
             """
@@ -40,7 +37,7 @@ class SQLiteEventRepository(
             FROM events
             WHERE id = ?
             """,
-            (str(event_id),),
+            (id,),
         )
 
         if row is None:
@@ -50,52 +47,15 @@ class SQLiteEventRepository(
             self._row_to_dict(row),
         )
 
-    def list_since(
+    def list(
         self,
-        since: datetime,
     ) -> list[Event]:
         rows = self._fetch_all(
             """
             SELECT *
             FROM events
-            WHERE timestamp >= ?
-            ORDER BY timestamp
-            """,
-            (since.isoformat(),),
-        )
-
-        return [
-            EventMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
-
-    def list_by_source(
-        self,
-        log_source: str,
-    ) -> list[Event]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="log_source",
-            value=log_source,
-        )
-
-        return [
-            EventMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
-
-    def list_by_type(
-        self,
-        event_type: EventType,
-    ) -> list[Event]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="event_type",
-            value=event_type.value,
+            ORDER BY timestamp DESC
+            """
         )
 
         return [

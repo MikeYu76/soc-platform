@@ -44,7 +44,7 @@ def test_risk_engine_scores_detection_by_severity(
 
     assert result.score == expected_score
     assert result.severity == severity.value
-    assert result.detection_id == detection.detection_id
+    assert result.id == detection.id
 
 
 def test_risk_engine_provides_reasoning():
@@ -64,7 +64,7 @@ def test_risk_assessment_rejects_scores_outside_valid_range(
 ):
     with pytest.raises(ValueError):
         RiskAssessment(
-            detection_id="test-detection",
+            id="test-detection",
             score=invalid_score,
             severity="high",
             reasoning="Test validation",

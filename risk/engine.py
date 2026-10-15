@@ -17,7 +17,7 @@ class RiskEngine:
         score = self.SEVERITY_SCORES[detection.severity]
 
         return RiskAssessment(
-            detection_id=detection.detection_id,
+            id=detection.id,
             score=score,
             severity=detection.severity.value,
             reasoning=(

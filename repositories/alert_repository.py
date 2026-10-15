@@ -36,7 +36,7 @@ class AlertRepository(ABC):
     @abstractmethod
     def get(
         self,
-        alert_id: UUID,
+        id: UUID,
     ) -> Alert | None:
         raise NotImplementedError
 
@@ -63,6 +63,6 @@ class AlertRepository(ABC):
     @abstractmethod
     def delete(
         self,
-        alert_id: UUID,
+        id: UUID,
     ) -> None:
         raise NotImplementedError

@@ -26,7 +26,7 @@ class Case(BaseModel):
     Represents an analyst investigation.
     """
 
-    case_id: UUID = Field(default_factory=uuid4)
+    id: UUID = Field(default_factory=uuid4)
 
     title: str
 

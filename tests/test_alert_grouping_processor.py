@@ -48,8 +48,8 @@ def test_groups_alerts_with_same_title():
     grouped = result[0]
 
     assert grouped.title == "Failed Login"
-    assert "grouped_alert_ids" in grouped.metadata
-    assert len(grouped.metadata["grouped_alert_ids"]) == 2
+    assert "grouped_ids" in grouped.metadata
+    assert len(grouped.metadata["grouped_ids"]) == 2
 
 
 def test_keeps_first_alert_as_group_representative():
@@ -60,7 +60,7 @@ def test_keeps_first_alert_as_group_representative():
 
     result = processor.process([alert1, alert2])
 
-    assert result[0].alert_id == alert1.alert_id
+    assert result[0].id == alert1.id
 
 
 def test_single_alert_is_not_modified():
@@ -88,7 +88,7 @@ def test_different_titles_are_not_grouped():
     assert len(result) == 3
 
 
-def test_group_contains_all_alert_ids():
+def test_group_contains_all_ids():
     processor = AlertGroupingProcessor()
 
     alerts = [
@@ -99,10 +99,10 @@ def test_group_contains_all_alert_ids():
 
     result = processor.process(alerts)
 
-    ids = result[0].metadata["grouped_alert_ids"]
+    ids = result[0].metadata["grouped_ids"]
 
     assert len(ids) == 3
 
-    expected = {alert.alert_id for alert in alerts}
+    expected = {alert.id for alert in alerts}
 
     assert set(ids) == expected

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from alert.factory import AlertFactory
+from alert.engine import AlertEngine
 from alert.processing.engine import AlertProcessingEngine
 
 from application.dto.process_security_event import (
@@ -39,7 +39,7 @@ class ProcessSecurityEventService(
         detection_engine: DetectionEngine,
         enrichment_engine: EnrichmentEngine,
         correlation_engine: CorrelationEngine,
-        alert_factory: AlertFactory,
+        alert_engine: AlertEngine,
         alert_processing_engine: AlertProcessingEngine,
         case_factory: CaseFactory,
         case_processing_engine: CaseProcessingEngine,
@@ -48,7 +48,7 @@ class ProcessSecurityEventService(
         self._detection_engine = detection_engine
         self._enrichment_engine = enrichment_engine
         self._correlation_engine = correlation_engine
-        self._alert_factory = alert_factory
+        self._alert_engine = alert_engine
         self._alert_processing_engine = alert_processing_engine
         self._case_factory = case_factory
         self._case_processing_engine = case_processing_engine
@@ -80,11 +80,11 @@ class ProcessSecurityEventService(
                 enriched_detections,
             )
 
-            # Alert creation
-            alerts = [
-                self._alert_factory.create(correlation)
-                for correlation in correlations
-            ]
+            # Alert generation
+            alerts = self._alert_engine.generate(
+                detections=detections,
+                correlations=correlations,
+            )
 
             # Alert processing
             alerts = self._alert_processing_engine.process(

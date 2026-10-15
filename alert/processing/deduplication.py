@@ -29,7 +29,7 @@ class DeduplicationProcessor(AlertProcessor):
             source = alert.source
 
             if isinstance(source, Detection):
-                key = ("detection", source.detection_id)
+                key = ("detection", source.id)
 
             elif isinstance(source, CorrelationResult):
                 key = ("correlation", source.correlation_id)

@@ -33,7 +33,7 @@ class SQLiteDetectionRepository(
 
     def get(
         self,
-        detection_id: str,
+        id: str,
     ) -> Detection | None:
         row = self._fetch_one(
             """
@@ -41,7 +41,7 @@ class SQLiteDetectionRepository(
             FROM detections
             WHERE id = ?
             """,
-            (detection_id,),
+            (id,),
         )
 
         if row is None:
@@ -50,6 +50,24 @@ class SQLiteDetectionRepository(
         return DetectionMapper.from_record(
             self._row_to_dict(row),
         )
+
+    def list_all(
+        self,
+    ) -> list[Detection]:
+        rows = self._fetch_all(
+            """
+            SELECT *
+            FROM detections
+            ORDER BY matched_at
+            """
+        )
+
+        return [
+            DetectionMapper.from_record(
+                self._row_to_dict(row),
+            )
+            for row in rows
+        ]    
 
     def list_by_rule(
         self,

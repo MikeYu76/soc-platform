@@ -88,7 +88,7 @@ def test_detection_roundtrip(
 
     with SQLiteUnitOfWork(connection_factory) as uow:
         loaded = uow.detections.get(
-            detection.detection_id,
+            detection.id,
         )
 
     assert loaded is not None
@@ -104,7 +104,7 @@ def test_alert_roundtrip(
 
     with SQLiteUnitOfWork(connection_factory) as uow:
         loaded = uow.alerts.get(
-            alert.alert_id,
+            alert.id,
         )
 
     assert loaded is not None
@@ -120,7 +120,7 @@ def test_case_roundtrip(
 
     with SQLiteUnitOfWork(connection_factory) as uow:
         loaded = uow.cases.get(
-            case.case_id,
+            case.id,
         )
 
     assert loaded is not None
