@@ -32,6 +32,15 @@ class SQLiteCaseRepository(
             values=CaseMapper.to_record(case),
         )
 
+    def update(
+        self,
+        case: Case,
+    ) -> None:
+        self._upsert(
+            table=self.TABLE,
+            values=CaseMapper.to_record(case),
+        )
+
     def get(
         self,
         id: UUID,

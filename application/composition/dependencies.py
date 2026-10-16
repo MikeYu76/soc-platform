@@ -41,6 +41,21 @@ from application.services.list_cases import (
 from application.services.close_alert import (
     CloseAlertService,
 )
+from application.services.assign_case import (
+    AssignCaseService,
+)
+from application.services.assign_case import (
+    AssignCaseService,
+)
+from application.services.start_case_investigation import (
+    StartCaseInvestigationService,
+)
+from application.services.resolve_case import (
+    ResolveCaseService,
+)
+from application.services.close_case import (
+    CloseCaseService,
+)
 
 from case.factory import CaseFactory
 from case.processing import (
@@ -226,6 +241,35 @@ get_case_service = GetCaseService(
 
 
 list_cases_service = ListCasesService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+
+assign_case_service = AssignCaseService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+start_case_investigation_service = StartCaseInvestigationService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+resolve_case_service = ResolveCaseService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+close_case_service = CloseCaseService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
         connection_factory,
     ),

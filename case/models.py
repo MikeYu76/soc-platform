@@ -141,11 +141,24 @@ class Case(BaseModel):
         self.assignment = assignment
         self.assigned_to = team
         self.assigned_at = assignment.assigned_at
+        self.status = CaseStatus.ASSIGNED
 
         self._add_timeline_event(
             event_type=CaseTimelineEventType.ASSIGNED,
             description=f"Assigned to {team}.",
             actor=assigned_by,
+        )
+
+    def start_investigation(
+        self,
+        analyst: str,
+    ) -> None:
+        self.status = CaseStatus.IN_PROGRESS
+
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.INVESTIGATION_STARTED,
+            description="Investigation started.",
+            actor=analyst,
         )
 
     def escalate(
@@ -189,4 +202,17 @@ class Case(BaseModel):
             event_type=CaseTimelineEventType.RESOLVED,
             description=f"Case resolved: {resolution_type}.",
             actor=resolved_by,
+        )
+
+    def close(
+        self,
+        closed_by: str,
+    ) -> None:
+        self.status = CaseStatus.CLOSED
+        self.closed_at = datetime.now(UTC)
+
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.CLOSED,
+            description="Case closed.",
+            actor=closed_by,
         )

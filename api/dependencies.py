@@ -1,7 +1,8 @@
 from application.composition.dependencies import (
     acknowledge_alert_service,
+    assign_case_service,
     close_alert_service,
-    start_alert_investigation_service,
+    close_case_service,
     get_alert_service,
     get_case_service,
     get_event_service,
@@ -9,17 +10,22 @@ from application.composition.dependencies import (
     list_cases_service,
     list_events_service,
     process_security_event_service,
-)
-
-from application.services.close_alert import (
-    CloseAlertService,
+    resolve_case_service,
+    start_alert_investigation_service,
+    start_case_investigation_service,
 )
 
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
 )
-from application.services.start_alert_investigation import (
-    StartAlertInvestigationService,
+from application.services.assign_case import (
+    AssignCaseService,
+)
+from application.services.close_alert import (
+    CloseAlertService,
+)
+from application.services.close_case import (
+    CloseCaseService,
 )
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
@@ -29,6 +35,15 @@ from application.services.list_cases import ListCasesService
 from application.services.list_events import ListEventsService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
+)
+from application.services.resolve_case import (
+    ResolveCaseService,
+)
+from application.services.start_alert_investigation import (
+    StartAlertInvestigationService,
+)
+from application.services.start_case_investigation import (
+    StartCaseInvestigationService,
 )
 
 
@@ -56,12 +71,13 @@ def get_acknowledge_alert_service() -> AcknowledgeAlertService:
     return acknowledge_alert_service
 
 
-def get_start_alert_investigation_service(
-) -> StartAlertInvestigationService:
+def get_start_alert_investigation_service() -> StartAlertInvestigationService:
     return start_alert_investigation_service
+
 
 def get_close_alert_service() -> CloseAlertService:
     return close_alert_service
+
 
 def get_get_case_service() -> GetCaseService:
     return get_case_service
@@ -69,3 +85,19 @@ def get_get_case_service() -> GetCaseService:
 
 def get_list_cases_service() -> ListCasesService:
     return list_cases_service
+
+
+def get_assign_case_service() -> AssignCaseService:
+    return assign_case_service
+
+
+def get_start_case_investigation_service() -> StartCaseInvestigationService:
+    return start_case_investigation_service
+
+
+def get_resolve_case_service() -> ResolveCaseService:
+    return resolve_case_service
+
+
+def get_close_case_service() -> CloseCaseService:
+    return close_case_service

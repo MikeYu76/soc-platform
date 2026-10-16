@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from uuid import UUID
-
 from collections.abc import Iterable
+from uuid import UUID
 
 from case.models import Case
 
@@ -16,6 +15,13 @@ class CaseRepository(ABC):
 
     @abstractmethod
     def save(
+        self,
+        case: Case,
+    ) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def update(
         self,
         case: Case,
     ) -> None:
