@@ -20,6 +20,9 @@ from application.composition.settings import (
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
 )
+from application.services.start_alert_investigation import (
+    StartAlertInvestigationService,
+)
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
@@ -34,6 +37,9 @@ from application.services.list_alerts import (
 from application.services.get_case import GetCaseService
 from application.services.list_cases import (
     ListCasesService,
+)
+from application.services.close_alert import (
+    CloseAlertService,
 )
 
 from case.factory import CaseFactory
@@ -80,12 +86,6 @@ connection_factory = SQLiteConnectionFactory(
 )
 
 
-#
-# Shared enrichment data.
-#
-# In production this can later be replaced with MaxMind,
-# OpenSearch, MISP, AbuseIPDB, etc.
-#
 ip_context: dict[str, dict[str, str]] = {
     "8.8.8.8": {
         "country": "United States",
@@ -198,6 +198,20 @@ list_alerts_service = ListAlertsService(
 
 
 acknowledge_alert_service = AcknowledgeAlertService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+start_alert_investigation_service = StartAlertInvestigationService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
+close_alert_service = CloseAlertService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
         connection_factory,
     ),

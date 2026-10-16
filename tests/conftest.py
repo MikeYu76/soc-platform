@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from api.dependencies import (
     get_acknowledge_alert_service,
+    get_start_alert_investigation_service,
     get_get_alert_service,
     get_get_case_service,
     get_get_event_service,
@@ -16,6 +17,7 @@ from api.dependencies import (
     get_list_cases_service,
     get_list_events_service,
     get_process_security_event_service,
+    get_close_alert_service,
 )
 from api.main import app
 
@@ -40,6 +42,12 @@ from application.services.list_cases import ListCasesService
 from application.services.list_events import ListEventsService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
+)
+from application.services.start_alert_investigation import (
+    StartAlertInvestigationService,
+)
+from application.services.close_alert import (
+    CloseAlertService,
 )
 
 from case.factory import CaseFactory
@@ -179,6 +187,12 @@ def client(
         ),
     )
 
+    start_alert_investigation_service = StartAlertInvestigationService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
     get_case_service = GetCaseService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
@@ -186,6 +200,12 @@ def client(
     )
 
     list_cases_service = ListCasesService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
+    close_alert_service = CloseAlertService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
         ),
@@ -216,8 +236,16 @@ def client(
     ] = lambda: acknowledge_alert_service
 
     app.dependency_overrides[
+        get_start_alert_investigation_service
+    ] = lambda: start_alert_investigation_service
+
+    app.dependency_overrides[
         get_get_case_service
-    ] = lambda: get_get_case_service
+    ] = lambda: get_case_service
+
+    app.dependency_overrides[
+        get_close_alert_service
+    ] = lambda: close_alert_service
 
     app.dependency_overrides[
         get_list_cases_service

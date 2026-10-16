@@ -1,5 +1,7 @@
 from application.composition.dependencies import (
     acknowledge_alert_service,
+    close_alert_service,
+    start_alert_investigation_service,
     get_alert_service,
     get_case_service,
     get_event_service,
@@ -9,8 +11,15 @@ from application.composition.dependencies import (
     process_security_event_service,
 )
 
+from application.services.close_alert import (
+    CloseAlertService,
+)
+
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
+)
+from application.services.start_alert_investigation import (
+    StartAlertInvestigationService,
 )
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
@@ -46,6 +55,13 @@ def get_list_alerts_service() -> ListAlertsService:
 def get_acknowledge_alert_service() -> AcknowledgeAlertService:
     return acknowledge_alert_service
 
+
+def get_start_alert_investigation_service(
+) -> StartAlertInvestigationService:
+    return start_alert_investigation_service
+
+def get_close_alert_service() -> CloseAlertService:
+    return close_alert_service
 
 def get_get_case_service() -> GetCaseService:
     return get_case_service

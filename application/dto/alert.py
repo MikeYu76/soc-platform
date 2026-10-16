@@ -46,3 +46,21 @@ class AcknowledgeAlertResponse(Response):
     """
 
     alert: Alert
+
+
+@dataclass(slots=True)
+class StartAlertInvestigationResponse(Response):
+    """
+    Response after starting an alert investigation.
+    """
+
+    alert: Alert
+
+
+@dataclass(slots=True)
+class CloseAlertResponse(Response):
+    """
+    Response after closing an alert.
+    """
+
+    alert: Alert
