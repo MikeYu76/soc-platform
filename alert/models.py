@@ -26,10 +26,18 @@ class Alert(BaseModel):
 
     severity: Severity
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+    )
 
     status: AlertStatus = AlertStatus.NEW
 
+    acknowledged_by: str | None = None
+
+    acknowledged_at: datetime | None = None
+
     source: Detection | CorrelationResult
 
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )

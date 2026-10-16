@@ -17,6 +17,9 @@ from application.composition.settings import (
     get_settings,
 )
 
+from application.services.acknowledge_alert import (
+    AcknowledgeAlertService,
+)
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
@@ -172,11 +175,13 @@ get_event_service = GetEventService(
     ),
 )
 
+
 list_events_service = ListEventsService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
         connection_factory,
     ),
 )
+
 
 get_alert_service = GetAlertService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
@@ -184,17 +189,27 @@ get_alert_service = GetAlertService(
     ),
 )
 
+
 list_alerts_service = ListAlertsService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
         connection_factory,
     ),
 )
 
+
+acknowledge_alert_service = AcknowledgeAlertService(
+    unit_of_work_factory=lambda: SQLiteUnitOfWork(
+        connection_factory,
+    ),
+)
+
+
 get_case_service = GetCaseService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(
         connection_factory,
     ),
 )
+
 
 list_cases_service = ListCasesService(
     unit_of_work_factory=lambda: SQLiteUnitOfWork(

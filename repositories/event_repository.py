@@ -5,6 +5,8 @@ from collections.abc import Iterable
 
 from common.event import Event
 
+from repositories.queries.event_query import EventQuery
+
 
 class EventRepository(ABC):
     """
@@ -50,5 +52,15 @@ class EventRepository(ABC):
     ) -> list[Event]:
         """
         Return all persisted events.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def search(
+        self,
+        query: EventQuery,
+    ) -> list[Event]:
+        """
+        Search for persisted events using query criteria.
         """
         raise NotImplementedError

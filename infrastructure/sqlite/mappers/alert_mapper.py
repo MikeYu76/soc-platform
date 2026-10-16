@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import Any
 
 from alert.models import Alert
@@ -23,6 +22,12 @@ class AlertMapper(BaseMapper):
             "status": alert.status.value,
             "severity": alert.severity.value,
             "created_at": alert.created_at.isoformat(),
+            "acknowledged_by": alert.acknowledged_by,
+            "acknowledged_at": (
+                alert.acknowledged_at.isoformat()
+                if alert.acknowledged_at is not None
+                else None
+            ),
             "data": cls.serialize(alert),
         }
 

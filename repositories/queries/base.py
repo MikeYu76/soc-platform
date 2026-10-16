@@ -1,0 +1,19 @@
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
+
+
+class Query(BaseModel):
+    """
+    Base query object shared by repository search operations.
+    """
+
+    limit: int = Field(
+        default=50,
+        ge=1,
+    )
+
+    offset: int = Field(
+        default=0,
+        ge=0,
+    )

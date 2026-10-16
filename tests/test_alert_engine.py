@@ -9,21 +9,57 @@ from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
 
+from correlation.models import CorrelationResult
+
 
 class NoOpAlertRule(AlertRule):
-    def generate(self, detections, correlations):
+    def generate(
+        self,
+        detections: list[Detection],
+        correlations: list[CorrelationResult],
+    ) -> list[Alert]:
         return []
+
+    def from_detection(
+        self,
+        detection: Detection,
+    ) -> Alert | None:
+        return None
+
+    def from_correlation(
+        self,
+        correlation: CorrelationResult,
+    ) -> Alert | None:
+        return None
 
 
 class StaticAlertRule(AlertRule):
-    def generate(self, detections, correlations):
+    def generate(
+        self,
+        detections: list[Detection],
+        correlations: list[CorrelationResult],
+    ) -> list[Alert]:
         return [
-            Alert(
-                title="Test Alert",
-                severity=Severity.HIGH,
-                source=detections[0],
-            )
+            alert
+            for detection in detections
+            if (alert := self.from_detection(detection)) is not None
         ]
+
+    def from_detection(
+        self,
+        detection: Detection,
+    ) -> Alert | None:
+        return Alert(
+            title="Test Alert",
+            severity=Severity.HIGH,
+            source=detection,
+        )
+
+    def from_correlation(
+        self,
+        correlation: CorrelationResult,
+    ) -> Alert | None:
+        return None
 
 
 def build_detection() -> Detection:
@@ -84,4 +120,7 @@ def test_engine_merges_results_from_multiple_rules():
 
     assert len(alerts) == 2
 
-    assert all(alert.title == "Test Alert" for alert in alerts)
+    assert all(
+        alert.title == "Test Alert"
+        for alert in alerts
+    )

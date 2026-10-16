@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from uuid import UUID
 from collections.abc import Iterable
+from uuid import UUID
 
 from alert.models import Alert
 
@@ -32,6 +32,16 @@ class AlertRepository(ABC):
         """
         for alert in alerts:
             self.save(alert)
+
+    @abstractmethod
+    def update(
+        self,
+        alert: Alert,
+    ) -> None:
+        """
+        Persist changes to an existing alert.
+        """
+        raise NotImplementedError
 
     @abstractmethod
     def get(

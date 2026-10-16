@@ -1,26 +1,41 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from api.dependencies import (
+    get_acknowledge_alert_service,
     get_get_alert_service,
     get_list_alerts_service,
 )
 
-from application.dto.base import Request
-from application.dto.identifier import IdentifierRequest
-
 from application.dto.alert import (
+    AcknowledgeAlertRequest,
+    AcknowledgeAlertResponse,
     GetAlertResponse,
     ListAlertsResponse,
 )
+from application.dto.base import Request
+from application.dto.identifier import IdentifierRequest
 
+from application.services.acknowledge_alert import (
+    AcknowledgeAlertService,
+)
 from application.services.get_alert import (
     GetAlertService,
 )
 from application.services.list_alerts import (
     ListAlertsService,
 )
+
+
+class AcknowledgeAlertBody(BaseModel):
+    """
+    Request body for acknowledging an alert.
+    """
+
+    analyst: str
+
 
 router = APIRouter(
     prefix="/alerts",
@@ -57,5 +72,25 @@ def get_alert(
     return service.execute(
         IdentifierRequest(
             id=id,
+        )
+    )
+
+
+@router.patch(
+    "/{id}/acknowledge",
+    response_model=AcknowledgeAlertResponse,
+    summary="Acknowledge an alert",
+)
+def acknowledge_alert(
+    id: str,
+    body: AcknowledgeAlertBody,
+    service: AcknowledgeAlertService = Depends(
+        get_acknowledge_alert_service,
+    ),
+) -> AcknowledgeAlertResponse:
+    return service.execute(
+        AcknowledgeAlertRequest(
+            alert_id=id,
+            analyst=body.analyst,
         )
     )

@@ -4,8 +4,12 @@ from common.event import Event
 
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.event_mapper import EventMapper
+from infrastructure.sqlite.queries.event_query_builder import (
+    EventQueryBuilder,
+)
 
 from repositories.event_repository import EventRepository
+from repositories.queries.event_query import EventQuery
 
 
 class SQLiteEventRepository(
@@ -50,12 +54,21 @@ class SQLiteEventRepository(
     def list(
         self,
     ) -> list[Event]:
+        return self.search(
+            EventQuery(),
+        )
+
+    def search(
+        self,
+        query: EventQuery,
+    ) -> list[Event]:
+        sql, parameters = EventQueryBuilder.build(
+            query,
+        )
+
         rows = self._fetch_all(
-            """
-            SELECT *
-            FROM events
-            ORDER BY timestamp DESC
-            """
+            sql,
+            parameters,
         )
 
         return [

@@ -2,24 +2,47 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from application.dto.base import (
+    Request,
+    Response,
+)
+
 from alert.models import Alert
 
-from application.dto.base import Response
+
+@dataclass(slots=True)
+class ListAlertsResponse(Response):
+    """
+    Response containing active alerts.
+    """
+
+    alerts: list[Alert]
 
 
 @dataclass(slots=True)
 class GetAlertResponse(Response):
     """
-    Response returned when retrieving a single alert.
+    Response containing a single alert.
     """
 
     alert: Alert
 
 
 @dataclass(slots=True)
-class ListAlertsResponse(Response):
+class AcknowledgeAlertRequest(Request):
     """
-    Response returned when listing alerts.
+    Request to acknowledge an alert.
     """
 
-    alerts: list[Alert]
+    alert_id: str
+
+    analyst: str
+
+
+@dataclass(slots=True)
+class AcknowledgeAlertResponse(Response):
+    """
+    Response after acknowledging an alert.
+    """
+
+    alert: Alert

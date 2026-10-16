@@ -33,7 +33,9 @@ class ListEventsService(
     ) -> ListEventsResponse:
 
         with self._unit_of_work_factory() as uow:
-            events = uow.events.list()
+            events = uow.events.search(
+                request.query,
+            )
 
         return ListEventsResponse(
             events=events,

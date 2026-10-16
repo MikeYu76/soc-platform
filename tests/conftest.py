@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.dependencies import (
+    get_acknowledge_alert_service,
     get_get_alert_service,
     get_get_case_service,
     get_get_event_service,
@@ -18,10 +19,9 @@ from api.dependencies import (
 )
 from api.main import app
 
+from alert.correlation_alert import CorrelationAlertRule
 from alert.engine import AlertEngine
 from alert.immediate_detection import ImmediateDetectionAlertRule
-from alert.correlation_alert import CorrelationAlertRule
-
 from alert.processing import (
     AlertGroupingProcessor,
     AlertProcessingEngine,
@@ -29,6 +29,9 @@ from alert.processing import (
     DeduplicationProcessor,
 )
 
+from application.services.acknowledge_alert import (
+    AcknowledgeAlertService,
+)
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_event import GetEventService
@@ -170,6 +173,12 @@ def client(
         ),
     )
 
+    acknowledge_alert_service = AcknowledgeAlertService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
     get_case_service = GetCaseService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
@@ -203,8 +212,12 @@ def client(
     ] = lambda: list_alerts_service
 
     app.dependency_overrides[
+        get_acknowledge_alert_service
+    ] = lambda: acknowledge_alert_service
+
+    app.dependency_overrides[
         get_get_case_service
-    ] = lambda: get_case_service
+    ] = lambda: get_get_case_service
 
     app.dependency_overrides[
         get_list_cases_service

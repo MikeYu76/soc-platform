@@ -32,6 +32,18 @@ class SQLiteAlertRepository(
             values=AlertMapper.to_record(alert),
         )
 
+    def update(
+        self,
+        alert: Alert,
+    ) -> None:
+        """
+        Persist changes to an existing alert.
+        """
+        self._upsert(
+            table=self.TABLE,
+            values=AlertMapper.to_record(alert),
+        )
+
     def get(
         self,
         id: UUID,

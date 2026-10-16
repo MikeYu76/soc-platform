@@ -21,6 +21,12 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             timestamp TEXT NOT NULL,
             log_source TEXT NOT NULL,
             event_type TEXT NOT NULL,
+
+            hostname TEXT,
+            username TEXT,
+            source_ip TEXT,
+            destination_ip TEXT,
+
             data TEXT NOT NULL
         );
 
@@ -32,6 +38,18 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_events_type
             ON events(event_type);
+
+        CREATE INDEX IF NOT EXISTS idx_events_hostname
+            ON events(hostname);
+
+        CREATE INDEX IF NOT EXISTS idx_events_username
+            ON events(username);
+
+        CREATE INDEX IF NOT EXISTS idx_events_source_ip
+            ON events(source_ip);
+
+        CREATE INDEX IF NOT EXISTS idx_events_destination_ip
+            ON events(destination_ip);
 
         --------------------------------------------------------------------
         -- Detections
@@ -63,6 +81,8 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
             status TEXT NOT NULL,
             severity TEXT NOT NULL,
             created_at TEXT NOT NULL,
+            acknowledged_by TEXT,
+            acknowledged_at TEXT,
             data TEXT NOT NULL
         );
 
@@ -74,6 +94,9 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_alert_created
             ON alerts(created_at);
+
+        CREATE INDEX IF NOT EXISTS idx_alert_acknowledged_by
+            ON alerts(acknowledged_by);
 
         --------------------------------------------------------------------
         -- Cases
