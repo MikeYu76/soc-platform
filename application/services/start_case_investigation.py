@@ -46,7 +46,7 @@ class StartCaseInvestigationService(
                 analyst=request.analyst,
             )
 
-            uow.cases.save(case)
+            uow.cases.update(case)
 
             uow.commit()
 

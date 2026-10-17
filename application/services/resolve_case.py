@@ -3,7 +3,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from uuid import UUID
 
-from application.dto.case import ResolveCaseRequest, ResolveCaseResponse
+from application.dto.case import (
+    ResolveCaseRequest,
+    ResolveCaseResponse,
+)
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
 from repositories.unit_of_work import UnitOfWork
@@ -45,7 +48,7 @@ class ResolveCaseService(
                 resolved_by=request.resolved_by,
             )
 
-            uow.cases.save(case)
+            uow.cases.update(case)
 
             uow.commit()
 
