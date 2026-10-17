@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Any
+from uuid import uuid4
 
 from pydantic import BaseModel, Field, IPvAnyAddress
-from common.event_types import EventType
 
-from uuid import uuid4
+from common.event_types import EventType
 
 
 class Event(BaseModel):
@@ -34,5 +33,3 @@ class Event(BaseModel):
 
     process_name: str | None = None
     command_line: str | None = None
-
-    

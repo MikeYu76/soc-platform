@@ -3,8 +3,8 @@ from datetime import UTC, datetime, timedelta
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-from enrichment.models import EnrichedDetection, Enrichment
 from correlation.rules.impossible_travel import ImpossibleTravelRule
+from enrichment.models import EnrichedDetection, Enrichment
 
 
 def make_auth_detection(
@@ -12,7 +12,7 @@ def make_auth_detection(
     username: str,
     country: str,
     source_ip: str = "203.0.113.10",
-    event_type: str = EventType.AUTHENTICATION_SUCCESS
+    event_type: str = EventType.AUTHENTICATION_SUCCESS,
 ) -> EnrichedDetection:
 
     event = Event(
@@ -67,8 +67,8 @@ def test_detects_impossible_travel():
 
     assert len(results) == 1
     assert results[0].rule_id == "CORR-AUTH-002"
-    assert len(results[0].detections) == 2 
-    
+    assert len(results[0].detections) == 2
+
 
 def test_does_not_detect_same_country():
     start = datetime(2026, 10, 9, 10, 0, tzinfo=UTC)
@@ -88,7 +88,7 @@ def test_does_not_detect_same_country():
 
     rule = ImpossibleTravelRule(window_hours=2)
 
-    assert rule.correlate(detections) == []  
+    assert rule.correlate(detections) == []
 
 
 def test_does_not_correlate_different_users():
@@ -177,4 +177,4 @@ def test_handles_unordered_input():
     results = rule.correlate(detections)
 
     assert len(results) == 1
-    assert len(results[0].detections) == 2                    
+    assert len(results[0].detections) == 2

@@ -1,17 +1,14 @@
 from datetime import datetime
 
 from alert.models import Alert
+from case.domain.timeline import CaseTimelineEventType
+from case.models import Case
 from common.alert_status import AlertStatus
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
-from case.domain.timeline import (
-    CaseTimelineEventType,
-)
-from case.models import Case
 
 
 def build_case() -> Case:
@@ -54,10 +51,7 @@ def test_case_starts_with_creation_event():
 def test_creation_event_type():
     case = build_case()
 
-    assert (
-        case.timeline[0].event_type
-        == CaseTimelineEventType.CASE_CREATED
-    )
+    assert case.timeline[0].event_type == CaseTimelineEventType.CASE_CREATED
 
 
 def test_creation_event_has_timestamp():

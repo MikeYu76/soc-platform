@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from alert.models import Alert
-
 from case.models import Case
 
 

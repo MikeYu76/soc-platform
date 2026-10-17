@@ -1,10 +1,8 @@
 from datetime import UTC, datetime
 
 from alert.models import Alert
-
-from case.models import Case
 from case.domain.timeline import CaseTimelineEventType
-
+from case.models import Case
 from common.alert_status import AlertStatus
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus

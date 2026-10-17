@@ -8,8 +8,7 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
     Create all SQLite tables and indexes.
     """
 
-    connection.executescript(
-        """
+    connection.executescript("""
         PRAGMA foreign_keys = ON;
 
         --------------------------------------------------------------------
@@ -123,7 +122,6 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_case_created
             ON cases(created_at);
-        """
-    )
+        """)
 
     connection.commit()

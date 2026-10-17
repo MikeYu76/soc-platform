@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
-import tempfile
 
 import pytest
 
@@ -10,10 +10,8 @@ from application.dto.get_event import GetEventResponse
 from application.dto.identifier import IdentifierRequest
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.get_event import GetEventService
-
 from common.event import Event
 from common.event_types import EventType
-
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 

@@ -1,23 +1,21 @@
 from __future__ import annotations
 
 import sqlite3
+from typing import Self
 
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
-
-from repositories.unit_of_work import UnitOfWork
-
-from repositories.event_repository import EventRepository
-from repositories.detection_repository import DetectionRepository
-from repositories.alert_repository import AlertRepository
-from repositories.case_repository import CaseRepository
-
-from infrastructure.sqlite.sqlite_event_repository import SQLiteEventRepository
+from infrastructure.sqlite.exceptions import UnitOfWorkNotActiveError
+from infrastructure.sqlite.sqlite_alert_repository import SQLiteAlertRepository
+from infrastructure.sqlite.sqlite_case_repository import SQLiteCaseRepository
 from infrastructure.sqlite.sqlite_detection_repository import (
     SQLiteDetectionRepository,
 )
-from infrastructure.sqlite.sqlite_alert_repository import SQLiteAlertRepository
-from infrastructure.sqlite.sqlite_case_repository import SQLiteCaseRepository
-from infrastructure.sqlite.exceptions import UnitOfWorkNotActiveError
+from infrastructure.sqlite.sqlite_event_repository import SQLiteEventRepository
+from repositories.alert_repository import AlertRepository
+from repositories.case_repository import CaseRepository
+from repositories.detection_repository import DetectionRepository
+from repositories.event_repository import EventRepository
+from repositories.unit_of_work import UnitOfWork
 
 
 class SQLiteUnitOfWork(UnitOfWork):
@@ -43,7 +41,7 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._alerts: SQLiteAlertRepository | None = None
         self._cases: SQLiteCaseRepository | None = None
 
-    def __enter__(self) -> "SQLiteUnitOfWork":
+    def __enter__(self) -> Self:
         self._connection = self._connection_factory.connect()
 
         self._events = SQLiteEventRepository(self._connection)
@@ -56,48 +54,36 @@ class SQLiteUnitOfWork(UnitOfWork):
     @property
     def events(self) -> EventRepository:
         if self._events is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._events
 
     @property
     def detections(self) -> DetectionRepository:
         if self._detections is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._detections
 
     @property
     def alerts(self) -> AlertRepository:
         if self._alerts is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._alerts
 
     @property
     def cases(self) -> CaseRepository:
         if self._cases is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._cases
 
     def commit(self) -> None:
         if self._connection is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
 
         self._connection.commit()
 
     def rollback(self) -> None:
         if self._connection is None:
-            raise UnitOfWorkNotActiveError(
-                "UnitOfWork has not been entered."
-            )
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
 
         self._connection.rollback()
 

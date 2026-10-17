@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from uuid import UUID
 
 from alert.models import Alert
-
 from common.alert_status import AlertStatus
 from common.detection import Severity
 

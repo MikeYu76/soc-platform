@@ -1,3 +1,4 @@
+from typing import ClassVar
 
 from common.detection import Detection, Severity
 from risk.models import RiskAssessment
@@ -6,7 +7,7 @@ from risk.models import RiskAssessment
 class RiskEngine:
     """Calculate a baseline risk score for a detection."""
 
-    SEVERITY_SCORES = {
+    SEVERITY_SCORES: ClassVar[dict[Severity, int]] = {
         Severity.LOW: 25,
         Severity.MEDIUM: 50,
         Severity.HIGH: 75,

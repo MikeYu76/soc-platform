@@ -2,12 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from application.dto.base import (
-    Request,
-    Response,
-)
-
 from alert.models import Alert
+from application.dto.base import Request, Response
 
 
 @dataclass(slots=True)

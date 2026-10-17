@@ -1,10 +1,7 @@
 from collections.abc import Callable
 
 from normalization.base import BaseParser
-from normalization.exceptions import (
-    DuplicateParserError,
-    ParserNotFoundError,
-)
+from normalization.exceptions import DuplicateParserError, ParserNotFoundError
 
 
 class ParserRegistry:

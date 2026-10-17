@@ -5,7 +5,6 @@ from collections.abc import Callable
 from application.dto.alert import ListAlertsResponse
 from application.dto.base import Request
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 

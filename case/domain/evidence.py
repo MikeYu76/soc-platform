@@ -15,6 +15,4 @@ class CaseEvidence(BaseModel):
 
     source: str
 
-    collected_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    collected_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

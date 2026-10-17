@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from alert.models import Alert
-
 from infrastructure.sqlite.mappers.base_mapper import BaseMapper
 
 

@@ -1,3 +1,4 @@
+import itertools
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -49,10 +50,7 @@ class ImpossibleTravelRule(CorrelationRule):
                 key=lambda detection: detection.detection.event.timestamp
             )
 
-            for previous, current in zip(
-                user_detections,
-                user_detections[1:],
-            ):
+            for previous, current in itertools.pairwise(user_detections):
 
                 previous_context = previous.enrichment.data.get("ip_context")
                 current_context = current.enrichment.data.get("ip_context")

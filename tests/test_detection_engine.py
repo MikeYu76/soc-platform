@@ -3,7 +3,6 @@ import pytest
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from detection.base import DetectionRule
 from detection.engine import DetectionEngine
 
@@ -44,7 +43,9 @@ def sample_event() -> Event:
     )
 
 
-def test_detection_engine_with_no_rules_returns_empty_list(sample_event: Event):
+def test_detection_engine_with_no_rules_returns_empty_list(
+    sample_event: Event,
+):
     # Arrange
     engine = DetectionEngine([])
 
@@ -92,10 +93,12 @@ def test_detection_engine_returns_all_matching_detections(
     sample_event: Event,
 ):
     # Arrange
-    engine = DetectionEngine([
-        MatchRule(),
-        AnotherMatchRule(),
-    ])
+    engine = DetectionEngine(
+        [
+            MatchRule(),
+            AnotherMatchRule(),
+        ]
+    )
 
     # Act
     detections = engine.process(sample_event)

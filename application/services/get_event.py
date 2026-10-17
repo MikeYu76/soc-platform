@@ -6,7 +6,6 @@ from application.dto.get_event import GetEventResponse
 from application.dto.identifier import IdentifierRequest
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -35,9 +34,7 @@ class GetEventService(
             event = uow.events.get(request.id)
 
         if event is None:
-            raise ResourceNotFoundError(
-                f"Event '{request.id}' was not found."
-            )
+            raise ResourceNotFoundError(f"Event '{request.id}' was not found.")
 
         return GetEventResponse(
             event=event,

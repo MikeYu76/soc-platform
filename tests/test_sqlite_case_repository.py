@@ -1,23 +1,20 @@
 from __future__ import annotations
 
+import tempfile
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
 from alert.models import Alert
 from case.models import Case
-
 from common.alert_status import AlertStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
-
-import tempfile
-from pathlib import Path
 
 @pytest.fixture
 def connection_factory() -> SQLiteConnectionFactory:

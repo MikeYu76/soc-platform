@@ -14,19 +14,10 @@ from application.composition.dependencies import (
     start_alert_investigation_service,
     start_case_investigation_service,
 )
-
-from application.services.acknowledge_alert import (
-    AcknowledgeAlertService,
-)
-from application.services.assign_case import (
-    AssignCaseService,
-)
-from application.services.close_alert import (
-    CloseAlertService,
-)
-from application.services.close_case import (
-    CloseCaseService,
-)
+from application.services.acknowledge_alert import AcknowledgeAlertService
+from application.services.assign_case import AssignCaseService
+from application.services.close_alert import CloseAlertService
+from application.services.close_case import CloseCaseService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_event import GetEventService
@@ -36,9 +27,7 @@ from application.services.list_events import ListEventsService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
-from application.services.resolve_case import (
-    ResolveCaseService,
-)
+from application.services.resolve_case import ResolveCaseService
 from application.services.start_alert_investigation import (
     StartAlertInvestigationService,
 )

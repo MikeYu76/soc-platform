@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from application.exceptions.not_found import (
-    ResourceNotFoundError,
-)
+from application.exceptions.not_found import ResourceNotFoundError
 
 
 def register_exception_handlers(

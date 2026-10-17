@@ -9,7 +9,6 @@ from application.dto.case import (
 )
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 

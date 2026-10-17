@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from alert.models import Alert
+from case.domain.timeline import CaseTimelineEventType
 from case.models import Case
 from case.processing.assignment import CaseAssignmentProcessor
 from common.alert_status import AlertStatus
@@ -9,7 +10,6 @@ from common.case_status import CaseStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-from case.domain.timeline import CaseTimelineEventType
 
 
 def build_case(severity: Severity) -> Case:

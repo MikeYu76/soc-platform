@@ -5,13 +5,8 @@ import pytest
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from correlation.rules.lateral_movement import LateralMovementRule
-
-from enrichment.models import (
-    EnrichedDetection,
-    Enrichment,
-)
+from enrichment.models import EnrichedDetection, Enrichment
 
 
 def make_detection(

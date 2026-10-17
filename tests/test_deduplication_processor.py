@@ -2,7 +2,6 @@ from datetime import datetime
 
 from alert.models import Alert
 from alert.processing.deduplication import DeduplicationProcessor
-
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType

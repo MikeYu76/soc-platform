@@ -118,10 +118,7 @@ class SQLiteRepository:
         """
         columns = list(values.keys())
 
-        placeholders = ", ".join(
-            "?"
-            for _ in columns
-        )
+        placeholders = ", ".join("?" for _ in columns)
 
         assignments = ", ".join(
             f"{column}=excluded.{column}"
@@ -140,8 +137,5 @@ class SQLiteRepository:
 
         self._connection.execute(
             sql,
-            tuple(
-                values[column]
-                for column in columns
-            ),
+            tuple(values[column] for column in columns),
         )

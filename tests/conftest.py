@@ -7,20 +7,6 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from api.dependencies import (
-    get_acknowledge_alert_service,
-    get_start_alert_investigation_service,
-    get_get_alert_service,
-    get_get_case_service,
-    get_get_event_service,
-    get_list_alerts_service,
-    get_list_cases_service,
-    get_list_events_service,
-    get_process_security_event_service,
-    get_close_alert_service,
-)
-from api.main import app
-
 from alert.correlation_alert import CorrelationAlertRule
 from alert.engine import AlertEngine
 from alert.immediate_detection import ImmediateDetectionAlertRule
@@ -30,10 +16,21 @@ from alert.processing import (
     AlertRoutingProcessor,
     DeduplicationProcessor,
 )
-
-from application.services.acknowledge_alert import (
-    AcknowledgeAlertService,
+from api.dependencies import (
+    get_acknowledge_alert_service,
+    get_close_alert_service,
+    get_get_alert_service,
+    get_get_case_service,
+    get_get_event_service,
+    get_list_alerts_service,
+    get_list_cases_service,
+    get_list_events_service,
+    get_process_security_event_service,
+    get_start_alert_investigation_service,
 )
+from api.main import app
+from application.services.acknowledge_alert import AcknowledgeAlertService
+from application.services.close_alert import CloseAlertService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_event import GetEventService
@@ -46,10 +43,6 @@ from application.services.process_security_event import (
 from application.services.start_alert_investigation import (
     StartAlertInvestigationService,
 )
-from application.services.close_alert import (
-    CloseAlertService,
-)
-
 from case.factory import CaseFactory
 from case.processing import (
     CaseAssignmentProcessor,
@@ -58,7 +51,6 @@ from case.processing import (
     CaseSLABreachProcessor,
     CaseSLAProcessor,
 )
-
 from correlation.engine import CorrelationEngine
 from correlation.rules import (
     FailedLoginBurstRule,
@@ -66,14 +58,11 @@ from correlation.rules import (
     LateralMovementRule,
     PrivilegeEscalationRule,
 )
-
 from detection.engine import DetectionEngine
 from detection.rules.failed_login import FailedLoginRule
-
 from enrichment.engine import EnrichmentEngine
 from enrichment.ip_classification import IPClassificationEnricher
 from enrichment.ip_context import IPContextEnricher
-
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
@@ -211,45 +200,39 @@ def client(
         ),
     )
 
-    app.dependency_overrides[
-        get_process_security_event_service
-    ] = lambda: process_service
+    app.dependency_overrides[get_process_security_event_service] = (
+        lambda: process_service
+    )
 
-    app.dependency_overrides[
-        get_get_event_service
-    ] = lambda: get_event_service
+    app.dependency_overrides[get_get_event_service] = lambda: get_event_service
 
-    app.dependency_overrides[
-        get_list_events_service
-    ] = lambda: list_events_service
+    app.dependency_overrides[get_list_events_service] = (
+        lambda: list_events_service
+    )
 
-    app.dependency_overrides[
-        get_get_alert_service
-    ] = lambda: get_alert_service
+    app.dependency_overrides[get_get_alert_service] = lambda: get_alert_service
 
-    app.dependency_overrides[
-        get_list_alerts_service
-    ] = lambda: list_alerts_service
+    app.dependency_overrides[get_list_alerts_service] = (
+        lambda: list_alerts_service
+    )
 
-    app.dependency_overrides[
-        get_acknowledge_alert_service
-    ] = lambda: acknowledge_alert_service
+    app.dependency_overrides[get_acknowledge_alert_service] = (
+        lambda: acknowledge_alert_service
+    )
 
-    app.dependency_overrides[
-        get_start_alert_investigation_service
-    ] = lambda: start_alert_investigation_service
+    app.dependency_overrides[get_start_alert_investigation_service] = (
+        lambda: start_alert_investigation_service
+    )
 
-    app.dependency_overrides[
-        get_get_case_service
-    ] = lambda: get_case_service
+    app.dependency_overrides[get_get_case_service] = lambda: get_case_service
 
-    app.dependency_overrides[
-        get_close_alert_service
-    ] = lambda: close_alert_service
+    app.dependency_overrides[get_close_alert_service] = (
+        lambda: close_alert_service
+    )
 
-    app.dependency_overrides[
-        get_list_cases_service
-    ] = lambda: list_cases_service
+    app.dependency_overrides[get_list_cases_service] = (
+        lambda: list_cases_service
+    )
 
     with TestClient(app) as test_client:
         yield test_client

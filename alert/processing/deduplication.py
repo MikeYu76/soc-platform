@@ -1,8 +1,7 @@
-from common.detection import Detection
-from correlation.models import CorrelationResult
-
 from alert.models import Alert
 from alert.processing.base import AlertProcessor
+from common.detection import Detection
+from correlation.models import CorrelationResult
 
 
 class DeduplicationProcessor(AlertProcessor):

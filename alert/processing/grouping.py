@@ -28,8 +28,7 @@ class AlertGroupingProcessor(AlertProcessor):
 
             if len(group) > 1:
                 representative.metadata["grouped_ids"] = [
-                    alert.id
-                    for alert in group
+                    alert.id for alert in group
                 ]
 
             grouped_alerts.append(representative)

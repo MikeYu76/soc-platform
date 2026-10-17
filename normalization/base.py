@@ -20,4 +20,3 @@ class BaseParser(ABC):
         Returns:
             A normalized Event.
         """
-        pass

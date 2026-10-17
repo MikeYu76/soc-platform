@@ -1,7 +1,6 @@
 from typing import Any
 
 from common.detection import Detection
-
 from enrichment.base import Enricher
 from enrichment.models import EnrichedDetection, Enrichment
 

@@ -3,13 +3,10 @@ from __future__ import annotations
 from uuid import UUID
 
 from alert.models import Alert
-
 from common.alert_status import AlertStatus
 from common.detection import Severity
-
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.alert_mapper import AlertMapper
-
 from repositories.alert_repository import AlertRepository
 
 

@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from typing import Any
 
 from common.detection import Detection
-
 from infrastructure.sqlite.mappers.base_mapper import BaseMapper
 
 

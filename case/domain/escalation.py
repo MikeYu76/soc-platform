@@ -16,6 +16,4 @@ class CaseEscalation(BaseModel):
 
     reason: str
 
-    escalated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    escalated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

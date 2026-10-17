@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from typing import Any
 
 from common.event import Event
-
 from infrastructure.sqlite.mappers.base_mapper import BaseMapper
 
 
@@ -26,9 +25,7 @@ class EventMapper(BaseMapper):
             "hostname": event.hostname,
             "username": event.username,
             "source_ip": (
-                str(event.source_ip)
-                if event.source_ip is not None
-                else None
+                str(event.source_ip) if event.source_ip is not None else None
             ),
             "destination_ip": (
                 str(event.destination_ip)

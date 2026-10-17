@@ -15,6 +15,7 @@ __all__ = [
     "PrivilegeEscalationRule",
 ]
 
+
 @dataclass(frozen=True)
 class Settings:
     """

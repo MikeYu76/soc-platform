@@ -1,18 +1,12 @@
 from fastapi.testclient import TestClient
 
 from alert.models import Alert
-
 from common.alert_status import AlertStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
-from infrastructure.sqlite.connection import (
-    SQLiteConnectionFactory,
-)
-from infrastructure.sqlite.sqlite_unit_of_work import (
-    SQLiteUnitOfWork,
-)
+from infrastructure.sqlite.connection import SQLiteConnectionFactory
+from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
 
 def build_detection() -> Detection:

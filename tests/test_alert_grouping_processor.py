@@ -1,11 +1,9 @@
-from uuid import uuid4
-
 from alert.models import Alert
 from alert.processing.grouping import AlertGroupingProcessor
-from common.detection import Detection
+from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-from common.detection import Detection, Severity
+
 
 def make_detection(title: str = "Detection") -> Detection:
     event = Event(

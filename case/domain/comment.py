@@ -13,6 +13,4 @@ class CaseComment(BaseModel):
 
     message: str
 
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

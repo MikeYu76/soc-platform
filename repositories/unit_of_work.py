@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Self
 
 from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
@@ -56,7 +57,7 @@ class UnitOfWork(ABC):
         """
         raise NotImplementedError
 
-    def __enter__(self) -> "UnitOfWork":
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(

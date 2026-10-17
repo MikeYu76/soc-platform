@@ -1,4 +1,3 @@
-
 import ipaddress
 
 from common.detection import Detection

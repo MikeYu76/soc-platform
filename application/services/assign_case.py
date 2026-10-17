@@ -3,13 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from uuid import UUID
 
-from application.dto.case import (
-    AssignCaseRequest,
-    AssignCaseResponse,
-)
+from application.dto.case import AssignCaseRequest, AssignCaseResponse
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -34,9 +30,7 @@ class AssignCaseService(
         request: AssignCaseRequest,
     ) -> AssignCaseResponse:
         with self._unit_of_work_factory() as uow:
-            case = uow.cases.get(
-                UUID(request.case_id)
-            )
+            case = uow.cases.get(UUID(request.case_id))
 
             if case is None:
                 raise ResourceNotFoundError(

@@ -1,5 +1,4 @@
 from case.models import Case
-
 from case.processing.base import CaseProcessor
 
 

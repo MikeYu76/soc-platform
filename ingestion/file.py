@@ -1,12 +1,9 @@
-from pathlib import Path
 import json
+from pathlib import Path
 from typing import Any
 
 from ingestion.base import BaseIngestor
-from ingestion.exceptions import (
-    FileReadError,
-    InvalidLogFormatError,
-)
+from ingestion.exceptions import FileReadError, InvalidLogFormatError
 
 
 class FileIngestor(BaseIngestor):

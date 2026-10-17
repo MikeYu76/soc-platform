@@ -24,13 +24,9 @@ def make_event() -> Event:
 
 def test_ingest_event() -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
-        factory = SQLiteConnectionFactory(
-            str(Path(tmpdir) / "test.db")
-        )
+        factory = SQLiteConnectionFactory(str(Path(tmpdir) / "test.db"))
 
-        service = IngestEventService(
-            lambda: SQLiteUnitOfWork(factory)
-        )
+        service = IngestEventService(lambda: SQLiteUnitOfWork(factory))
 
         event = make_event()
 

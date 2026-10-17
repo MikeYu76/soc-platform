@@ -1,25 +1,22 @@
 from __future__ import annotations
 
+import tempfile
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
 from alert.models import Alert
 from case.models import Case
-
 from common.alert_status import AlertStatus
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
-
-import tempfile
-from pathlib import Path
 
 @pytest.fixture
 def connection_factory() -> SQLiteConnectionFactory:
@@ -62,7 +59,8 @@ def make_case() -> Case:
         priority=CasePriority.HIGH,
         status=CaseStatus.NEW,
         alert=make_alert(),
-    ) 
+    )
+
 
 def test_event_roundtrip(
     connection_factory: SQLiteConnectionFactory,
@@ -76,7 +74,8 @@ def test_event_roundtrip(
         loaded = uow.events.get(event.id)
 
     assert loaded is not None
-    assert loaded == event    
+    assert loaded == event
+
 
 def test_detection_roundtrip(
     connection_factory: SQLiteConnectionFactory,
@@ -94,6 +93,7 @@ def test_detection_roundtrip(
     assert loaded is not None
     assert loaded == detection
 
+
 def test_alert_roundtrip(
     connection_factory: SQLiteConnectionFactory,
 ) -> None:
@@ -110,6 +110,7 @@ def test_alert_roundtrip(
     assert loaded is not None
     assert loaded == alert
 
+
 def test_case_roundtrip(
     connection_factory: SQLiteConnectionFactory,
 ) -> None:
@@ -125,4 +126,3 @@ def test_case_roundtrip(
 
     assert loaded is not None
     assert loaded == case
-

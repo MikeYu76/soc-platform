@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 
-from common.event import Event
 from common.detection import Detection
+from common.event import Event
+
 
 class DetectionRule(ABC):
     """
     Base interface for detection rules.
 
-    Every detection rule evaluates a canonial Event and returns a Detection if the rule matches, or None if it does not.
+    Every detection rule evaluates a canonical Event and
+    returns a Detection if the rule matches, or None if it
+    does not.
     """
 
     @abstractmethod
@@ -21,5 +24,3 @@ class DetectionRule(ABC):
         Returns:
             Detection | None: A Detection if the rule matches, or None if it does not.
         """
-        pass
-        

@@ -1,6 +1,6 @@
-from common.event_types import EventType
 from common.detection import Detection, Severity
 from common.event import Event
+from common.event_types import EventType
 from detection.base import DetectionRule
 
 

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from common.detection import Detection
-
 from enrichment.models import Enrichment
 
 
@@ -16,4 +15,3 @@ class Enricher(ABC):
         Add contextual information to a detection.
         """
         ...
-    

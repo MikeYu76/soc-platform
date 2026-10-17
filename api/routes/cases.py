@@ -11,7 +11,6 @@ from api.dependencies import (
     get_resolve_case_service,
     get_start_case_investigation_service,
 )
-
 from application.dto.base import Request
 from application.dto.case import (
     AssignCaseRequest,
@@ -26,7 +25,6 @@ from application.dto.case import (
     StartCaseInvestigationResponse,
 )
 from application.dto.identifier import IdentifierRequest
-
 from application.services.assign_case import AssignCaseService
 from application.services.close_case import CloseCaseService
 from application.services.get_case import GetCaseService

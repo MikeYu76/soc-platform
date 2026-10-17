@@ -12,6 +12,4 @@ class CaseResolution(BaseModel):
 
     resolved_by: str
 
-    resolved_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    resolved_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

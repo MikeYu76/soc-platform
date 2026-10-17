@@ -4,22 +4,16 @@ from collections.abc import Callable
 
 from alert.engine import AlertEngine
 from alert.processing.engine import AlertProcessingEngine
-
 from application.dto.process_security_event import (
     ProcessSecurityEventRequest,
     ProcessSecurityEventResponse,
 )
 from application.services.base import ApplicationService
-
 from case.factory import CaseFactory
 from case.processing.engine import CaseProcessingEngine
-
 from correlation.engine import CorrelationEngine
-
 from detection.engine import DetectionEngine
-
 from enrichment.engine import EnrichmentEngine
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -94,10 +88,7 @@ class ProcessSecurityEventService(
             uow.alerts.save_all(alerts)
 
             # Case creation
-            cases = [
-                self._case_factory.create(alert)
-                for alert in alerts
-            ]
+            cases = [self._case_factory.create(alert) for alert in alerts]
 
             # Case processing
             cases = self._case_processing_engine.process(

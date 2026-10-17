@@ -6,7 +6,6 @@ from application.dto.case import GetCaseResponse
 from application.dto.identifier import IdentifierRequest
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -35,9 +34,7 @@ class GetCaseService(
             case = uow.cases.get(request.id)
 
         if case is None:
-            raise ResourceNotFoundError(
-                f"Case '{request.id}' was not found."
-            )
+            raise ResourceNotFoundError(f"Case '{request.id}' was not found.")
 
         return GetCaseResponse(
             case=case,

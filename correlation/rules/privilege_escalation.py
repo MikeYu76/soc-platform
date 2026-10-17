@@ -32,9 +32,7 @@ class PrivilegeEscalationRule(CorrelationRule):
         window_minutes: int = 10,
     ) -> None:
         if window_minutes < 1:
-            raise ValueError(
-                "window_minutes must be at least 1"
-            )
+            raise ValueError("window_minutes must be at least 1")
 
         self.window = timedelta(
             minutes=window_minutes,
@@ -76,48 +74,33 @@ class PrivilegeEscalationRule(CorrelationRule):
         for username, user_detections in detections_by_user.items():
 
             user_detections.sort(
-                key=lambda detection: (
-                    detection.detection.event.timestamp
-                )
+                key=lambda detection: (detection.detection.event.timestamp)
             )
 
             for login_detection in user_detections:
 
                 login_event = login_detection.detection.event
 
-                if (
-                    login_event.event_type
-                    != EventType.AUTHENTICATION_SUCCESS
-                ):
+                if login_event.event_type != EventType.AUTHENTICATION_SUCCESS:
                     continue
 
                 for process_detection in user_detections:
 
                     process_event = process_detection.detection.event
 
-                    if (
-                        process_event.event_type
-                        != EventType.PROCESS_CREATED
-                    ):
+                    if process_event.event_type != EventType.PROCESS_CREATED:
+                        continue
+
+                    if process_event.timestamp <= login_event.timestamp:
                         continue
 
                     if (
-                        process_event.timestamp
-                        <= login_event.timestamp
-                    ):
-                        continue
-
-                    if (
-                        process_event.timestamp
-                        - login_event.timestamp
+                        process_event.timestamp - login_event.timestamp
                         > self.window
                     ):
                         continue
 
-                    if (
-                        process_event.hostname
-                        != login_event.hostname
-                    ):
+                    if process_event.hostname != login_event.hostname:
                         continue
 
                     searchable_text = " ".join(
@@ -154,8 +137,7 @@ class PrivilegeEscalationRule(CorrelationRule):
                                 "process": process_event.process_name,
                                 "command_line": process_event.command_line,
                                 "window_minutes": (
-                                    self.window.total_seconds()
-                                    / 60
+                                    self.window.total_seconds() / 60
                                 ),
                             },
                         )

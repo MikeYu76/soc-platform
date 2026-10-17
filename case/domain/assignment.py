@@ -12,6 +12,4 @@ class CaseAssignment(BaseModel):
 
     reason: str
 
-    assigned_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    assigned_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

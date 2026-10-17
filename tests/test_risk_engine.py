@@ -1,4 +1,3 @@
-
 import pytest
 
 from common.detection import Detection, Severity

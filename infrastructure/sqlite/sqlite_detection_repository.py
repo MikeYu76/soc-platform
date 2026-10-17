@@ -3,12 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 
 from common.detection import Detection, Severity
-
 from infrastructure.sqlite.base_repository import SQLiteRepository
-from infrastructure.sqlite.mappers.detection_mapper import (
-    DetectionMapper,
-)
-
+from infrastructure.sqlite.mappers.detection_mapper import DetectionMapper
 from repositories.detection_repository import DetectionRepository
 
 
@@ -54,20 +50,18 @@ class SQLiteDetectionRepository(
     def list_all(
         self,
     ) -> list[Detection]:
-        rows = self._fetch_all(
-            """
+        rows = self._fetch_all("""
             SELECT *
             FROM detections
             ORDER BY matched_at
-            """
-        )
+            """)
 
         return [
             DetectionMapper.from_record(
                 self._row_to_dict(row),
             )
             for row in rows
-        ]    
+        ]
 
     def list_by_rule(
         self,

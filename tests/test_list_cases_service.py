@@ -6,20 +6,10 @@ from pathlib import Path
 import pytest
 
 from application.dto.base import Request
-from application.services.list_cases import (
-    ListCasesService,
-)
-
-from infrastructure.sqlite.connection import (
-    SQLiteConnectionFactory,
-)
-from infrastructure.sqlite.sqlite_unit_of_work import (
-    SQLiteUnitOfWork,
-)
-
-from tests.test_sqlite_persistence_roundtrip import (
-    make_case,
-)
+from application.services.list_cases import ListCasesService
+from infrastructure.sqlite.connection import SQLiteConnectionFactory
+from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from tests.test_sqlite_persistence_roundtrip import make_case
 
 
 @pytest.fixture

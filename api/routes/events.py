@@ -5,30 +5,22 @@ from api.dependencies import (
     get_list_events_service,
     get_process_security_event_service,
 )
-
 from application.dto.get_event import GetEventResponse
 from application.dto.identifier import IdentifierRequest
-from application.dto.list_events import (
-    ListEventsRequest,
-    ListEventsResponse,
-)
+from application.dto.list_events import ListEventsRequest, ListEventsResponse
 from application.dto.process_security_event import (
     ProcessSecurityEventRequest,
     ProcessSecurityEventResponse,
 )
-
 from application.services.get_event import GetEventService
 from application.services.list_events import ListEventsService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
-
 from common.event_types import EventType
-
 from repositories.queries.event_query import EventQuery
 from repositories.queries.event_sort import EventSort
 from repositories.queries.sort_order import SortOrder
-
 
 router = APIRouter(
     prefix="/events",

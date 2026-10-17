@@ -3,13 +3,10 @@ from __future__ import annotations
 from uuid import UUID
 
 from case.models import Case
-
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
-
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.case_mapper import CaseMapper
-
 from repositories.case_repository import CaseRepository
 
 

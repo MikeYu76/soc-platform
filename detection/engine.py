@@ -1,5 +1,5 @@
-from common.event import Event
 from common.detection import Detection
+from common.event import Event
 from detection.base import DetectionRule
 
 

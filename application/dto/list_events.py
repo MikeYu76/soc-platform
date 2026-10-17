@@ -2,13 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from application.dto.base import (
-    Request,
-    Response,
-)
-
+from application.dto.base import Request, Response
 from common.event import Event
-
 from repositories.queries.event_query import EventQuery
 
 

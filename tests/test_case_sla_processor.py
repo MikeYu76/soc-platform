@@ -1,10 +1,8 @@
 from datetime import datetime
 
 from alert.models import Alert
-
 from case.models import Case
 from case.processing.sla import CaseSLAProcessor
-
 from common.alert_status import AlertStatus
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus

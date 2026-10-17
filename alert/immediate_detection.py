@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from common.detection import Detection, Severity
+from typing import ClassVar
 
 from alert.base import AlertRule
 from alert.models import Alert
-
+from common.detection import Detection, Severity
 from correlation.models import CorrelationResult
 
 
@@ -14,7 +14,7 @@ class ImmediateDetectionAlertRule(AlertRule):
     meets or exceeds a configurable threshold.
     """
 
-    _SEVERITY_ORDER = {
+    _SEVERITY_ORDER: ClassVar[dict[Severity, int]] = {
         Severity.LOW: 1,
         Severity.MEDIUM: 2,
         Severity.HIGH: 3,

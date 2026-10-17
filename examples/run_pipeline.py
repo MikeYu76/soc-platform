@@ -1,11 +1,9 @@
+from detection.engine import DetectionEngine
+from detection.rules.failed_login import FailedLoginRule
 from ingestion import FileIngestor
-
 from normalization.dispatcher import Dispatcher
 from normalization.registry import ParserRegistry
 from normalization.windows import WindowsParser
-
-from detection.engine import DetectionEngine
-from detection.rules.failed_login import FailedLoginRule
 
 
 def main() -> None:

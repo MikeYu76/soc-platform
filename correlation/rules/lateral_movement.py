@@ -3,10 +3,8 @@ from uuid import uuid4
 
 from common.detection import Severity
 from common.event_types import EventType
-
 from correlation.base import CorrelationRule
 from correlation.models import CorrelationResult
-
 from enrichment.models import EnrichedDetection
 
 

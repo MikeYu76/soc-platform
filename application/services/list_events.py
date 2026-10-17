@@ -2,12 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from application.dto.list_events import (
-    ListEventsRequest,
-    ListEventsResponse,
-)
+from application.dto.list_events import ListEventsRequest, ListEventsResponse
 from application.services.base import ApplicationService
-
 from repositories.unit_of_work import UnitOfWork
 
 

@@ -25,23 +25,8 @@ class CaseTimelineEvent(BaseModel):
 
     event_type: CaseTimelineEventType
 
-    occurred_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    occurred_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     description: str
 
     actor: str | None = None
-
-class CaseTimelineEventType(StrEnum):
-    CASE_CREATED = "CASE_CREATED"
-    ASSIGNED = "ASSIGNED"
-    INVESTIGATION_STARTED = "INVESTIGATION_STARTED"
-    ESCALATED = "ESCALATED"
-    COMMENT_ADDED = "COMMENT_ADDED"
-    EVIDENCE_ADDED = "EVIDENCE_ADDED"
-    PRIORITY_CHANGED = "PRIORITY_CHANGED"
-    STATUS_CHANGED = "STATUS_CHANGED"
-    RESOLVED = "RESOLVED"
-    CLOSED = "CLOSED"    
-

@@ -1,8 +1,6 @@
-
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from enrichment.ip_context import IPContextEnricher
 
 
@@ -76,4 +74,3 @@ def test_ip_context_enricher_returns_empty_data_when_source_ip_is_missing():
     result = enricher.enrich(detection)
 
     assert result.data == {}
-

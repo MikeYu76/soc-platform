@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from uuid import UUID
 
 from case.models import Case
-
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
 

@@ -1,13 +1,11 @@
-
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from enrichment.base import Enricher
 from enrichment.engine import EnrichmentEngine
+from enrichment.ip_classification import IPClassificationEnricher
 from enrichment.ip_context import IPContextEnricher
 from enrichment.models import Enrichment
-from enrichment.ip_classification import IPClassificationEnricher
 
 
 class GeoIPTestEnricher(Enricher):
@@ -112,7 +110,7 @@ def test_enrichment_engine_preserves_original_detection():
 
     assert result.detection is detection
 
- 
+
 def test_enrichment_engine_integrates_ip_context_enricher():
     detection = create_test_detection()
 
@@ -135,9 +133,9 @@ def test_enrichment_engine_integrates_ip_context_enricher():
             "risk": "low",
         }
     }
-    assert result.detection is detection 
+    assert result.detection is detection
 
- 
+
 def test_enrichment_engine_integrates_ip_classification_enricher():
     detection = create_test_detection()
     enricher = IPClassificationEnricher()
@@ -154,4 +152,4 @@ def test_enrichment_engine_integrates_ip_classification_enricher():
             "is_global": False,
         }
     }
-    assert result.detection is detection     
+    assert result.detection is detection

@@ -1,28 +1,17 @@
 from __future__ import annotations
 
+import tempfile
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
 
-import tempfile
-from pathlib import Path
-
 from application.dto.identifier import IdentifierRequest
-from application.exceptions.not_found import (
-    ResourceNotFoundError,
-)
+from application.exceptions.not_found import ResourceNotFoundError
 from application.services.get_case import GetCaseService
-
-from infrastructure.sqlite.connection import (
-    SQLiteConnectionFactory,
-)
-from infrastructure.sqlite.sqlite_unit_of_work import (
-    SQLiteUnitOfWork,
-)
-
-from tests.test_sqlite_persistence_roundtrip import (
-    make_case,
-)
+from infrastructure.sqlite.connection import SQLiteConnectionFactory
+from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from tests.test_sqlite_persistence_roundtrip import make_case
 
 
 @pytest.fixture

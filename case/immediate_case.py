@@ -1,5 +1,4 @@
 from alert.models import Alert
-
 from case.base import CaseRule
 from case.models import Case
 

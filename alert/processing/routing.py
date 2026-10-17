@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from alert.models import Alert
 from alert.processing.base import AlertProcessor
 from common.detection import Severity
@@ -10,7 +12,7 @@ class AlertRoutingProcessor(AlertProcessor):
     Current routing policy is severity-based.
     """
 
-    ROUTES = {
+    ROUTES: ClassVar[dict[Severity, str]] = {
         Severity.LOW: "Tier 1",
         Severity.MEDIUM: "Tier 1",
         Severity.HIGH: "Tier 2",

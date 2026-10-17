@@ -3,17 +3,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from uuid import UUID
 
-from application.dto.alert import (
-    StartAlertInvestigationResponse,
-)
-from application.dto.identifier import (
-    IdentifierRequest,
-)
+from application.dto.alert import StartAlertInvestigationResponse
+from application.dto.identifier import IdentifierRequest
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
-from common.alert_status import AlertStatus
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -24,7 +17,7 @@ class StartAlertInvestigationService(
     ],
 ):
     """
-    Starts analyst investigation of an acknowledged alert.
+    Starts investigation of an alert.
     """
 
     def __init__(
@@ -37,18 +30,15 @@ class StartAlertInvestigationService(
         self,
         request: IdentifierRequest,
     ) -> StartAlertInvestigationResponse:
-
         with self._unit_of_work_factory() as uow:
-            alert = uow.alerts.get(
-                UUID(request.id),
-            )
+            alert = uow.alerts.get(UUID(request.id))
 
             if alert is None:
                 raise ResourceNotFoundError(
                     f"Alert '{request.id}' was not found."
                 )
 
-            alert.status = AlertStatus.IN_PROGRESS
+            alert.start_investigation()
 
             uow.alerts.update(alert)
 

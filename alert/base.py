@@ -3,9 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from alert.models import Alert
-
 from common.detection import Detection
-
 from correlation.models import CorrelationResult
 
 

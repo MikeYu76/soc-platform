@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from alert.models import Alert
 from alert.processing.routing import AlertRoutingProcessor
 from common.detection import Detection, Severity

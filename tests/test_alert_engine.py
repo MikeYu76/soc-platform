@@ -3,12 +3,10 @@ from datetime import datetime
 from alert.base import AlertRule
 from alert.engine import AlertEngine
 from alert.models import Alert
-
 from common.alert_status import AlertStatus
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from correlation.models import CorrelationResult
 
 
@@ -120,7 +118,4 @@ def test_engine_merges_results_from_multiple_rules():
 
     assert len(alerts) == 2
 
-    assert all(
-        alert.title == "Test Alert"
-        for alert in alerts
-    )
+    assert all(alert.title == "Test Alert" for alert in alerts)

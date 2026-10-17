@@ -1,5 +1,6 @@
-from normalization.windows import WindowsParser
 from common.event_types import EventType
+from normalization.windows import WindowsParser
+
 
 def test_maps_failed_login_event():
     raw_log = {
@@ -10,7 +11,6 @@ def test_maps_failed_login_event():
         "IpAddress": "192.168.1.50",
         "Message": "An account failed to log on.",
     }
-
 
     parser = WindowsParser()
     event = parser.parse(raw_log)

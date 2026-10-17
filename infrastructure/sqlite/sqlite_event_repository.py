@@ -1,13 +1,9 @@
 from __future__ import annotations
 
 from common.event import Event
-
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.event_mapper import EventMapper
-from infrastructure.sqlite.queries.event_query_builder import (
-    EventQueryBuilder,
-)
-
+from infrastructure.sqlite.queries.event_query_builder import EventQueryBuilder
 from repositories.event_repository import EventRepository
 from repositories.queries.event_query import EventQuery
 

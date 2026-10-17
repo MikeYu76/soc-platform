@@ -9,14 +9,11 @@ from pydantic import BaseModel, Field, model_validator
 from alert.models import Alert
 from case.domain.assignment import CaseAssignment
 from case.domain.comment import CaseComment
-from case.domain.evidence import CaseEvidence
 from case.domain.escalation import CaseEscalation
+from case.domain.evidence import CaseEvidence
 from case.domain.resolution import CaseResolution
 from case.domain.sla import CaseSLA
-from case.domain.timeline import (
-    CaseTimelineEvent,
-    CaseTimelineEventType,
-)
+from case.domain.timeline import CaseTimelineEvent, CaseTimelineEventType
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
 
@@ -30,9 +27,7 @@ class Case(BaseModel):
 
     title: str
 
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     status: CaseStatus = CaseStatus.NEW
 
@@ -63,7 +58,7 @@ class Case(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def initialize_timeline(self) -> "Case":
+    def initialize_timeline(self) -> Case:
         if not self.timeline:
             self._add_timeline_event(
                 event_type=CaseTimelineEventType.CASE_CREATED,

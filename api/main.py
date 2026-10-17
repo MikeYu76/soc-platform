@@ -1,14 +1,7 @@
 from fastapi import FastAPI
 
-from api.exception_handlers import (
-    register_exception_handlers,
-)
-
-from api.routes import (
-    alerts_router,
-    cases_router,
-    events_router,
-)
+from api.exception_handlers import register_exception_handlers
+from api.routes import alerts_router, cases_router, events_router
 
 app = FastAPI(
     title="SOC Platform",

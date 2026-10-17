@@ -4,15 +4,10 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from uuid import UUID
 
-from application.dto.alert import (
-    ResolveAlertRequest,
-    ResolveAlertResponse,
-)
+from application.dto.alert import ResolveAlertRequest, ResolveAlertResponse
 from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
 from common.alert_status import AlertStatus
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -49,9 +44,7 @@ class ResolveAlertService(
             alert.status = AlertStatus.RESOLVED
 
             alert.metadata["resolution"] = request.resolution
-            alert.metadata["resolved_at"] = (
-                datetime.now(UTC).isoformat()
-            )
+            alert.metadata["resolved_at"] = datetime.now(UTC).isoformat()
 
             uow.alerts.update(alert)
 

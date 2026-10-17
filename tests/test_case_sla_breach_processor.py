@@ -1,11 +1,9 @@
 from datetime import UTC, datetime, timedelta
 
 from alert.models import Alert
-
 from case.domain.sla import CaseSLA
 from case.models import Case
 from case.processing.sla_breach import CaseSLABreachProcessor
-
 from common.alert_status import AlertStatus
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus

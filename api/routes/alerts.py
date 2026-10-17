@@ -10,7 +10,6 @@ from api.dependencies import (
     get_list_alerts_service,
     get_start_alert_investigation_service,
 )
-
 from application.dto.alert import (
     AcknowledgeAlertRequest,
     AcknowledgeAlertResponse,
@@ -21,19 +20,10 @@ from application.dto.alert import (
 )
 from application.dto.base import Request
 from application.dto.identifier import IdentifierRequest
-
-from application.services.acknowledge_alert import (
-    AcknowledgeAlertService,
-)
-from application.services.close_alert import (
-    CloseAlertService,
-)
-from application.services.get_alert import (
-    GetAlertService,
-)
-from application.services.list_alerts import (
-    ListAlertsService,
-)
+from application.services.acknowledge_alert import AcknowledgeAlertService
+from application.services.close_alert import CloseAlertService
+from application.services.get_alert import GetAlertService
+from application.services.list_alerts import ListAlertsService
 from application.services.start_alert_investigation import (
     StartAlertInvestigationService,
 )

@@ -1,8 +1,8 @@
+import pytest
+
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.exceptions import UnitOfWorkNotActiveError
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
-
-import pytest
 
 
 @pytest.fixture

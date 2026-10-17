@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from alert.base import AlertRule
 from alert.models import Alert
-
 from common.detection import Detection
-
 from correlation.models import CorrelationResult
 
 

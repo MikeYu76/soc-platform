@@ -2,15 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from repositories.unit_of_work import UnitOfWork
-
+from application.dto.ingest_event import IngestEventRequest
 from application.services.base import ApplicationService
-
 from common.event import Event
-
-from application.dto.ingest_event import (
-    IngestEventRequest,
-)
+from repositories.unit_of_work import UnitOfWork
 
 
 class IngestEventService(
@@ -36,20 +31,10 @@ class IngestEventService(
         self,
         request: IngestEventRequest,
     ) -> Event:
-        with self._unit_of_work_factory() as uow:
-            uow.events.save(request.event)
-            uow.commit()
-
-        return request.event
-
-    def execute(
-        self,
-        request: IngestEventRequest,
-    ) -> Event:
         event = request.event
 
         with self._unit_of_work_factory() as uow:
             uow.events.save(event)
             uow.commit()
 
-        return event    
+        return event

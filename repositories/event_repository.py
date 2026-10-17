@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
 from common.event import Event
-
 from repositories.queries.event_query import EventQuery
 
 

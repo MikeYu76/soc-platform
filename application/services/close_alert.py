@@ -3,19 +3,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from uuid import UUID
 
-from application.dto.alert import (
-    CloseAlertResponse,
-)
-from application.dto.identifier import (
-    IdentifierRequest,
-)
-from application.exceptions.not_found import (
-    ResourceNotFoundError,
-)
+from application.dto.alert import CloseAlertResponse
+from application.dto.identifier import IdentifierRequest
+from application.exceptions.not_found import ResourceNotFoundError
 from application.services.base import ApplicationService
-
-from common.alert_status import AlertStatus
-
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -26,7 +17,7 @@ class CloseAlertService(
     ],
 ):
     """
-    Closes an alert after the investigation has been completed.
+    Closes an alert.
     """
 
     def __init__(
@@ -40,16 +31,14 @@ class CloseAlertService(
         request: IdentifierRequest,
     ) -> CloseAlertResponse:
         with self._unit_of_work_factory() as uow:
-            alert = uow.alerts.get(
-                UUID(request.id),
-            )
+            alert = uow.alerts.get(UUID(request.id))
 
             if alert is None:
                 raise ResourceNotFoundError(
                     f"Alert '{request.id}' was not found."
                 )
 
-            alert.status = AlertStatus.CLOSED
+            alert.close()
 
             uow.alerts.update(alert)
 

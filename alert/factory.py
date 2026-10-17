@@ -1,6 +1,5 @@
-from correlation.models import CorrelationResult
-
 from alert.models import Alert
+from correlation.models import CorrelationResult
 
 
 class AlertFactory:

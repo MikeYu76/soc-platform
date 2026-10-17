@@ -1,53 +1,29 @@
 from datetime import UTC, datetime
 from uuid import uuid4
 
+from alert.correlation_alert import CorrelationAlertRule
 from alert.engine import AlertEngine
-from alert.immediate_detection import (
-    ImmediateDetectionAlertRule,
-)
-from alert.correlation_alert import (
-    CorrelationAlertRule,
-)
+from alert.immediate_detection import ImmediateDetectionAlertRule
 from alert.processing.engine import AlertProcessingEngine
-
-from application.dto.process_security_event import (
-    ProcessSecurityEventRequest,
-)
+from application.dto.process_security_event import ProcessSecurityEventRequest
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
-
 from case.factory import CaseFactory
 from case.processing.engine import CaseProcessingEngine
-
-from common.detection import (
-    Detection,
-    Severity,
-)
-
+from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
 from correlation.base import CorrelationRule
-from correlation.models import CorrelationResult
 from correlation.engine import CorrelationEngine
-
+from correlation.models import CorrelationResult
 from detection.base import DetectionRule
 from detection.engine import DetectionEngine
-
 from enrichment.base import Enricher
 from enrichment.engine import EnrichmentEngine
-from enrichment.models import (
-    EnrichedDetection,
-    Enrichment,
-)
-
-from infrastructure.sqlite.connection import (
-    SQLiteConnectionFactory,
-)
-from infrastructure.sqlite.sqlite_unit_of_work import (
-    SQLiteUnitOfWork,
-)
+from enrichment.models import EnrichedDetection, Enrichment
+from infrastructure.sqlite.connection import SQLiteConnectionFactory
+from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
 
 class MatchRule(DetectionRule):

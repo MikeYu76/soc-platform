@@ -5,15 +5,8 @@ import pytest
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
-
-from correlation.rules.privilege_escalation import (
-    PrivilegeEscalationRule,
-)
-
-from enrichment.models import (
-    EnrichedDetection,
-    Enrichment,
-)
+from correlation.rules.privilege_escalation import PrivilegeEscalationRule
+from enrichment.models import EnrichedDetection, Enrichment
 
 
 def make_detection(
@@ -155,12 +148,15 @@ def test_outside_time_window_returns_no_results():
         window_minutes=10,
     )
 
-    assert rule.correlate(
-        [
-            login,
-            process,
-        ]
-    ) == []
+    assert (
+        rule.correlate(
+            [
+                login,
+                process,
+            ]
+        )
+        == []
+    )
 
 
 def test_different_host_returns_no_results():
@@ -182,12 +178,15 @@ def test_different_host_returns_no_results():
 
     rule = PrivilegeEscalationRule()
 
-    assert rule.correlate(
-        [
-            login,
-            process,
-        ]
-    ) == []
+    assert (
+        rule.correlate(
+            [
+                login,
+                process,
+            ]
+        )
+        == []
+    )
 
 
 def test_different_user_returns_no_results():
@@ -209,12 +208,15 @@ def test_different_user_returns_no_results():
 
     rule = PrivilegeEscalationRule()
 
-    assert rule.correlate(
-        [
-            login,
-            process,
-        ]
-    ) == []
+    assert (
+        rule.correlate(
+            [
+                login,
+                process,
+            ]
+        )
+        == []
+    )
 
 
 def test_process_without_privilege_indicator_returns_no_results():
@@ -234,12 +236,15 @@ def test_process_without_privilege_indicator_returns_no_results():
 
     rule = PrivilegeEscalationRule()
 
-    assert rule.correlate(
-        [
-            login,
-            process,
-        ]
-    ) == []
+    assert (
+        rule.correlate(
+            [
+                login,
+                process,
+            ]
+        )
+        == []
+    )
 
 
 def test_multiple_users_only_matching_user_generates_result():

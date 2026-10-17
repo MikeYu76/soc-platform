@@ -92,6 +92,7 @@ def test_get_event(
     assert body["event"]["id"] == event["id"]
     assert body["event"]["message"] == "Failed login"
 
+
 def test_get_missing_event(
     client: TestClient,
 ) -> None:
@@ -103,4 +104,4 @@ def test_get_missing_event(
 
     body = response.json()
 
-    assert "detail" in body    
+    assert "detail" in body

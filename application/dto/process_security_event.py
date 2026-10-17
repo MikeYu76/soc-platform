@@ -2,16 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from application.dto.base import Request, Response
-
-from common.event import Event
-from common.detection import Detection
-
-from enrichment.models import EnrichedDetection
-from correlation.models import CorrelationResult
-
 from alert.models import Alert
+from application.dto.base import Request, Response
 from case.models import Case
+from common.detection import Detection
+from common.event import Event
+from correlation.models import CorrelationResult
+from enrichment.models import EnrichedDetection
 
 
 @dataclass(slots=True)

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Any
 
-from common.event_types import EventType
 from common.event import Event
+from common.event_types import EventType
 from normalization.base import BaseParser
 
 EVENT_ID_MAP = {
@@ -18,6 +18,7 @@ FIELD_MAP = {
     "ProcessName": "process_name",
     "CommandLine": "command_line",
 }
+
 
 class WindowsParser(BaseParser):
     """

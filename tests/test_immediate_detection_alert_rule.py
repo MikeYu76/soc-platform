@@ -3,7 +3,6 @@ from datetime import datetime
 import pytest
 
 from alert.immediate_detection import ImmediateDetectionAlertRule
-
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType

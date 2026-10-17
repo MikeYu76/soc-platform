@@ -41,3 +41,21 @@ class Alert(BaseModel):
     metadata: dict[str, Any] = Field(
         default_factory=dict,
     )
+
+    def acknowledge(
+        self,
+        analyst: str,
+    ) -> None:
+        self.status = AlertStatus.ACKNOWLEDGED
+        self.acknowledged_by = analyst
+        self.acknowledged_at = datetime.now(UTC)
+
+    def start_investigation(
+        self,
+    ) -> None:
+        self.status = AlertStatus.IN_PROGRESS
+
+    def close(
+        self,
+    ) -> None:
+        self.status = AlertStatus.CLOSED
