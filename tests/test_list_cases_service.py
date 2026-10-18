@@ -5,10 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from application.dto.base import Request
+from application.dto.case import ListCasesRequest
 from application.services.list_cases import ListCasesService
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from repositories.queries.case_query import CaseQuery
 from tests.test_sqlite_persistence_roundtrip import make_case
 
 
@@ -35,7 +36,9 @@ def test_list_active_cases(
     )
 
     response = service.execute(
-        Request(),
+        ListCasesRequest(
+            query=CaseQuery(),
+        )
     )
 
     assert len(response.cases) == 1

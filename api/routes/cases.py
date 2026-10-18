@@ -11,13 +11,13 @@ from api.dependencies import (
     get_resolve_case_service,
     get_start_case_investigation_service,
 )
-from application.dto.base import Request
 from application.dto.case import (
     AssignCaseRequest,
     AssignCaseResponse,
     CloseCaseRequest,
     CloseCaseResponse,
     GetCaseResponse,
+    ListCasesRequest,
     ListCasesResponse,
     ResolveCaseRequest,
     ResolveCaseResponse,
@@ -33,6 +33,9 @@ from application.services.resolve_case import ResolveCaseService
 from application.services.start_case_investigation import (
     StartCaseInvestigationService,
 )
+from common.case_priority import CasePriority
+from common.case_status import CaseStatus
+from repositories.queries.case_query import CaseQuery
 
 
 class AssignCaseBody(BaseModel):
@@ -67,12 +70,21 @@ router = APIRouter(
     summary="List active cases",
 )
 def list_cases(
+    status: CaseStatus | None = None,
+    priority: CasePriority | None = None,
+    assigned_to: str | None = None,
     service: ListCasesService = Depends(
         get_list_cases_service,
     ),
 ) -> ListCasesResponse:
     return service.execute(
-        Request(),
+        ListCasesRequest(
+            query=CaseQuery(
+                status=status,
+                priority=priority,
+                assigned_to=assigned_to,
+            ),
+        )
     )
 
 

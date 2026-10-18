@@ -24,6 +24,8 @@ from enrichment.engine import EnrichmentEngine
 from enrichment.models import EnrichedDetection, Enrichment
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from repositories.queries.alert_query import AlertQuery
+from repositories.queries.case_query import CaseQuery
 
 
 class MatchRule(DetectionRule):
@@ -161,5 +163,5 @@ def test_process_security_event(
     with SQLiteUnitOfWork(connection_factory) as uow:
         assert uow.events.get(request.event.id) is not None
         assert len(uow.detections.list_all()) == 1
-        assert len(uow.alerts.list_active()) == 2
-        assert len(uow.cases.list_active()) == 2
+        assert len(uow.alerts.search(AlertQuery())) == 2
+        assert len(uow.cases.search(CaseQuery())) == 2

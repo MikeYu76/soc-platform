@@ -2,20 +2,22 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from application.dto.alert import ListAlertsResponse
-from application.dto.base import Request
+from application.dto.alert import (
+    ListAlertsRequest,
+    ListAlertsResponse,
+)
 from application.services.base import ApplicationService
 from repositories.unit_of_work import UnitOfWork
 
 
 class ListAlertsService(
     ApplicationService[
-        Request,
+        ListAlertsRequest,
         ListAlertsResponse,
     ],
 ):
     """
-    Lists all active alerts.
+    Retrieves alerts matching query criteria.
     """
 
     def __init__(
@@ -26,11 +28,12 @@ class ListAlertsService(
 
     def execute(
         self,
-        request: Request,
+        request: ListAlertsRequest,
     ) -> ListAlertsResponse:
-
         with self._unit_of_work_factory() as uow:
-            alerts = uow.alerts.list_active()
+            alerts = uow.alerts.search(
+                request.query,
+            )
 
         return ListAlertsResponse(
             alerts=alerts,

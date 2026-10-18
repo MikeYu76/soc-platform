@@ -3,11 +3,10 @@ from __future__ import annotations
 from uuid import UUID
 
 from case.models import Case
-from common.case_priority import CasePriority
-from common.case_status import CaseStatus
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.case_mapper import CaseMapper
 from repositories.case_repository import CaseRepository
+from repositories.queries.case_query import CaseQuery
 
 
 class SQLiteCaseRepository(
@@ -58,67 +57,33 @@ class SQLiteCaseRepository(
             self._row_to_dict(row),
         )
 
-    def list_active(
+    def search(
         self,
+        query: CaseQuery,
     ) -> list[Case]:
-        rows = self._fetch_all(
-            """
+        sql = """
             SELECT *
             FROM cases
-            WHERE status != ?
-            """,
-            (CaseStatus.CLOSED.value,),
-        )
+            WHERE 1 = 1
+        """
 
-        return [
-            CaseMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
+        parameters: list[object] = []
 
-    def list_by_status(
-        self,
-        status: CaseStatus,
-    ) -> list[Case]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="status",
-            value=status.value,
-        )
+        if query.status is not None:
+            sql += " AND status = ?"
+            parameters.append(query.status.value)
 
-        return [
-            CaseMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
+        if query.priority is not None:
+            sql += " AND priority = ?"
+            parameters.append(query.priority.value)
 
-    def list_by_priority(
-        self,
-        priority: CasePriority,
-    ) -> list[Case]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="priority",
-            value=priority.value,
-        )
+        if query.assigned_to is not None:
+            sql += " AND assigned_to = ?"
+            parameters.append(query.assigned_to)
 
-        return [
-            CaseMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
-
-    def list_assigned_to(
-        self,
-        team: str,
-    ) -> list[Case]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="assigned_to",
-            value=team,
+        rows = self._fetch_all(
+            sql,
+            tuple(parameters),
         )
 
         return [

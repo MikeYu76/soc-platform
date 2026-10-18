@@ -2,20 +2,22 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from application.dto.base import Request
-from application.dto.case import ListCasesResponse
+from application.dto.case import (
+    ListCasesRequest,
+    ListCasesResponse,
+)
 from application.services.base import ApplicationService
 from repositories.unit_of_work import UnitOfWork
 
 
 class ListCasesService(
     ApplicationService[
-        Request,
+        ListCasesRequest,
         ListCasesResponse,
     ],
 ):
     """
-    Lists all active cases.
+    Retrieves cases matching query criteria.
     """
 
     def __init__(
@@ -26,11 +28,12 @@ class ListCasesService(
 
     def execute(
         self,
-        request: Request,
+        request: ListCasesRequest,
     ) -> ListCasesResponse:
-
         with self._unit_of_work_factory() as uow:
-            cases = uow.cases.list_active()
+            cases = uow.cases.search(
+                request.query,
+            )
 
         return ListCasesResponse(
             cases=cases,

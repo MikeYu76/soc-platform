@@ -3,11 +3,10 @@ from __future__ import annotations
 from uuid import UUID
 
 from alert.models import Alert
-from common.alert_status import AlertStatus
-from common.detection import Severity
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.alert_mapper import AlertMapper
 from repositories.alert_repository import AlertRepository
+from repositories.queries.alert_query import AlertQuery
 
 
 class SQLiteAlertRepository(
@@ -33,9 +32,6 @@ class SQLiteAlertRepository(
         self,
         alert: Alert,
     ) -> None:
-        """
-        Persist changes to an existing alert.
-        """
         self._upsert(
             table=self.TABLE,
             values=AlertMapper.to_record(alert),
@@ -61,50 +57,29 @@ class SQLiteAlertRepository(
             self._row_to_dict(row),
         )
 
-    def list_active(
+    def search(
         self,
+        query: AlertQuery,
     ) -> list[Alert]:
-        rows = self._fetch_all(
-            """
+        sql = """
             SELECT *
             FROM alerts
-            WHERE status != ?
-            """,
-            (AlertStatus.CLOSED.value,),
-        )
+            WHERE 1 = 1
+        """
 
-        return [
-            AlertMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
+        parameters: list[object] = []
 
-    def list_by_status(
-        self,
-        status: AlertStatus,
-    ) -> list[Alert]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="status",
-            value=status.value,
-        )
+        if query.status is not None:
+            sql += " AND status = ?"
+            parameters.append(query.status.value)
 
-        return [
-            AlertMapper.from_record(
-                self._row_to_dict(row),
-            )
-            for row in rows
-        ]
+        if query.severity is not None:
+            sql += " AND severity = ?"
+            parameters.append(query.severity.value)
 
-    def list_by_severity(
-        self,
-        severity: Severity,
-    ) -> list[Alert]:
-        rows = self._fetch_by_column(
-            table=self.TABLE,
-            column="severity",
-            value=severity.value,
+        rows = self._fetch_all(
+            sql,
+            tuple(parameters),
         )
 
         return [

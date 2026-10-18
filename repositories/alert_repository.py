@@ -3,8 +3,7 @@ from collections.abc import Iterable
 from uuid import UUID
 
 from alert.models import Alert
-from common.alert_status import AlertStatus
-from common.detection import Severity
+from repositories.queries.alert_query import AlertQuery
 
 
 class AlertRepository(ABC):
@@ -37,9 +36,6 @@ class AlertRepository(ABC):
         self,
         alert: Alert,
     ) -> None:
-        """
-        Persist changes to an existing alert.
-        """
         raise NotImplementedError
 
     @abstractmethod
@@ -50,23 +46,13 @@ class AlertRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list_active(
+    def search(
         self,
+        query: AlertQuery,
     ) -> list[Alert]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def list_by_status(
-        self,
-        status: AlertStatus,
-    ) -> list[Alert]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def list_by_severity(
-        self,
-        severity: Severity,
-    ) -> list[Alert]:
+        """
+        Search for alerts using query criteria.
+        """
         raise NotImplementedError
 
     @abstractmethod

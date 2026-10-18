@@ -15,10 +15,10 @@ from application.dto.alert import (
     AcknowledgeAlertResponse,
     CloseAlertResponse,
     GetAlertResponse,
+    ListAlertsRequest,
     ListAlertsResponse,
     StartAlertInvestigationResponse,
 )
-from application.dto.base import Request
 from application.dto.identifier import IdentifierRequest
 from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.close_alert import CloseAlertService
@@ -27,6 +27,9 @@ from application.services.list_alerts import ListAlertsService
 from application.services.start_alert_investigation import (
     StartAlertInvestigationService,
 )
+from common.alert_status import AlertStatus
+from common.detection import Severity
+from repositories.queries.alert_query import AlertQuery
 
 
 class AcknowledgeAlertBody(BaseModel):
@@ -49,12 +52,19 @@ router = APIRouter(
     summary="List active alerts",
 )
 def list_alerts(
+    status: AlertStatus | None = None,
+    severity: Severity | None = None,
     service: ListAlertsService = Depends(
         get_list_alerts_service,
     ),
 ) -> ListAlertsResponse:
     return service.execute(
-        Request(),
+        ListAlertsRequest(
+            query=AlertQuery(
+                status=status,
+                severity=severity,
+            ),
+        )
     )
 
 

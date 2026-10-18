@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from application.dto.base import Request, Response
 from case.models import Case
+from repositories.queries.case_query import CaseQuery
 
 
 @dataclass(slots=True)
@@ -16,9 +17,20 @@ class GetCaseResponse(Response):
 
 
 @dataclass(slots=True)
+class ListCasesRequest(Request):
+    """
+    Request to retrieve cases.
+    """
+
+    query: CaseQuery = field(
+        default_factory=CaseQuery,
+    )
+
+
+@dataclass(slots=True)
 class ListCasesResponse(Response):
     """
-    Response containing active cases.
+    Response containing cases.
     """
 
     cases: list[Case]

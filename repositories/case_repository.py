@@ -3,8 +3,7 @@ from collections.abc import Iterable
 from uuid import UUID
 
 from case.models import Case
-from common.case_priority import CasePriority
-from common.case_status import CaseStatus
+from repositories.queries.case_query import CaseQuery
 
 
 class CaseRepository(ABC):
@@ -47,30 +46,13 @@ class CaseRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list_active(
+    def search(
         self,
+        query: CaseQuery,
     ) -> list[Case]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def list_by_status(
-        self,
-        status: CaseStatus,
-    ) -> list[Case]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def list_by_priority(
-        self,
-        priority: CasePriority,
-    ) -> list[Case]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def list_assigned_to(
-        self,
-        team: str,
-    ) -> list[Case]:
+        """
+        Search for cases using query criteria.
+        """
         raise NotImplementedError
 
     @abstractmethod

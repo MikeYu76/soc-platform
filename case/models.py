@@ -13,7 +13,11 @@ from case.domain.escalation import CaseEscalation
 from case.domain.evidence import CaseEvidence
 from case.domain.resolution import CaseResolution
 from case.domain.sla import CaseSLA
-from case.domain.timeline import CaseTimelineEvent, CaseTimelineEventType
+from case.domain.timeline import (
+    CaseTimelineEvent,
+    CaseTimelineEventType,
+)
+from case.exceptions import InvalidCaseStateError
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
 
@@ -27,7 +31,9 @@ class Case(BaseModel):
 
     title: str
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+    )
 
     status: CaseStatus = CaseStatus.NEW
 
@@ -49,13 +55,21 @@ class Case(BaseModel):
 
     sla: CaseSLA | None = None
 
-    timeline: list[CaseTimelineEvent] = Field(default_factory=list)
+    timeline: list[CaseTimelineEvent] = Field(
+        default_factory=list,
+    )
 
-    comments: list[CaseComment] = Field(default_factory=list)
+    comments: list[CaseComment] = Field(
+        default_factory=list,
+    )
 
-    evidence: list[CaseEvidence] = Field(default_factory=list)
+    evidence: list[CaseEvidence] = Field(
+        default_factory=list,
+    )
 
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )
 
     @model_validator(mode="after")
     def initialize_timeline(self) -> Case:
@@ -67,15 +81,23 @@ class Case(BaseModel):
 
         return self
 
+    def _require_status(
+        self,
+        expected: CaseStatus,
+    ) -> None:
+        if self.status != expected:
+            raise InvalidCaseStateError(
+                "Cannot perform this operation when case "
+                f"status is '{self.status}'. "
+                f"Expected '{expected}'."
+            )
+
     def _add_timeline_event(
         self,
         event_type: CaseTimelineEventType,
         description: str,
         actor: str | None = None,
     ) -> None:
-        """
-        Records a timeline event for the case.
-        """
         self.timeline.append(
             CaseTimelineEvent(
                 event_type=event_type,
@@ -127,6 +149,10 @@ class Case(BaseModel):
         assigned_by: str,
         reason: str,
     ) -> None:
+        self._require_status(
+            CaseStatus.NEW,
+        )
+
         assignment = CaseAssignment(
             team=team,
             assigned_by=assigned_by,
@@ -148,6 +174,10 @@ class Case(BaseModel):
         self,
         analyst: str,
     ) -> None:
+        self._require_status(
+            CaseStatus.ASSIGNED,
+        )
+
         self.status = CaseStatus.IN_PROGRESS
 
         self._add_timeline_event(
@@ -183,6 +213,10 @@ class Case(BaseModel):
         summary: str,
         resolved_by: str,
     ) -> None:
+        self._require_status(
+            CaseStatus.IN_PROGRESS,
+        )
+
         resolution = CaseResolution(
             resolution_type=resolution_type,
             summary=summary,
@@ -203,6 +237,10 @@ class Case(BaseModel):
         self,
         closed_by: str,
     ) -> None:
+        self._require_status(
+            CaseStatus.RESOLVED,
+        )
+
         self.status = CaseStatus.CLOSED
         self.closed_at = datetime.now(UTC)
 

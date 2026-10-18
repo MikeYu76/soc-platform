@@ -42,8 +42,24 @@ def build_case() -> Case:
     )
 
 
-def test_case_can_be_resolved():
+def prepare_case_for_resolution() -> Case:
     case = build_case()
+
+    case.assign(
+        team="Tier 2",
+        assigned_by="system",
+        reason="Automatic routing",
+    )
+
+    case.start_investigation(
+        analyst="alice",
+    )
+
+    return case
+
+
+def test_case_can_be_resolved():
+    case = prepare_case_for_resolution()
 
     case.resolve(
         resolution_type="False Positive",
@@ -56,7 +72,7 @@ def test_case_can_be_resolved():
 
 
 def test_resolution_updates_case_status():
-    case = build_case()
+    case = prepare_case_for_resolution()
 
     case.resolve(
         resolution_type="False Positive",
@@ -69,7 +85,7 @@ def test_resolution_updates_case_status():
 
 
 def test_resolution_creates_timeline_event():
-    case = build_case()
+    case = prepare_case_for_resolution()
 
     case.resolve(
         resolution_type="False Positive",

@@ -1,15 +1,27 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from alert.models import Alert
 from application.dto.base import Request, Response
+from repositories.queries.alert_query import AlertQuery
+
+
+@dataclass(slots=True)
+class ListAlertsRequest(Request):
+    """
+    Request to retrieve alerts.
+    """
+
+    query: AlertQuery = field(
+        default_factory=AlertQuery,
+    )
 
 
 @dataclass(slots=True)
 class ListAlertsResponse(Response):
     """
-    Response containing active alerts.
+    Response containing alerts.
     """
 
     alerts: list[Alert]

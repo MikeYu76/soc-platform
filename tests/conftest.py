@@ -18,7 +18,9 @@ from alert.processing import (
 )
 from api.dependencies import (
     get_acknowledge_alert_service,
+    get_assign_case_service,
     get_close_alert_service,
+    get_close_case_service,
     get_get_alert_service,
     get_get_case_service,
     get_get_event_service,
@@ -26,11 +28,15 @@ from api.dependencies import (
     get_list_cases_service,
     get_list_events_service,
     get_process_security_event_service,
+    get_resolve_case_service,
     get_start_alert_investigation_service,
+    get_start_case_investigation_service,
 )
 from api.main import app
 from application.services.acknowledge_alert import AcknowledgeAlertService
+from application.services.assign_case import AssignCaseService
 from application.services.close_alert import CloseAlertService
+from application.services.close_case import CloseCaseService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_event import GetEventService
@@ -40,8 +46,12 @@ from application.services.list_events import ListEventsService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
+from application.services.resolve_case import ResolveCaseService
 from application.services.start_alert_investigation import (
     StartAlertInvestigationService,
+)
+from application.services.start_case_investigation import (
+    StartCaseInvestigationService,
 )
 from case.factory import CaseFactory
 from case.processing import (
@@ -182,6 +192,12 @@ def client(
         ),
     )
 
+    close_alert_service = CloseAlertService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
     get_case_service = GetCaseService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
@@ -194,7 +210,25 @@ def client(
         ),
     )
 
-    close_alert_service = CloseAlertService(
+    assign_case_service = AssignCaseService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
+    start_case_investigation_service = StartCaseInvestigationService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
+    resolve_case_service = ResolveCaseService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(
+            connection_factory,
+        ),
+    )
+
+    close_case_service = CloseCaseService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
         ),
@@ -224,14 +258,30 @@ def client(
         lambda: start_alert_investigation_service
     )
 
-    app.dependency_overrides[get_get_case_service] = lambda: get_case_service
-
     app.dependency_overrides[get_close_alert_service] = (
         lambda: close_alert_service
     )
 
+    app.dependency_overrides[get_get_case_service] = lambda: get_case_service
+
     app.dependency_overrides[get_list_cases_service] = (
         lambda: list_cases_service
+    )
+
+    app.dependency_overrides[get_assign_case_service] = (
+        lambda: assign_case_service
+    )
+
+    app.dependency_overrides[get_start_case_investigation_service] = (
+        lambda: start_case_investigation_service
+    )
+
+    app.dependency_overrides[get_resolve_case_service] = (
+        lambda: resolve_case_service
+    )
+
+    app.dependency_overrides[get_close_case_service] = (
+        lambda: close_case_service
     )
 
     with TestClient(app) as test_client:
