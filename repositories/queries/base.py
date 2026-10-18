@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
+from repositories.queries.sort_order import SortOrder
+
 
 class Query(BaseModel):
     """
@@ -17,3 +19,7 @@ class Query(BaseModel):
         default=0,
         ge=0,
     )
+
+    sort_by: str | None = None
+
+    sort_order: SortOrder = SortOrder.DESC

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from common.alert_status import AlertStatus
 from common.detection import Severity
+from repositories.queries.base import Query
 
 
-@dataclass(slots=True)
-class AlertQuery:
+class AlertQuery(Query):
     """
     Query criteria for searching alerts.
     """

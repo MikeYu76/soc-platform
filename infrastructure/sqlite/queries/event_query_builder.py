@@ -68,7 +68,11 @@ class EventQueryBuilder:
 
         sort_column = cls._SORT_COLUMNS[query.sort_by]
 
-        direction = "ASC" if query.order is SortOrder.ASC else "DESC"
+        direction = (
+            "ASC"
+            if query.sort_order is SortOrder.ASC
+            else "DESC"
+        )
 
         sql += f"""
             ORDER BY {sort_column} {direction}

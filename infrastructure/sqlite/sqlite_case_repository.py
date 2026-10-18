@@ -5,6 +5,9 @@ from uuid import UUID
 from case.models import Case
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.case_mapper import CaseMapper
+from infrastructure.sqlite.queries.case_query_builder import (
+    CaseQueryBuilder,
+)
 from repositories.case_repository import CaseRepository
 from repositories.queries.case_query import CaseQuery
 
@@ -61,29 +64,13 @@ class SQLiteCaseRepository(
         self,
         query: CaseQuery,
     ) -> list[Case]:
-        sql = """
-            SELECT *
-            FROM cases
-            WHERE 1 = 1
-        """
-
-        parameters: list[object] = []
-
-        if query.status is not None:
-            sql += " AND status = ?"
-            parameters.append(query.status.value)
-
-        if query.priority is not None:
-            sql += " AND priority = ?"
-            parameters.append(query.priority.value)
-
-        if query.assigned_to is not None:
-            sql += " AND assigned_to = ?"
-            parameters.append(query.assigned_to)
+        sql, parameters = CaseQueryBuilder.build(
+            query,
+        )
 
         rows = self._fetch_all(
             sql,
-            tuple(parameters),
+            parameters,
         )
 
         return [

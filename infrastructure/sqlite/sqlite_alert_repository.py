@@ -5,6 +5,9 @@ from uuid import UUID
 from alert.models import Alert
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.alert_mapper import AlertMapper
+from infrastructure.sqlite.queries.alert_query_builder import (
+    AlertQueryBuilder,
+)
 from repositories.alert_repository import AlertRepository
 from repositories.queries.alert_query import AlertQuery
 
@@ -61,25 +64,13 @@ class SQLiteAlertRepository(
         self,
         query: AlertQuery,
     ) -> list[Alert]:
-        sql = """
-            SELECT *
-            FROM alerts
-            WHERE 1 = 1
-        """
-
-        parameters: list[object] = []
-
-        if query.status is not None:
-            sql += " AND status = ?"
-            parameters.append(query.status.value)
-
-        if query.severity is not None:
-            sql += " AND severity = ?"
-            parameters.append(query.severity.value)
+        sql, parameters = AlertQueryBuilder.build(
+            query,
+        )
 
         rows = self._fetch_all(
             sql,
-            tuple(parameters),
+            parameters,
         )
 
         return [
