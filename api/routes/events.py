@@ -46,6 +46,18 @@ def list_events(
         default=None,
         description="Filter by username.",
     ),
+    log_source: str | None = Query(
+        default=None,
+        description="Filter by log source.",
+    ),
+    source_ip: str | None = Query(
+        default=None,
+        description="Filter by source IP address.",
+    ),
+    destination_ip: str | None = Query(
+        default=None,
+        description="Filter by destination IP address.",
+    ),
     sort_by: EventSort = Query(
         default=EventSort.TIMESTAMP,
         description="Field to sort by.",
@@ -77,8 +89,11 @@ def list_events(
                 event_type=event_type,
                 hostname=hostname,
                 username=username,
+                log_source=log_source,
+                source_ip=source_ip,
+                destination_ip=destination_ip,
                 sort_by=sort_by,
-                order=order,
+                sort_order=order,
                 limit=limit,
                 offset=offset,
             ),

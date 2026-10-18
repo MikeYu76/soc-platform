@@ -5,6 +5,7 @@ from pydantic import IPvAnyAddress
 from common.event_types import EventType
 from repositories.queries.base import Query
 from repositories.queries.event_sort import EventSort
+from repositories.queries.sort_order import SortOrder
 
 
 class EventQuery(Query):
@@ -25,3 +26,6 @@ class EventQuery(Query):
     log_source: str | None = None
 
     sort_by: EventSort = EventSort.TIMESTAMP
+    sort_order: SortOrder = SortOrder.DESC
+
+

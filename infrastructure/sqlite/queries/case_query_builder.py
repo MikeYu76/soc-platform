@@ -40,11 +40,7 @@ class CaseQueryBuilder:
         if where_clauses:
             sql += "\nWHERE " + " AND ".join(where_clauses)
 
-        direction = (
-            "ASC"
-            if query.sort_order is SortOrder.ASC
-            else "DESC"
-        )
+        direction = "ASC" if query.sort_order is SortOrder.ASC else "DESC"
 
         sql += f"""
             ORDER BY created_at {direction}
