@@ -27,5 +27,3 @@ class EventQuery(Query):
 
     sort_by: EventSort = EventSort.TIMESTAMP
     sort_order: SortOrder = SortOrder.DESC
-
-

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from api.dependencies import (
@@ -49,20 +49,41 @@ router = APIRouter(
 @router.get(
     "",
     response_model=ListAlertsResponse,
-    summary="List active alerts",
+    summary="List alerts",
 )
 def list_alerts(
-    status: AlertStatus | None = None,
-    severity: Severity | None = None,
+    status: AlertStatus | None = Query(
+        default=None,
+        description="Filter by alert status.",
+    ),
+    severity: Severity | None = Query(
+        default=None,
+        description="Filter by alert severity.",
+    ),
+    limit: int = Query(
+        default=50,
+        ge=1,
+        description="Maximum number of alerts to return.",
+    ),
+    offset: int = Query(
+        default=0,
+        ge=0,
+        description="Number of alerts to skip.",
+    ),
     service: ListAlertsService = Depends(
         get_list_alerts_service,
     ),
 ) -> ListAlertsResponse:
+    """
+    Retrieve persisted alerts.
+    """
     return service.execute(
         ListAlertsRequest(
             query=AlertQuery(
                 status=status,
                 severity=severity,
+                limit=limit,
+                offset=offset,
             ),
         )
     )
@@ -79,6 +100,9 @@ def get_alert(
         get_get_alert_service,
     ),
 ) -> GetAlertResponse:
+    """
+    Retrieve an alert by its internal identifier.
+    """
     return service.execute(
         IdentifierRequest(
             id=id,
@@ -98,6 +122,9 @@ def acknowledge_alert(
         get_acknowledge_alert_service,
     ),
 ) -> AcknowledgeAlertResponse:
+    """
+    Acknowledge an alert.
+    """
     return service.execute(
         AcknowledgeAlertRequest(
             alert_id=id,
@@ -117,6 +144,9 @@ def start_alert_investigation(
         get_start_alert_investigation_service,
     ),
 ) -> StartAlertInvestigationResponse:
+    """
+    Start investigating an alert.
+    """
     return service.execute(
         IdentifierRequest(
             id=id,
@@ -135,6 +165,9 @@ def close_alert(
         get_close_alert_service,
     ),
 ) -> CloseAlertResponse:
+    """
+    Close an alert.
+    """
     return service.execute(
         IdentifierRequest(
             id=id,
