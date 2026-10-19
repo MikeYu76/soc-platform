@@ -8,6 +8,7 @@ from api.dependencies import (
     get_add_case_evidence_service,
     get_assign_case_service,
     get_close_case_service,
+    get_change_case_priority_service,
     get_get_case_service,
     get_get_case_timeline_service,
     get_list_cases_service,
@@ -23,6 +24,8 @@ from application.dto.case import (
     AssignCaseResponse,
     CloseCaseRequest,
     CloseCaseResponse,
+    ChangeCasePriorityRequest,
+    ChangeCasePriorityResponse,
     GetCaseResponse,
     GetCaseTimelineResponse,
     ListCasesRequest,
@@ -37,6 +40,7 @@ from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
 from application.services.close_case import CloseCaseService
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.list_cases import ListCasesService
@@ -82,6 +86,13 @@ class AddCaseEvidenceBody(BaseModel):
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
     source: str = Field(min_length=1)
+
+
+class ChangeCasePriorityBody(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    priority: CasePriority
+    changed_by: str = Field(min_length=1)
 
 
 router = APIRouter(
@@ -191,6 +202,27 @@ def add_case_evidence(
             name=body.name,
             description=body.description,
             source=body.source,
+        )
+    )
+
+
+@router.patch(
+    "/{id}/priority",
+    response_model=ChangeCasePriorityResponse,
+    summary="Change a case priority",
+)
+def change_case_priority(
+    id: str,
+    body: ChangeCasePriorityBody,
+    service: ChangeCasePriorityService = Depends(
+        get_change_case_priority_service,
+    ),
+) -> ChangeCasePriorityResponse:
+    return service.execute(
+        ChangeCasePriorityRequest(
+            case_id=id,
+            priority=body.priority.value,
+            changed_by=body.changed_by,
         )
     )
 

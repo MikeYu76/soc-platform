@@ -27,6 +27,7 @@ from application.services.close_alert import (
 from application.services.close_case import (
     CloseCaseService,
 )
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
@@ -253,5 +254,10 @@ add_case_comment_service = AddCaseCommentService(
 
 
 add_case_evidence_service = AddCaseEvidenceService(
+    unit_of_work_factory=unit_of_work_factory,
+)
+
+
+change_case_priority_service = ChangeCasePriorityService(
     unit_of_work_factory=unit_of_work_factory,
 )

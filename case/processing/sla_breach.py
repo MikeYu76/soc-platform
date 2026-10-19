@@ -23,7 +23,6 @@ class CaseSLABreachProcessor(CaseProcessor):
                 continue
 
             if now > case.sla.due_at:
-                case.sla.breached = True
-                case.sla.breached_at = now
+                case.mark_sla_breached(now)
 
         return cases

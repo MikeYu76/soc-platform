@@ -70,6 +70,24 @@ class AddCaseEvidenceResponse(Response):
 
 
 @dataclass(slots=True)
+class ChangeCasePriorityRequest(Request):
+    """Request to change a case priority."""
+
+    case_id: str
+
+    priority: str
+
+    changed_by: str
+
+
+@dataclass(slots=True)
+class ChangeCasePriorityResponse(Response):
+    """Response after changing a case priority."""
+
+    case: Case
+
+
+@dataclass(slots=True)
 class ListCasesRequest(Request):
     """
     Request to retrieve cases.

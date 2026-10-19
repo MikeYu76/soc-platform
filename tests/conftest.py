@@ -23,6 +23,7 @@ from api.dependencies import (
     get_assign_case_service,
     get_close_alert_service,
     get_close_case_service,
+    get_change_case_priority_service,
     get_get_alert_service,
     get_get_case_service,
     get_get_case_timeline_service,
@@ -42,6 +43,7 @@ from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
@@ -252,6 +254,10 @@ def client(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
     )
 
+    change_case_priority_service = ChangeCasePriorityService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
+    )
+
     app.dependency_overrides[get_process_security_event_service] = (
         lambda: process_service
     )
@@ -312,6 +318,10 @@ def client(
 
     app.dependency_overrides[get_add_case_evidence_service] = (
         lambda: add_case_evidence_service
+    )
+
+    app.dependency_overrides[get_change_case_priority_service] = (
+        lambda: change_case_priority_service
     )
 
     with TestClient(app) as test_client:

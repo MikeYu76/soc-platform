@@ -143,6 +143,41 @@ class Case(BaseModel):
             description=f"Evidence '{name}' added.",
         )
 
+    def change_priority(
+        self,
+        priority: CasePriority,
+        changed_by: str,
+    ) -> None:
+        if self.priority == priority:
+            return
+
+        previous_priority = self.priority
+        self.priority = priority
+
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.PRIORITY_CHANGED,
+            description=(
+                f"Priority changed from {previous_priority.value} "
+                f"to {priority.value}."
+            ),
+            actor=changed_by,
+        )
+
+    def mark_sla_breached(
+        self,
+        breached_at: datetime,
+    ) -> None:
+        if self.sla is None or self.sla.breached:
+            return
+
+        self.sla.breached = True
+        self.sla.breached_at = breached_at
+
+        self._add_timeline_event(
+            event_type=CaseTimelineEventType.SLA_BREACHED,
+            description="Case SLA breached.",
+        )
+
     def assign(
         self,
         team: str,
