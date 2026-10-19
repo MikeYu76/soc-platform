@@ -37,6 +37,7 @@ from api.dependencies import (
     get_start_case_investigation_service,
 )
 from api.main import app
+from api.security import get_current_user
 from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
@@ -95,6 +96,8 @@ from enrichment.ip_classification import IPClassificationEnricher
 from enrichment.ip_context import IPContextEnricher
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from common.user_role import UserRole
+from identity.user import User
 
 
 @pytest.fixture
@@ -108,6 +111,8 @@ def connection_factory() -> Generator[SQLiteConnectionFactory]:
 def client(
     connection_factory: SQLiteConnectionFactory,
 ) -> Generator[TestClient]:
+    app.state.testing = True
+
     ip_context = {
         "8.8.8.8": {
             "country": "United States",
@@ -344,6 +349,12 @@ def client(
 
     app.dependency_overrides[get_change_case_priority_service] = (
         lambda: change_case_priority_service
+    )
+
+    app.dependency_overrides[get_current_user] = lambda: User(
+        username="test-administrator",
+        password_hash="unused-in-api-tests",
+        role=UserRole.ADMINISTRATOR,
     )
 
     with TestClient(app) as test_client:

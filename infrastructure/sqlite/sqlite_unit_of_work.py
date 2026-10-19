@@ -11,10 +11,12 @@ from infrastructure.sqlite.sqlite_detection_repository import (
     SQLiteDetectionRepository,
 )
 from infrastructure.sqlite.sqlite_event_repository import SQLiteEventRepository
+from infrastructure.sqlite.sqlite_user_repository import SQLiteUserRepository
 from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
 from repositories.detection_repository import DetectionRepository
 from repositories.event_repository import EventRepository
+from repositories.user_repository import UserRepository
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -40,6 +42,7 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._detections: SQLiteDetectionRepository | None = None
         self._alerts: SQLiteAlertRepository | None = None
         self._cases: SQLiteCaseRepository | None = None
+        self._users: SQLiteUserRepository | None = None
 
     def __enter__(self) -> Self:
         self._connection = self._connection_factory.connect()
@@ -48,6 +51,7 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._detections = SQLiteDetectionRepository(self._connection)
         self._alerts = SQLiteAlertRepository(self._connection)
         self._cases = SQLiteCaseRepository(self._connection)
+        self._users = SQLiteUserRepository(self._connection)
 
         return self
 
@@ -75,6 +79,12 @@ class SQLiteUnitOfWork(UnitOfWork):
             raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._cases
 
+    @property
+    def users(self) -> UserRepository:
+        if self._users is None:
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
+        return self._users
+
     def commit(self) -> None:
         if self._connection is None:
             raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
@@ -96,3 +106,4 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._detections = None
         self._alerts = None
         self._cases = None
+        self._users = None

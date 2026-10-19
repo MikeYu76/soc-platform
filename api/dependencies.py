@@ -6,6 +6,7 @@ from application.composition.dependencies import (
     close_alert_service,
     close_case_service,
     change_case_priority_service,
+    create_user_service,
     get_alert_service,
     get_case_service,
     get_case_timeline_service,
@@ -13,6 +14,7 @@ from application.composition.dependencies import (
     list_alerts_service,
     list_cases_service,
     list_events_service,
+    login_service,
     process_security_event_service,
     resolve_case_service,
     start_alert_investigation_service,
@@ -25,6 +27,7 @@ from application.services.assign_case import AssignCaseService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
 from application.services.change_case_priority import ChangeCasePriorityService
+from application.services.create_user import CreateUserService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
@@ -32,6 +35,7 @@ from application.services.get_event import GetEventService
 from application.services.list_alerts import ListAlertsService
 from application.services.list_cases import ListCasesService
 from application.services.list_events import ListEventsService
+from application.services.login import LoginService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
@@ -114,3 +118,11 @@ def get_add_case_evidence_service() -> AddCaseEvidenceService:
 
 def get_change_case_priority_service() -> ChangeCasePriorityService:
     return change_case_priority_service
+
+
+def get_login_service() -> LoginService:
+    return login_service
+
+
+def get_create_user_service() -> CreateUserService:
+    return create_user_service

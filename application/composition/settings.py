@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 from dotenv import load_dotenv
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -50,6 +50,14 @@ class Settings(BaseSettings):
     opensearch_index: str = Field(
         default="security-events",
     )
+
+    jwt_secret: SecretStr = Field(default=SecretStr(""))
+
+    access_token_expire_minutes: int = Field(default=30, gt=0)
+
+    bootstrap_admin_username: str | None = None
+
+    bootstrap_admin_password: SecretStr | None = None
 
 
 @lru_cache

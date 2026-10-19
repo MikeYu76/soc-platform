@@ -5,6 +5,7 @@ from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
 from repositories.detection_repository import DetectionRepository
 from repositories.event_repository import EventRepository
+from repositories.user_repository import UserRepository
 
 
 class UnitOfWork(ABC):
@@ -34,6 +35,11 @@ class UnitOfWork(ABC):
     @property
     @abstractmethod
     def cases(self) -> CaseRepository:
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def users(self) -> UserRepository:
         raise NotImplementedError
 
     @abstractmethod

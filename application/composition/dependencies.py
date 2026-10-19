@@ -16,6 +16,8 @@ from application.composition.settings import (
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
 )
+from application.services.create_user import CreateUserService
+from application.services.login import LoginService
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import (
@@ -281,5 +283,16 @@ add_case_evidence_service = AddCaseEvidenceService(
 
 
 change_case_priority_service = ChangeCasePriorityService(
+    unit_of_work_factory=unit_of_work_factory,
+)
+
+
+login_service = LoginService(
+    unit_of_work_factory=unit_of_work_factory,
+    settings=settings,
+)
+
+
+create_user_service = CreateUserService(
     unit_of_work_factory=unit_of_work_factory,
 )

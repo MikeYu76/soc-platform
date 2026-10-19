@@ -122,6 +122,22 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_case_created
             ON cases(created_at);
+
+        --------------------------------------------------------------------
+        -- Users
+        --------------------------------------------------------------------
+
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            username TEXT NOT NULL COLLATE NOCASE UNIQUE,
+            role TEXT NOT NULL,
+            is_active INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            data TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_users_username
+            ON users(username);
         """)
 
     connection.commit()

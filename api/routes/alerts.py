@@ -10,6 +10,7 @@ from api.dependencies import (
     get_list_alerts_service,
     get_start_alert_investigation_service,
 )
+from api.security import get_current_user, require_roles
 from application.dto.alert import (
     AcknowledgeAlertRequest,
     AcknowledgeAlertResponse,
@@ -29,6 +30,8 @@ from application.services.start_alert_investigation import (
 )
 from common.alert_status import AlertStatus
 from common.detection import Severity
+from common.user_role import UserRole
+from identity.user import User
 from repositories.queries.alert_query import AlertQuery
 
 
@@ -43,6 +46,7 @@ class AcknowledgeAlertBody(BaseModel):
 router = APIRouter(
     prefix="/alerts",
     tags=["Alerts"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -121,6 +125,15 @@ def acknowledge_alert(
     service: AcknowledgeAlertService = Depends(
         get_acknowledge_alert_service,
     ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.ANALYST,
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
+    ),
 ) -> AcknowledgeAlertResponse:
     """
     Acknowledge an alert.
@@ -143,6 +156,15 @@ def start_alert_investigation(
     service: StartAlertInvestigationService = Depends(
         get_start_alert_investigation_service,
     ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.ANALYST,
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
+    ),
 ) -> StartAlertInvestigationResponse:
     """
     Start investigating an alert.
@@ -163,6 +185,14 @@ def close_alert(
     id: str,
     service: CloseAlertService = Depends(
         get_close_alert_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> CloseAlertResponse:
     """

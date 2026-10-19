@@ -5,6 +5,7 @@ from api.dependencies import (
     get_list_events_service,
     get_process_security_event_service,
 )
+from api.security import get_current_user, require_roles
 from application.dto.get_event import GetEventResponse
 from application.dto.identifier import IdentifierRequest
 from application.dto.list_events import ListEventsRequest, ListEventsResponse
@@ -18,6 +19,8 @@ from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
 from common.event_types import EventType
+from common.user_role import UserRole
+from identity.user import User
 from repositories.queries.event_query import EventQuery
 from repositories.queries.event_sort import EventSort
 from repositories.queries.sort_order import SortOrder
@@ -25,6 +28,7 @@ from repositories.queries.sort_order import SortOrder
 router = APIRouter(
     prefix="/events",
     tags=["Events"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -131,6 +135,13 @@ def process_security_event(
     request: ProcessSecurityEventRequest,
     service: ProcessSecurityEventService = Depends(
         get_process_security_event_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> ProcessSecurityEventResponse:
     """

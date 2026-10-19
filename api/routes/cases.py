@@ -15,6 +15,7 @@ from api.dependencies import (
     get_resolve_case_service,
     get_start_case_investigation_service,
 )
+from api.security import get_current_user, require_roles
 from application.dto.case import (
     AddCaseCommentRequest,
     AddCaseCommentResponse,
@@ -50,6 +51,8 @@ from application.services.start_case_investigation import (
 )
 from common.case_priority import CasePriority
 from common.case_status import CaseStatus
+from common.user_role import UserRole
+from identity.user import User
 from repositories.queries.case_query import CaseQuery
 
 
@@ -98,6 +101,7 @@ class ChangeCasePriorityBody(BaseModel):
 router = APIRouter(
     prefix="/cases",
     tags=["Cases"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -173,6 +177,15 @@ def add_case_comment(
     service: AddCaseCommentService = Depends(
         get_add_case_comment_service,
     ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.ANALYST,
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
+    ),
 ) -> AddCaseCommentResponse:
     return service.execute(
         AddCaseCommentRequest(
@@ -194,6 +207,15 @@ def add_case_evidence(
     body: AddCaseEvidenceBody,
     service: AddCaseEvidenceService = Depends(
         get_add_case_evidence_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.ANALYST,
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> AddCaseEvidenceResponse:
     return service.execute(
@@ -217,6 +239,14 @@ def change_case_priority(
     service: ChangeCasePriorityService = Depends(
         get_change_case_priority_service,
     ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
+    ),
 ) -> ChangeCasePriorityResponse:
     return service.execute(
         ChangeCasePriorityRequest(
@@ -237,6 +267,14 @@ def assign_case(
     body: AssignCaseBody,
     service: AssignCaseService = Depends(
         get_assign_case_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> AssignCaseResponse:
     return service.execute(
@@ -260,6 +298,15 @@ def start_case_investigation(
     service: StartCaseInvestigationService = Depends(
         get_start_case_investigation_service,
     ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.ANALYST,
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
+    ),
 ) -> StartCaseInvestigationResponse:
     return service.execute(
         StartCaseInvestigationRequest(
@@ -279,6 +326,14 @@ def resolve_case(
     body: ResolveCaseBody,
     service: ResolveCaseService = Depends(
         get_resolve_case_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> ResolveCaseResponse:
     return service.execute(
@@ -301,6 +356,14 @@ def close_case(
     body: CloseCaseBody,
     service: CloseCaseService = Depends(
         get_close_case_service,
+    ),
+    _user: User = Depends(
+        require_roles(
+            UserRole.SENIOR_ANALYST,
+            UserRole.INCIDENT_RESPONDER,
+            UserRole.SOC_MANAGER,
+            UserRole.ADMINISTRATOR,
+        )
     ),
 ) -> CloseCaseResponse:
     return service.execute(
