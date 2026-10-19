@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from api.dependencies import (
+    get_add_case_comment_service,
+    get_add_case_evidence_service,
     get_assign_case_service,
     get_close_case_service,
     get_get_case_service,
@@ -13,6 +15,10 @@ from api.dependencies import (
     get_start_case_investigation_service,
 )
 from application.dto.case import (
+    AddCaseCommentRequest,
+    AddCaseCommentResponse,
+    AddCaseEvidenceRequest,
+    AddCaseEvidenceResponse,
     AssignCaseRequest,
     AssignCaseResponse,
     CloseCaseRequest,
@@ -27,12 +33,12 @@ from application.dto.case import (
     StartCaseInvestigationResponse,
 )
 from application.dto.identifier import IdentifierRequest
+from application.services.add_case_comment import AddCaseCommentService
+from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
 from application.services.close_case import CloseCaseService
 from application.services.get_case import GetCaseService
-from application.services.get_case_timeline import (
-    GetCaseTimelineService,
-)
+from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.list_cases import ListCasesService
 from application.services.resolve_case import ResolveCaseService
 from application.services.start_case_investigation import (
@@ -61,6 +67,21 @@ class ResolveCaseBody(BaseModel):
 
 class CloseCaseBody(BaseModel):
     closed_by: str
+
+
+class AddCaseCommentBody(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    author: str = Field(min_length=1)
+    message: str = Field(min_length=1)
+
+
+class AddCaseEvidenceBody(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    source: str = Field(min_length=1)
 
 
 router = APIRouter(
@@ -108,8 +129,6 @@ def get_case(
         get_get_case_service,
     ),
 ) -> GetCaseResponse:
-    print(">>> get_case:", id)
-
     return service.execute(
         IdentifierRequest(
             id=id,
@@ -128,11 +147,50 @@ def get_case_timeline(
         get_get_case_timeline_service,
     ),
 ) -> GetCaseTimelineResponse:
-    print(">>> get_case_timeline:", id)
+    return service.execute(IdentifierRequest(id=id))
 
+
+@router.post(
+    "/{id}/comments",
+    response_model=AddCaseCommentResponse,
+    summary="Add a comment to a case",
+    status_code=201,
+)
+def add_case_comment(
+    id: str,
+    body: AddCaseCommentBody,
+    service: AddCaseCommentService = Depends(
+        get_add_case_comment_service,
+    ),
+) -> AddCaseCommentResponse:
     return service.execute(
-        IdentifierRequest(
-            id=id,
+        AddCaseCommentRequest(
+            case_id=id,
+            author=body.author,
+            message=body.message,
+        )
+    )
+
+
+@router.post(
+    "/{id}/evidence",
+    response_model=AddCaseEvidenceResponse,
+    summary="Add evidence to a case",
+    status_code=201,
+)
+def add_case_evidence(
+    id: str,
+    body: AddCaseEvidenceBody,
+    service: AddCaseEvidenceService = Depends(
+        get_add_case_evidence_service,
+    ),
+) -> AddCaseEvidenceResponse:
+    return service.execute(
+        AddCaseEvidenceRequest(
+            case_id=id,
+            name=body.name,
+            description=body.description,
+            source=body.source,
         )
     )
 

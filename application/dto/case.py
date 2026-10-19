@@ -50,6 +50,26 @@ class AddCaseCommentResponse(Response):
 
 
 @dataclass(slots=True)
+class AddCaseEvidenceRequest(Request):
+    """Request to add evidence to a case."""
+
+    case_id: str
+
+    name: str
+
+    description: str
+
+    source: str
+
+
+@dataclass(slots=True)
+class AddCaseEvidenceResponse(Response):
+    """Response after adding evidence to a case."""
+
+    case: Case
+
+
+@dataclass(slots=True)
 class ListCasesRequest(Request):
     """
     Request to retrieve cases.

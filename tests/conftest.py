@@ -19,6 +19,7 @@ from alert.processing import (
 from api.dependencies import (
     get_acknowledge_alert_service,
     get_add_case_comment_service,
+    get_add_case_evidence_service,
     get_assign_case_service,
     get_close_alert_service,
     get_close_case_service,
@@ -37,6 +38,7 @@ from api.dependencies import (
 from api.main import app
 from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.add_case_comment import AddCaseCommentService
+from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
@@ -246,6 +248,10 @@ def client(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
     )
 
+    add_case_evidence_service = AddCaseEvidenceService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
+    )
+
     app.dependency_overrides[get_process_security_event_service] = (
         lambda: process_service
     )
@@ -302,6 +308,10 @@ def client(
 
     app.dependency_overrides[get_add_case_comment_service] = (
         lambda: add_case_comment_service
+    )
+
+    app.dependency_overrides[get_add_case_evidence_service] = (
+        lambda: add_case_evidence_service
     )
 
     with TestClient(app) as test_client:
