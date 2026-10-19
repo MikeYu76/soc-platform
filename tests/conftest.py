@@ -77,7 +77,19 @@ from correlation.rules import (
     PrivilegeEscalationRule,
 )
 from detection.engine import DetectionEngine
-from detection.rules.failed_login import FailedLoginRule
+from detection.rules import (
+    CredentialDumpingRule,
+    FailedLoginRule,
+    KerberoastingRule,
+    LSASSAccessRule,
+    PassTheHashRule,
+    PowerShellAbuseRule,
+    RemoteDesktopFailedLoginRule,
+    ScheduledTaskPersistenceRule,
+    ServiceCreationRule,
+    WMIExecutionRule,
+    WindowsEventLogClearingRule,
+)
 from enrichment.engine import EnrichmentEngine
 from enrichment.ip_classification import IPClassificationEnricher
 from enrichment.ip_context import IPContextEnricher
@@ -110,6 +122,16 @@ def client(
     detection_engine = DetectionEngine(
         [
             FailedLoginRule(),
+            PowerShellAbuseRule(),
+            ServiceCreationRule(),
+            CredentialDumpingRule(),
+            PassTheHashRule(),
+            KerberoastingRule(),
+            LSASSAccessRule(),
+            ScheduledTaskPersistenceRule(),
+            WMIExecutionRule(),
+            WindowsEventLogClearingRule(),
+            RemoteDesktopFailedLoginRule(),
         ]
     )
 
