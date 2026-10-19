@@ -7,6 +7,7 @@ from api.dependencies import (
     get_assign_case_service,
     get_close_case_service,
     get_get_case_service,
+    get_get_case_timeline_service,
     get_list_cases_service,
     get_resolve_case_service,
     get_start_case_investigation_service,
@@ -17,6 +18,7 @@ from application.dto.case import (
     CloseCaseRequest,
     CloseCaseResponse,
     GetCaseResponse,
+    GetCaseTimelineResponse,
     ListCasesRequest,
     ListCasesResponse,
     ResolveCaseRequest,
@@ -28,6 +30,9 @@ from application.dto.identifier import IdentifierRequest
 from application.services.assign_case import AssignCaseService
 from application.services.close_case import CloseCaseService
 from application.services.get_case import GetCaseService
+from application.services.get_case_timeline import (
+    GetCaseTimelineService,
+)
 from application.services.list_cases import ListCasesService
 from application.services.resolve_case import ResolveCaseService
 from application.services.start_case_investigation import (
@@ -73,6 +78,8 @@ def list_cases(
     status: CaseStatus | None = None,
     priority: CasePriority | None = None,
     assigned_to: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
     service: ListCasesService = Depends(
         get_list_cases_service,
     ),
@@ -83,6 +90,8 @@ def list_cases(
                 status=status,
                 priority=priority,
                 assigned_to=assigned_to,
+                limit=limit,
+                offset=offset,
             ),
         )
     )
@@ -99,6 +108,28 @@ def get_case(
         get_get_case_service,
     ),
 ) -> GetCaseResponse:
+    print(">>> get_case:", id)
+
+    return service.execute(
+        IdentifierRequest(
+            id=id,
+        )
+    )
+
+
+@router.get(
+    "/{id}/timeline",
+    response_model=GetCaseTimelineResponse,
+    summary="Retrieve a case timeline",
+)
+def get_case_timeline(
+    id: str,
+    service: GetCaseTimelineService = Depends(
+        get_get_case_timeline_service,
+    ),
+) -> GetCaseTimelineResponse:
+    print(">>> get_case_timeline:", id)
+
     return service.execute(
         IdentifierRequest(
             id=id,

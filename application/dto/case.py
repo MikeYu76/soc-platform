@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from application.dto.base import Request, Response
 from case.models import Case
+from case.domain.timeline import CaseTimelineEvent
 from repositories.queries.case_query import CaseQuery
 
 
@@ -14,6 +15,20 @@ class GetCaseResponse(Response):
     """
 
     case: Case
+
+
+@dataclass(slots=True)
+class GetCaseTimelineResponse(Response):
+    """Response containing the timeline for a case."""
+
+    timeline: list[CaseTimelineEvent]
+
+    @classmethod
+    def from_domain(
+        cls,
+        timeline: list[CaseTimelineEvent],
+    ) -> GetCaseTimelineResponse:
+        return cls(timeline=timeline)
 
 
 @dataclass(slots=True)
@@ -122,3 +137,4 @@ class CloseCaseResponse(Response):
     """
 
     case: Case
+

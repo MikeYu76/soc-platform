@@ -27,6 +27,7 @@ from application.services.close_case import (
 )
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
+from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.get_event import GetEventService
 from application.services.list_alerts import (
     ListAlertsService,
@@ -210,6 +211,11 @@ close_alert_service = CloseAlertService(
 
 
 get_case_service = GetCaseService(
+    unit_of_work_factory=unit_of_work_factory,
+)
+
+
+get_case_timeline_service = GetCaseTimelineService(
     unit_of_work_factory=unit_of_work_factory,
 )
 

@@ -5,6 +5,7 @@ from application.composition.dependencies import (
     close_case_service,
     get_alert_service,
     get_case_service,
+    get_case_timeline_service,
     get_event_service,
     list_alerts_service,
     list_cases_service,
@@ -20,6 +21,7 @@ from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
+from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.get_event import GetEventService
 from application.services.list_alerts import ListAlertsService
 from application.services.list_cases import ListCasesService
@@ -70,6 +72,10 @@ def get_close_alert_service() -> CloseAlertService:
 
 def get_get_case_service() -> GetCaseService:
     return get_case_service
+
+
+def get_get_case_timeline_service() -> GetCaseTimelineService:
+    return get_case_timeline_service
 
 
 def get_list_cases_service() -> ListCasesService:

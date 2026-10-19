@@ -241,3 +241,37 @@ def test_close_case(
     assert closed["id"] == str(case.id)
     assert closed["status"] == CaseStatus.CLOSED.value
     assert closed["closed_at"] is not None
+
+
+def test_limit_cases(
+    client: TestClient,
+    connection_factory: SQLiteConnectionFactory,
+) -> None:
+    cases = [build_case() for _ in range(3)]
+
+    with SQLiteUnitOfWork(connection_factory) as uow:
+        for case in cases:
+            uow.cases.save(case)
+        uow.commit()
+
+    response = client.get("/cases?limit=1")
+
+    assert response.status_code == 200
+    assert len(response.json()["cases"]) == 1
+
+
+def test_offset_cases(
+    client: TestClient,
+    connection_factory: SQLiteConnectionFactory,
+) -> None:
+    cases = [build_case() for _ in range(3)]
+
+    with SQLiteUnitOfWork(connection_factory) as uow:
+        for case in cases:
+            uow.cases.save(case)
+        uow.commit()
+
+    response = client.get("/cases?offset=1")
+
+    assert response.status_code == 200
+    assert len(response.json()["cases"]) == 2

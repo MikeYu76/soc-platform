@@ -23,6 +23,7 @@ from api.dependencies import (
     get_close_case_service,
     get_get_alert_service,
     get_get_case_service,
+    get_get_case_timeline_service,
     get_get_event_service,
     get_list_alerts_service,
     get_list_cases_service,
@@ -39,6 +40,7 @@ from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
+from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.get_event import GetEventService
 from application.services.list_alerts import ListAlertsService
 from application.services.list_cases import ListCasesService
@@ -204,6 +206,10 @@ def client(
         ),
     )
 
+    get_case_timeline_service = GetCaseTimelineService(
+        unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
+    )
+
     list_cases_service = ListCasesService(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(
             connection_factory,
@@ -263,6 +269,10 @@ def client(
     )
 
     app.dependency_overrides[get_get_case_service] = lambda: get_case_service
+
+    app.dependency_overrides[get_get_case_timeline_service] = (
+        lambda: get_case_timeline_service
+    )
 
     app.dependency_overrides[get_list_cases_service] = (
         lambda: list_cases_service

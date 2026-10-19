@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from repositories.queries.case_query import CaseQuery
+from repositories.queries.case_sort import CaseSort
 from repositories.queries.sort_order import SortOrder
 
 
@@ -12,11 +15,22 @@ class CaseQueryBuilder:
     parameters. It performs no database operations.
     """
 
+    _SORT_COLUMNS: ClassVar[dict[CaseSort, str]] = {
+        CaseSort.CREATED_AT: "created_at",
+        CaseSort.PRIORITY: "priority",
+        CaseSort.STATUS: "status",
+        CaseSort.ASSIGNED_TO: "assigned_to",
+    }
+
     @classmethod
     def build(
         cls,
         query: CaseQuery,
     ) -> tuple[str, tuple[object, ...]]:
+        """
+        Build a SQL statement and parameter tuple.
+        """
+
         where_clauses: list[str] = []
         parameters: list[object] = []
 
@@ -40,10 +54,12 @@ class CaseQueryBuilder:
         if where_clauses:
             sql += "\nWHERE " + " AND ".join(where_clauses)
 
+        sort_column = cls._SORT_COLUMNS[query.sort_by]
+
         direction = "ASC" if query.sort_order is SortOrder.ASC else "DESC"
 
         sql += f"""
-            ORDER BY created_at {direction}
+            ORDER BY {sort_column} {direction}, id DESC
             LIMIT ?
             OFFSET ?
         """
