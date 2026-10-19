@@ -16,6 +16,7 @@ from application.composition.settings import (
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
 )
+from application.services.add_case_comment import AddCaseCommentService
 from application.services.assign_case import (
     AssignCaseService,
 )
@@ -241,5 +242,10 @@ resolve_case_service = ResolveCaseService(
 
 
 close_case_service = CloseCaseService(
+    unit_of_work_factory=unit_of_work_factory,
+)
+
+
+add_case_comment_service = AddCaseCommentService(
     unit_of_work_factory=unit_of_work_factory,
 )

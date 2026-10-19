@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from application.dto.base import Request, Response
-from case.models import Case
 from case.domain.timeline import CaseTimelineEvent
+from case.models import Case
 from repositories.queries.case_query import CaseQuery
 
 
@@ -29,6 +29,24 @@ class GetCaseTimelineResponse(Response):
         timeline: list[CaseTimelineEvent],
     ) -> GetCaseTimelineResponse:
         return cls(timeline=timeline)
+
+
+@dataclass(slots=True)
+class AddCaseCommentRequest(Request):
+    """Request to add an analyst comment to a case."""
+
+    case_id: str
+
+    author: str
+
+    message: str
+
+
+@dataclass(slots=True)
+class AddCaseCommentResponse(Response):
+    """Response after adding a comment to a case."""
+
+    case: Case
 
 
 @dataclass(slots=True)
@@ -137,4 +155,3 @@ class CloseCaseResponse(Response):
     """
 
     case: Case
-

@@ -1,5 +1,6 @@
 from application.composition.dependencies import (
     acknowledge_alert_service,
+    add_case_comment_service,
     assign_case_service,
     close_alert_service,
     close_case_service,
@@ -16,6 +17,7 @@ from application.composition.dependencies import (
     start_case_investigation_service,
 )
 from application.services.acknowledge_alert import AcknowledgeAlertService
+from application.services.add_case_comment import AddCaseCommentService
 from application.services.assign_case import AssignCaseService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
@@ -96,3 +98,7 @@ def get_resolve_case_service() -> ResolveCaseService:
 
 def get_close_case_service() -> CloseCaseService:
     return close_case_service
+
+
+def get_add_case_comment_service() -> AddCaseCommentService:
+    return add_case_comment_service
