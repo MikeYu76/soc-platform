@@ -2,4 +2,7 @@ fastapi
 uvicorn
 opensearch-py
 pydantic
+pydantic-settings
 python-dotenv
+PyJWT>=2.10,<3
+pwdlib[argon2]>=0.2,<1

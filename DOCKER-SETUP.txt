@@ -1,0 +1,33 @@
+SOC Platform Docker Setup
+
+FILES TO COPY
+Copy Dockerfile, compose.yaml, .dockerignore, requirements.txt, and .env.docker.example into the top-level soc-platform project folder. They sit beside api, application, and tests. Keep the filenames exactly as shown. Open this guide from the ZIP; it does not need to go into the project.
+
+SET UP SECRETS
+If you already have a .env file from setting up authentication, keep it. Open it and add this new line using a strong password of your choice:
+   OPENSEARCH_INITIAL_ADMIN_PASSWORD=your_strong_opensearch_password
+Use a different password from the bootstrap administrator password.
+
+If you do not already have a .env file, copy .env.docker.example and name the copy .env. Replace every placeholder. The JWT secret can be generated in PowerShell with:
+   .\.venv\Scripts\python.exe -c "import secrets; print(secrets.token_urlsafe(48))"
+The bootstrap administrator password must be at least 12 characters. Do not share or commit .env.
+
+START
+Open PowerShell in the soc-platform project folder and run:
+   docker compose up --build -d
+
+OPEN
+API documentation: http://localhost:8000/docs
+API health:       http://localhost:8000/health
+OpenSearch:       https://localhost:9200 (a self-signed certificate warning is expected for this local development setup)
+Dashboards:       http://localhost:5601
+OpenSearch login: admin and the OPENSEARCH_INITIAL_ADMIN_PASSWORD from .env
+
+STOP
+   docker compose down
+
+The SQLite database is kept in the soc-data Docker volume. Stopping or recreating the containers keeps it. To stop the services and permanently erase both stored database volumes, run:
+   docker compose down -v
+
+NOTES
+This Compose file is for local development. OpenSearch and Dashboards are included as services for the planned SOC stack; the current API code does not yet send data to OpenSearch. This setup does not configure production TLS or production secrets.

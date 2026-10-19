@@ -1,0 +1,69 @@
+services:
+  soc-platform:
+    build: .
+    container_name: soc-platform-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SOC_API_HOST: 0.0.0.0
+      SOC_API_PORT: 8000
+      SOC_DATABASE_PATH: /app/data/soc_platform.db
+      SOC_JWT_SECRET: ${SOC_JWT_SECRET:?Set SOC_JWT_SECRET in .env}
+      SOC_ACCESS_TOKEN_EXPIRE_MINUTES: ${SOC_ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      SOC_BOOTSTRAP_ADMIN_USERNAME: ${SOC_BOOTSTRAP_ADMIN_USERNAME:?Set SOC_BOOTSTRAP_ADMIN_USERNAME in .env}
+      SOC_BOOTSTRAP_ADMIN_PASSWORD: ${SOC_BOOTSTRAP_ADMIN_PASSWORD:?Set SOC_BOOTSTRAP_ADMIN_PASSWORD in .env}
+    ports:
+      - "8000:8000"
+    volumes:
+      - soc-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  opensearch:
+    image: opensearchproject/opensearch:3.9.0
+    container_name: soc-platform-opensearch
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      bootstrap.memory_lock: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: ${OPENSEARCH_INITIAL_ADMIN_PASSWORD:?Set OPENSEARCH_INITIAL_ADMIN_PASSWORD in .env}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sk -u admin:$${OPENSEARCH_INITIAL_ADMIN_PASSWORD} https://localhost:9200/_cluster/health | grep -q status"]
+      interval: 20s
+      timeout: 10s
+      start_period: 60s
+      retries: 10
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:3.9.0
+    container_name: soc-platform-dashboards
+    restart: unless-stopped
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+      OPENSEARCH_USERNAME: admin
+      OPENSEARCH_PASSWORD: ${OPENSEARCH_INITIAL_ADMIN_PASSWORD:?Set OPENSEARCH_INITIAL_ADMIN_PASSWORD in .env}
+      OPENSEARCH_SSL_VERIFICATIONMODE: none
+    ports:
+      - "5601:5601"
+    depends_on:
+      opensearch:
+        condition: service_healthy
+
+volumes:
+  soc-data:
+  opensearch-data:
+
