@@ -1,0 +1,8 @@
+-r requirements.txt
+
+mypy
+httpx
+psycopg[binary]
+pytest
+pytest-cov
+ruff
