@@ -1,4 +1,3 @@
-from .failed_login import FailedLoginRule
 from .endpoint_activity import (
     CredentialDumpingRule,
     KerberoastingRule,
@@ -8,9 +7,10 @@ from .endpoint_activity import (
     RemoteDesktopFailedLoginRule,
     ScheduledTaskPersistenceRule,
     ServiceCreationRule,
-    WMIExecutionRule,
     WindowsEventLogClearingRule,
+    WMIExecutionRule,
 )
+from .failed_login import FailedLoginRule
 
 __all__ = [
     "CredentialDumpingRule",

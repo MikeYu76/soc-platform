@@ -7,8 +7,8 @@ from api.dependencies import (
     get_add_case_comment_service,
     get_add_case_evidence_service,
     get_assign_case_service,
-    get_close_case_service,
     get_change_case_priority_service,
+    get_close_case_service,
     get_get_case_service,
     get_get_case_timeline_service,
     get_list_cases_service,
@@ -23,10 +23,10 @@ from application.dto.case import (
     AddCaseEvidenceResponse,
     AssignCaseRequest,
     AssignCaseResponse,
-    CloseCaseRequest,
-    CloseCaseResponse,
     ChangeCasePriorityRequest,
     ChangeCasePriorityResponse,
+    CloseCaseRequest,
+    CloseCaseResponse,
     GetCaseResponse,
     GetCaseTimelineResponse,
     ListCasesRequest,
@@ -40,8 +40,8 @@ from application.dto.identifier import IdentifierRequest
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
-from application.services.close_case import CloseCaseService
 from application.services.change_case_priority import ChangeCasePriorityService
+from application.services.close_case import CloseCaseService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.list_cases import ListCasesService

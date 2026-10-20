@@ -21,9 +21,9 @@ from api.dependencies import (
     get_add_case_comment_service,
     get_add_case_evidence_service,
     get_assign_case_service,
+    get_change_case_priority_service,
     get_close_alert_service,
     get_close_case_service,
-    get_change_case_priority_service,
     get_get_alert_service,
     get_get_case_service,
     get_get_case_timeline_service,
@@ -42,9 +42,9 @@ from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
-from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
@@ -70,6 +70,7 @@ from case.processing import (
     CaseSLABreachProcessor,
     CaseSLAProcessor,
 )
+from common.user_role import UserRole
 from correlation.engine import CorrelationEngine
 from correlation.rules import (
     FailedLoginBurstRule,
@@ -88,16 +89,15 @@ from detection.rules import (
     RemoteDesktopFailedLoginRule,
     ScheduledTaskPersistenceRule,
     ServiceCreationRule,
-    WMIExecutionRule,
     WindowsEventLogClearingRule,
+    WMIExecutionRule,
 )
 from enrichment.engine import EnrichmentEngine
 from enrichment.ip_classification import IPClassificationEnricher
 from enrichment.ip_context import IPContextEnricher
+from identity.user import User
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
-from common.user_role import UserRole
-from identity.user import User
 
 
 @pytest.fixture
@@ -285,70 +285,56 @@ def client(
         unit_of_work_factory=lambda: SQLiteUnitOfWork(connection_factory),
     )
 
-    app.dependency_overrides[get_process_security_event_service] = (
-        lambda: process_service
+    app.dependency_overrides[get_process_security_event_service] = lambda: (
+        process_service
     )
 
     app.dependency_overrides[get_get_event_service] = lambda: get_event_service
 
-    app.dependency_overrides[get_list_events_service] = (
-        lambda: list_events_service
-    )
+    app.dependency_overrides[get_list_events_service] = lambda: list_events_service
 
     app.dependency_overrides[get_get_alert_service] = lambda: get_alert_service
 
-    app.dependency_overrides[get_list_alerts_service] = (
-        lambda: list_alerts_service
+    app.dependency_overrides[get_list_alerts_service] = lambda: list_alerts_service
+
+    app.dependency_overrides[get_acknowledge_alert_service] = lambda: (
+        acknowledge_alert_service
     )
 
-    app.dependency_overrides[get_acknowledge_alert_service] = (
-        lambda: acknowledge_alert_service
+    app.dependency_overrides[get_start_alert_investigation_service] = lambda: (
+        start_alert_investigation_service
     )
 
-    app.dependency_overrides[get_start_alert_investigation_service] = (
-        lambda: start_alert_investigation_service
-    )
-
-    app.dependency_overrides[get_close_alert_service] = (
-        lambda: close_alert_service
-    )
+    app.dependency_overrides[get_close_alert_service] = lambda: close_alert_service
 
     app.dependency_overrides[get_get_case_service] = lambda: get_case_service
 
-    app.dependency_overrides[get_get_case_timeline_service] = (
-        lambda: get_case_timeline_service
+    app.dependency_overrides[get_get_case_timeline_service] = lambda: (
+        get_case_timeline_service
     )
 
-    app.dependency_overrides[get_list_cases_service] = (
-        lambda: list_cases_service
+    app.dependency_overrides[get_list_cases_service] = lambda: list_cases_service
+
+    app.dependency_overrides[get_assign_case_service] = lambda: assign_case_service
+
+    app.dependency_overrides[get_start_case_investigation_service] = lambda: (
+        start_case_investigation_service
     )
 
-    app.dependency_overrides[get_assign_case_service] = (
-        lambda: assign_case_service
+    app.dependency_overrides[get_resolve_case_service] = lambda: resolve_case_service
+
+    app.dependency_overrides[get_close_case_service] = lambda: close_case_service
+
+    app.dependency_overrides[get_add_case_comment_service] = lambda: (
+        add_case_comment_service
     )
 
-    app.dependency_overrides[get_start_case_investigation_service] = (
-        lambda: start_case_investigation_service
+    app.dependency_overrides[get_add_case_evidence_service] = lambda: (
+        add_case_evidence_service
     )
 
-    app.dependency_overrides[get_resolve_case_service] = (
-        lambda: resolve_case_service
-    )
-
-    app.dependency_overrides[get_close_case_service] = (
-        lambda: close_case_service
-    )
-
-    app.dependency_overrides[get_add_case_comment_service] = (
-        lambda: add_case_comment_service
-    )
-
-    app.dependency_overrides[get_add_case_evidence_service] = (
-        lambda: add_case_evidence_service
-    )
-
-    app.dependency_overrides[get_change_case_priority_service] = (
-        lambda: change_case_priority_service
+    app.dependency_overrides[get_change_case_priority_service] = lambda: (
+        change_case_priority_service
     )
 
     app.dependency_overrides[get_current_user] = lambda: User(

@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from infrastructure.postgres.connection import PostgreSQLConnection, PostgreSQLConnectionFactory
+from typing import Self
+
+from infrastructure.postgres.connection import (
+    PostgreSQLConnection,
+    PostgreSQLConnectionFactory,
+)
 from infrastructure.postgres.repositories import (
     PostgreSQLAlertRepository,
     PostgreSQLCaseRepository,
@@ -24,7 +29,7 @@ class PostgreSQLUnitOfWork(UnitOfWork):
         self._cases: PostgreSQLCaseRepository | None = None
         self._users: PostgreSQLUserRepository | None = None
 
-    def __enter__(self) -> PostgreSQLUnitOfWork:
+    def __enter__(self) -> Self:
         self._connection = self._connection_factory.connect()
         self._events = PostgreSQLEventRepository(self._connection)
         self._detections = PostgreSQLDetectionRepository(self._connection)
@@ -82,3 +87,4 @@ class PostgreSQLUnitOfWork(UnitOfWork):
         self._alerts = None
         self._cases = None
         self._users = None
+

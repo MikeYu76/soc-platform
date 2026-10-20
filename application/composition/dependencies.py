@@ -16,20 +16,19 @@ from application.composition.settings import (
 from application.services.acknowledge_alert import (
     AcknowledgeAlertService,
 )
-from application.services.create_user import CreateUserService
-from application.services.login import LoginService
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import (
     AssignCaseService,
 )
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.close_alert import (
     CloseAlertService,
 )
 from application.services.close_case import (
     CloseCaseService,
 )
-from application.services.change_case_priority import ChangeCasePriorityService
+from application.services.create_user import CreateUserService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
@@ -43,6 +42,7 @@ from application.services.list_cases import (
 from application.services.list_events import (
     ListEventsService,
 )
+from application.services.login import LoginService
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
@@ -81,8 +81,8 @@ from detection.rules import (
     RemoteDesktopFailedLoginRule,
     ScheduledTaskPersistenceRule,
     ServiceCreationRule,
-    WMIExecutionRule,
     WindowsEventLogClearingRule,
+    WMIExecutionRule,
 )
 from enrichment.engine import EnrichmentEngine
 from enrichment.ip_classification import (

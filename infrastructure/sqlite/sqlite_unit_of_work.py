@@ -16,8 +16,8 @@ from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
 from repositories.detection_repository import DetectionRepository
 from repositories.event_repository import EventRepository
-from repositories.user_repository import UserRepository
 from repositories.unit_of_work import UnitOfWork
+from repositories.user_repository import UserRepository
 
 
 class SQLiteUnitOfWork(UnitOfWork):

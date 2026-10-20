@@ -3,9 +3,9 @@ from application.composition.dependencies import (
     add_case_comment_service,
     add_case_evidence_service,
     assign_case_service,
+    change_case_priority_service,
     close_alert_service,
     close_case_service,
-    change_case_priority_service,
     create_user_service,
     get_alert_service,
     get_case_service,
@@ -24,9 +24,9 @@ from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.add_case_comment import AddCaseCommentService
 from application.services.add_case_evidence import AddCaseEvidenceService
 from application.services.assign_case import AssignCaseService
+from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.close_alert import CloseAlertService
 from application.services.close_case import CloseCaseService
-from application.services.change_case_priority import ChangeCasePriorityService
 from application.services.create_user import CreateUserService
 from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService

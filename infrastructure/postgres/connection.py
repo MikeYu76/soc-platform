@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import psycopg
 from psycopg.rows import dict_row
-
-if TYPE_CHECKING:
-    from infrastructure.postgres.schema import initialize_schema
 
 
 class PostgreSQLConnection:
@@ -38,7 +35,15 @@ class PostgreSQLConnection:
 class PostgreSQLConnectionFactory:
     """Opens PostgreSQL connections and initializes the application schema."""
 
-    def __init__(self, *, host: str, port: int, dbname: str, user: str, password: str) -> None:
+    def __init__(
+        self,
+        *,
+        host: str,
+        port: int,
+        dbname: str,
+        user: str,
+        password: str,
+    ) -> None:
         self._parameters = {
             "host": host,
             "port": port,
