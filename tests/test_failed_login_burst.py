@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from ipaddress import ip_address
 
 from common.detection import Detection, Severity
 from common.event import Event
@@ -11,7 +12,7 @@ def make_failed_login_detection(
     timestamp: datetime,
     source_ip: str = "203.0.113.10",
     username: str = "alice",
-    event_type: str = EventType.AUTHENTICATION_FAILED,
+    event_type: EventType = EventType.AUTHENTICATION_FAILED,
 ) -> EnrichedDetection:
 
     event = Event(
@@ -20,7 +21,7 @@ def make_failed_login_detection(
         event_type=event_type,
         message="Authentication attempt",
         raw_message="Authentication attempt",
-        source_ip=source_ip,
+        source_ip=ip_address(source_ip),
         username=username,
     )
 

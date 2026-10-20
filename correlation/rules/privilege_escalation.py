@@ -64,6 +64,8 @@ class PrivilegeEscalationRule(CorrelationRule):
 
         for detection in relevant_detections:
             username = detection.detection.event.username
+            if username is None:
+                continue
             detections_by_user.setdefault(
                 username,
                 [],

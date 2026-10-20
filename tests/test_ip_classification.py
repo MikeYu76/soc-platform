@@ -1,3 +1,6 @@
+from datetime import UTC, datetime
+from ipaddress import ip_address
+
 from common.detection import Detection, Severity
 from common.event import Event
 from common.event_types import EventType
@@ -11,12 +14,12 @@ def create_test_detection(source_ip: str | None) -> Detection:
         title="Windows Failed Login",
         severity=Severity.MEDIUM,
         event=Event(
-            timestamp="2026-10-08T12:00:00Z",
+            timestamp=datetime(2026, 10, 8, 12, 0, tzinfo=UTC),
             log_source="windows",
             event_type=EventType.AUTHENTICATION_FAILED,
             message="Failed login attempt",
             raw_message="Sample Windows failed login event",
-            source_ip=source_ip,
+            source_ip=ip_address(source_ip) if source_ip is not None else None,
         ),
     )
 

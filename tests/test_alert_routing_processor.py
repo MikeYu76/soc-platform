@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from alert.models import Alert
 from alert.processing.routing import AlertRoutingProcessor
 from common.detection import Detection, Severity
@@ -11,7 +13,7 @@ def make_alert(severity: Severity) -> Alert:
         title="Test Detection",
         severity=severity,
         event=Event(
-            timestamp="2025-01-01T00:00:00Z",
+            timestamp=datetime(2025, 1, 1, 0, 0, tzinfo=UTC),
             log_source="windows",
             event_type=EventType.AUTHENTICATION_FAILED,
             message="Failed login",

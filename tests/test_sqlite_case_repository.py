@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tempfile
+from collections.abc import Iterator
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -17,7 +18,7 @@ from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
 
 @pytest.fixture
-def connection_factory() -> SQLiteConnectionFactory:
+def connection_factory() -> Iterator[SQLiteConnectionFactory]:
     with tempfile.TemporaryDirectory() as tmpdir:
         database = Path(tmpdir) / "test.db"
         yield SQLiteConnectionFactory(str(database))

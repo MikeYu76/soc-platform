@@ -2,7 +2,17 @@ from __future__ import annotations
 
 import sqlite3
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Protocol
+
+
+class RepositoryConnection(Protocol):
+    """Connection interface shared by SQLite and PostgreSQL adapters."""
+
+    def execute(
+        self,
+        query: str,
+        parameters: Any = (),
+    ) -> Any: ...
 
 
 class SQLiteRepository:
@@ -19,22 +29,15 @@ class SQLiteRepository:
 
     def __init__(
         self,
-        connection: sqlite3.Connection,
+        connection: RepositoryConnection,
     ) -> None:
         self._connection = connection
 
     @staticmethod
     def _row_to_dict(
-        row: sqlite3.Row | None,
-    ) -> dict[str, Any] | None:
-        """
-        Convert a sqlite3.Row into a dictionary.
-
-        Returns None if the supplied row is None.
-        """
-        if row is None:
-            return None
-
+        row: sqlite3.Row,
+    ) -> dict[str, Any]:
+        """Convert a non-null sqlite3.Row into a dictionary."""
         return dict(row)
 
     def _fetch_one(

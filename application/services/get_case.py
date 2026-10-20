@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from uuid import UUID
 
 from application.dto.case import GetCaseResponse
 from application.dto.identifier import IdentifierRequest
@@ -31,7 +32,7 @@ class GetCaseService(
     ) -> GetCaseResponse:
 
         with self._unit_of_work_factory() as uow:
-            case = uow.cases.get(request.id)
+            case = uow.cases.get(UUID(request.id))
 
         if case is None:
             raise ResourceNotFoundError(f"Case '{request.id}' was not found.")

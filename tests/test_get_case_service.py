@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tempfile
+from collections.abc import Iterator
 from pathlib import Path
 from uuid import uuid4
 
@@ -15,7 +16,7 @@ from tests.test_sqlite_persistence_roundtrip import make_case
 
 
 @pytest.fixture
-def connection_factory() -> SQLiteConnectionFactory:
+def connection_factory() -> Iterator[SQLiteConnectionFactory]:
     with tempfile.TemporaryDirectory() as tmpdir:
         database = Path(tmpdir) / "test.db"
         yield SQLiteConnectionFactory(str(database))

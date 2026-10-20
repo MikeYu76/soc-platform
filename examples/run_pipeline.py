@@ -55,7 +55,7 @@ def main() -> None:
         print(event)
 
         # Run detection rules.
-        detections = engine.detect(event)
+        detections = engine.process(event)
 
         print("\n=== Detections ===")
 

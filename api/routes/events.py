@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query
+from pydantic import IPvAnyAddress
 
 from api.dependencies import (
     get_get_event_service,
@@ -54,11 +55,11 @@ def list_events(
         default=None,
         description="Filter by log source.",
     ),
-    source_ip: str | None = Query(
+    source_ip: IPvAnyAddress | None = Query(
         default=None,
         description="Filter by source IP address.",
     ),
-    destination_ip: str | None = Query(
+    destination_ip: IPvAnyAddress | None = Query(
         default=None,
         description="Filter by destination IP address.",
     ),

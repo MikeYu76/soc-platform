@@ -11,15 +11,6 @@ EVENT_ID_MAP = {
     4688: EventType.PROCESS_CREATED,
 }
 
-FIELD_MAP = {
-    "Computer": "hostname",
-    "TargetUserName": "username",
-    "IpAddress": "source_ip",
-    "ProcessName": "process_name",
-    "CommandLine": "command_line",
-}
-
-
 class WindowsParser(BaseParser):
     """
     Parser for normalized Windows event logs.
@@ -43,11 +34,6 @@ class WindowsParser(BaseParser):
 
         event_id = raw_log.get("EventID")
 
-        event_data = {}
-
-        for windows_field, event_field in FIELD_MAP.items():
-            event_data[event_field] = raw_log.get(windows_field)
-
         return Event(
             timestamp=datetime.fromisoformat(raw_log["TimeCreated"]),
             log_source="windows",
@@ -55,5 +41,9 @@ class WindowsParser(BaseParser):
             message=raw_log.get("Message", ""),
             raw_message=str(raw_log),
             event_id=event_id,
-            **event_data,
+            hostname=raw_log.get("Computer"),
+            username=raw_log.get("TargetUserName"),
+            source_ip=raw_log.get("IpAddress"),
+            process_name=raw_log.get("ProcessName"),
+            command_line=raw_log.get("CommandLine"),
         )

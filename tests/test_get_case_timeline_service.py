@@ -38,7 +38,7 @@ def test_get_case_timeline(
 
     response = service.execute(
         IdentifierRequest(
-            id=case.id,
+            id=str(case.id),
         )
     )
 

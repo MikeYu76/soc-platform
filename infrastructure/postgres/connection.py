@@ -44,7 +44,7 @@ class PostgreSQLConnectionFactory:
         user: str,
         password: str,
     ) -> None:
-        self._parameters = {
+        self._parameters: dict[str, Any] = {
             "host": host,
             "port": port,
             "dbname": dbname,

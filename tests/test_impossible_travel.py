@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from ipaddress import ip_address
 
 from common.detection import Detection, Severity
 from common.event import Event
@@ -12,7 +13,7 @@ def make_auth_detection(
     username: str,
     country: str,
     source_ip: str = "203.0.113.10",
-    event_type: str = EventType.AUTHENTICATION_SUCCESS,
+    event_type: EventType = EventType.AUTHENTICATION_SUCCESS,
 ) -> EnrichedDetection:
 
     event = Event(
@@ -21,7 +22,7 @@ def make_auth_detection(
         event_type=event_type,
         message="Successful authentication",
         raw_message="Successful authentication",
-        source_ip=source_ip,
+        source_ip=ip_address(source_ip),
         username=username,
     )
 

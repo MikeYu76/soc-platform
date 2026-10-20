@@ -19,6 +19,14 @@ class AlertRule(ABC):
     """
 
     @abstractmethod
+    def generate(
+        self,
+        detections: list[Detection],
+        correlations: list[CorrelationResult],
+    ) -> list[Alert]:
+        """Generate alerts from detections and correlation results."""
+        raise NotImplementedError
+    @abstractmethod
     def from_detection(
         self,
         detection: Detection,

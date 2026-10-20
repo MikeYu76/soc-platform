@@ -40,6 +40,8 @@ class ImpossibleTravelRule(CorrelationRule):
 
         for detection in successful_logins:
             username = detection.detection.event.username
+            if username is None:
+                continue
             detections_by_user.setdefault(username, []).append(detection)
 
         results: list[CorrelationResult] = []

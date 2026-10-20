@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import builtins
+
 from common.event import Event
 from infrastructure.sqlite.base_repository import SQLiteRepository
 from infrastructure.sqlite.mappers.event_mapper import EventMapper
@@ -49,7 +51,7 @@ class SQLiteEventRepository(
 
     def list(
         self,
-    ) -> list[Event]:
+    ) -> builtins.list[Event]:
         return self.search(
             EventQuery(),
         )
@@ -57,7 +59,7 @@ class SQLiteEventRepository(
     def search(
         self,
         query: EventQuery,
-    ) -> list[Event]:
+    ) -> builtins.list[Event]:
         sql, parameters = EventQueryBuilder.build(
             query,
         )

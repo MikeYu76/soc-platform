@@ -4,12 +4,14 @@ from uuid import uuid4
 from alert.correlation_alert import CorrelationAlertRule
 from alert.engine import AlertEngine
 from alert.immediate_detection import ImmediateDetectionAlertRule
+from alert.processing.base import AlertProcessor
 from alert.processing.engine import AlertProcessingEngine
 from application.dto.process_security_event import ProcessSecurityEventRequest
 from application.services.process_security_event import (
     ProcessSecurityEventService,
 )
 from case.factory import CaseFactory
+from case.processing.base import CaseProcessor
 from case.processing.engine import CaseProcessingEngine
 from common.detection import Detection, Severity
 from common.event import Event
@@ -70,7 +72,7 @@ class TestCorrelationRule(CorrelationRule):
         ]
 
 
-class TestAlertProcessor:
+class TestAlertProcessor(AlertProcessor):
     def process(
         self,
         alerts,
@@ -78,7 +80,7 @@ class TestAlertProcessor:
         return alerts
 
 
-class TestCaseProcessor:
+class TestCaseProcessor(CaseProcessor):
     def process(
         self,
         cases,

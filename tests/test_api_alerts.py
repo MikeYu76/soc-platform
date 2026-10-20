@@ -1,3 +1,6 @@
+from datetime import UTC, datetime
+from ipaddress import ip_address
+
 from fastapi.testclient import TestClient
 
 from alert.models import Alert
@@ -15,15 +18,15 @@ def build_detection() -> Detection:
     """
 
     event = Event(
-        timestamp="2026-01-01T00:00:00Z",
+        timestamp=datetime(2026, 1, 1, 0, 0, tzinfo=UTC),
         log_source="windows",
         event_type=EventType.AUTHENTICATION_FAILED,
         message="Failed login",
         raw_message="User admin failed to log in.",
         hostname="dc01",
         username="admin",
-        source_ip="8.8.8.8",
-        destination_ip="10.0.0.5",
+        source_ip=ip_address("8.8.8.8"),
+        destination_ip=ip_address("10.0.0.5"),
     )
 
     return Detection(
@@ -119,15 +122,15 @@ def test_filter_alerts_by_severity(
     high_detection = build_detection()
 
     critical_event = Event(
-        timestamp="2026-01-01T00:00:01Z",
+        timestamp=datetime(2026, 1, 1, 0, 0, 1, tzinfo=UTC),
         log_source="windows",
         event_type=EventType.AUTHENTICATION_FAILED,
         message="Critical Failed Login",
         raw_message="Critical Failed Login",
         hostname="dc01",
         username="admin",
-        source_ip="1.1.1.1",
-        destination_ip="10.0.0.5",
+        source_ip=ip_address("1.1.1.1"),
+        destination_ip=ip_address("10.0.0.5"),
     )
 
     critical_detection = Detection(

@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import pytest
 
 from common.detection import Detection, Severity
@@ -35,7 +37,7 @@ class AnotherMatchRule(DetectionRule):
 @pytest.fixture
 def sample_event() -> Event:
     return Event(
-        timestamp="2026-01-01T12:00:00Z",
+        timestamp=datetime(2026, 1, 1, 12, 0, tzinfo=UTC),
         log_source="windows",
         event_type=EventType.UNKNOWN,
         message="Test event",

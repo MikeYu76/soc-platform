@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from uuid import UUID
 
 from application.dto.alert import GetAlertResponse
 from application.dto.identifier import IdentifierRequest
@@ -31,7 +32,7 @@ class GetAlertService(
     ) -> GetAlertResponse:
 
         with self._unit_of_work_factory() as uow:
-            alert = uow.alerts.get(request.id)
+            alert = uow.alerts.get(UUID(request.id))
 
         if alert is None:
             raise ResourceNotFoundError(f"Alert '{request.id}' was not found.")

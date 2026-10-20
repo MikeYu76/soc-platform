@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import pytest
 
 from common.detection import Detection, Severity
@@ -14,7 +16,7 @@ def create_test_detection(severity: Severity) -> Detection:
         title="Windows Failed Login",
         severity=severity,
         event=Event(
-            timestamp="2026-10-08T12:00:00Z",
+            timestamp=datetime(2026, 10, 8, 12, 0, tzinfo=UTC),
             log_source="windows",
             event_type=EventType.AUTHENTICATION_FAILED,
             message="Failed login attempt",

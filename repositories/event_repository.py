@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
@@ -48,7 +49,7 @@ class EventRepository(ABC):
     @abstractmethod
     def list(
         self,
-    ) -> list[Event]:
+    ) -> builtins.list[Event]:
         """
         Return all persisted events.
         """
@@ -58,7 +59,7 @@ class EventRepository(ABC):
     def search(
         self,
         query: EventQuery,
-    ) -> list[Event]:
+    ) -> builtins.list[Event]:
         """
         Search for persisted events using query criteria.
         """

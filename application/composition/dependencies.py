@@ -98,6 +98,8 @@ from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
 settings: Settings = get_settings()
 
+connection_factory: PostgreSQLConnectionFactory | SQLiteConnectionFactory
+
 if settings.database_backend == "postgresql":
     connection_factory = PostgreSQLConnectionFactory(
         host=settings.postgres_host,
@@ -111,7 +113,7 @@ else:
 
 
 def unit_of_work_factory():
-    if settings.database_backend == "postgresql":
+    if isinstance(connection_factory, PostgreSQLConnectionFactory):
         return PostgreSQLUnitOfWork(connection_factory)
     return SQLiteUnitOfWork(connection_factory)
 
