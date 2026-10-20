@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     opensearch_port: int = Field(default=9200)
     opensearch_use_ssl: bool = Field(default=False)
     opensearch_index: str = Field(default="security-events")
+    opensearch_enabled: bool = False
+    opensearch_username: str = "admin"
+    opensearch_password: SecretStr = SecretStr("")
+    opensearch_verify_certs: bool = True
     jwt_secret: SecretStr = Field(default=SecretStr(""))
     access_token_expire_minutes: int = Field(default=30, gt=0)
     bootstrap_admin_username: str | None = None

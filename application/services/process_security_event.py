@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 
 from alert.engine import AlertEngine
@@ -14,7 +15,10 @@ from case.processing.engine import CaseProcessingEngine
 from correlation.engine import CorrelationEngine
 from detection.engine import DetectionEngine
 from enrichment.engine import EnrichmentEngine
+from repositories.event_indexer import EventIndexer
 from repositories.unit_of_work import UnitOfWork
+
+logger = logging.getLogger(__name__)
 
 
 class ProcessSecurityEventService(
@@ -37,6 +41,7 @@ class ProcessSecurityEventService(
         alert_processing_engine: AlertProcessingEngine,
         case_factory: CaseFactory,
         case_processing_engine: CaseProcessingEngine,
+        event_indexer: EventIndexer | None = None,
     ) -> None:
         self._unit_of_work_factory = unit_of_work_factory
         self._detection_engine = detection_engine
@@ -46,6 +51,7 @@ class ProcessSecurityEventService(
         self._alert_processing_engine = alert_processing_engine
         self._case_factory = case_factory
         self._case_processing_engine = case_processing_engine
+        self._event_indexer = event_indexer
 
     def execute(
         self,
@@ -98,6 +104,18 @@ class ProcessSecurityEventService(
             uow.cases.save_all(cases)
 
             uow.commit()
+
+        # The relational database remains the source of truth. OpenSearch is
+        # an auxiliary search index, so an indexing outage must not undo a
+        # successfully committed event-processing result.
+        if self._event_indexer is not None:
+            try:
+                self._event_indexer.index(request.event)
+            except Exception:
+                logger.exception(
+                    "Could not index processed event in OpenSearch",
+                    extra={"event_id": request.event.id},
+                )
 
         return ProcessSecurityEventResponse(
             event=request.event,

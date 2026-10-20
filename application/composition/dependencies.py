@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from opensearchpy import OpenSearch
+
 from alert.correlation_alert import CorrelationAlertRule
 from alert.engine import AlertEngine
 from alert.immediate_detection import ImmediateDetectionAlertRule
@@ -91,10 +93,12 @@ from enrichment.ip_classification import (
 from enrichment.ip_context import (
     IPContextEnricher,
 )
+from infrastructure.opensearch.event_indexer import OpenSearchEventIndexer
 from infrastructure.postgres.connection import PostgreSQLConnectionFactory
 from infrastructure.postgres.postgres_unit_of_work import PostgreSQLUnitOfWork
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
 from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
+from repositories.event_indexer import EventIndexer
 
 settings: Settings = get_settings()
 
@@ -110,6 +114,32 @@ if settings.database_backend == "postgresql":
     )
 else:
     connection_factory = SQLiteConnectionFactory(settings.database_path)
+
+
+event_indexer: EventIndexer | None = None
+if settings.opensearch_enabled:
+    opensearch_client = OpenSearch(
+        hosts=[
+            {
+                "host": settings.opensearch_host,
+                "port": settings.opensearch_port,
+            }
+        ],
+        http_auth=(
+            settings.opensearch_username,
+            settings.opensearch_password.get_secret_value(),
+        ),
+        use_ssl=settings.opensearch_use_ssl,
+        verify_certs=settings.opensearch_verify_certs,
+        ssl_show_warn=settings.opensearch_verify_certs,
+        timeout=5,
+        max_retries=2,
+        retry_on_timeout=True,
+    )
+    event_indexer = OpenSearchEventIndexer(
+        client=opensearch_client,
+        index_name=settings.opensearch_index,
+    )
 
 
 def unit_of_work_factory():
@@ -206,6 +236,7 @@ process_security_event_service = ProcessSecurityEventService(
     alert_processing_engine=alert_processing_engine,
     case_factory=case_factory,
     case_processing_engine=case_processing_engine,
+    event_indexer=event_indexer,
 )
 
 

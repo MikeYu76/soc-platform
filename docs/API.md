@@ -34,7 +34,7 @@ Allowed role names: `Analyst`, `Senior Analyst`, `Incident Responder`, `SOC Mana
 |---|---|---|
 | `GET` | `/events` | List persisted events. Supports event type, hostname, username, log source, source/destination IP, sort field, order, limit, and offset filters. |
 | `GET` | `/events/{id}` | Retrieve one event. |
-| `POST` | `/events` | Process a normalized security event through the SOC pipeline. Incident Responder, SOC Manager, or Administrator role required. |
+| `POST` | `/events` | Process a normalized security event through the SOC pipeline, persist it relationally, and best-effort index it in OpenSearch. Incident Responder, SOC Manager, or Administrator role required. |
 
 List defaults: `limit=50`, `offset=0`, descending timestamp order. `limit` must be at least 1; `offset` must be nonnegative.
 
@@ -92,3 +92,8 @@ Invoke-RestMethod -Uri http://localhost:8000/cases?limit=10 -Headers $headers
 ```
 
 Use the response fields shown in `/docs` for the exact login token response and event request schema.
+
+
+## OpenSearch event index
+
+The Compose stack indexes processed events into the `security-events` index. OpenSearch Dashboards can inspect the index through **Discover** after creating a data view named `security-events` and selecting `timestamp` as the time field. Indexing happens after relational commit; indexing errors are logged and do not roll back processing. See `docs/DESIGN-DECISIONS.md` for this delivery trade-off.

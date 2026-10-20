@@ -20,7 +20,7 @@ flowchart TB
     COMPOSE -. includes .-> OS[OpenSearch + Dashboards]
 ```
 
-The OpenSearch services currently run alongside the API but the event processing path does not yet write to an OpenSearch index. Persistence for operational entities is through the selected relational backend.
+Processed normalized events are sent to OpenSearch after the relational Unit of Work commits. The relational database remains the source of truth for operational entities; OpenSearch is an auxiliary event-search index. If indexing fails, the API logs the failure and returns the successfully committed processing result. This best-effort path does not include a durable retry queue.
 
 ## Event processing sequence
 
@@ -35,6 +35,7 @@ sequenceDiagram
     participant Alert as Alert + processors
     participant Case as Case factory + processors
     participant UoW as Unit of Work / repositories
+    participant Search as OpenSearch indexer
     Analyst->>API: POST /events (bearer token)
     API->>UseCase: validated event request
     UseCase->>Detect: evaluate event
@@ -48,7 +49,9 @@ sequenceDiagram
     UseCase->>Case: create/process investigation cases
     Case-->>UseCase: cases
     UseCase->>UoW: persist results and commit
-    UoW-->>UseCase: persisted identifiers
+    UoW-->>UseCase: relational commit succeeds
+    UseCase->>Search: index normalized event (best-effort)
+    Search-->>UseCase: indexed or logged failure
     UseCase-->>API: response DTO
     API-->>Analyst: JSON response
 ```
@@ -101,4 +104,4 @@ sequenceDiagram
 
 ## Runtime selection
 
-`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. PostgreSQL schema setup is currently managed by the application adapter; a separate migration framework is not configured.
+`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. When `SOC_OPENSEARCH_ENABLED=true`, it also creates an OpenSearch client and injects an event indexer into the processing service. PostgreSQL schema setup is currently managed by the application adapter; a separate migration framework is not configured.

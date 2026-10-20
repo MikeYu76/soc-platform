@@ -9,6 +9,13 @@ services:
       SOC_API_HOST: 0.0.0.0
       SOC_API_PORT: 8000
       SOC_DATABASE_BACKEND: postgresql
+      SOC_OPENSEARCH_ENABLED: "true"
+      SOC_OPENSEARCH_HOST: opensearch
+      SOC_OPENSEARCH_PORT: 9200
+      SOC_OPENSEARCH_USE_SSL: "true"
+      SOC_OPENSEARCH_VERIFY_CERTS: "false"
+      SOC_OPENSEARCH_USERNAME: admin
+      SOC_OPENSEARCH_PASSWORD: ${OPENSEARCH_INITIAL_ADMIN_PASSWORD:?Set OPENSEARCH_INITIAL_ADMIN_PASSWORD in .env}
       SOC_POSTGRES_HOST: postgres
       SOC_POSTGRES_PORT: 5432
       SOC_POSTGRES_DATABASE: ${SOC_POSTGRES_DB:-soc_platform}
@@ -22,6 +29,8 @@ services:
       - "8000:8000"
     depends_on:
       postgres:
+        condition: service_healthy
+      opensearch:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]

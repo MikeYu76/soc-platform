@@ -10,7 +10,7 @@ A modular Security Operations Center (SOC) learning and portfolio project. The p
 - REST API for events, alerts, cases, and authentication.
 - SQLite for local development/tests; PostgreSQL is configured for the Docker Compose stack.
 - React console at `http://localhost:3000` when Compose is running.
-- OpenSearch and OpenSearch Dashboards services are included in Compose. The current event processing path does not yet index application events into OpenSearch.
+- Processed events are indexed into OpenSearch for searching in OpenSearch Dashboards. The relational database remains the source of truth.
 
 This is a development and portfolio project. Review the security and deployment limitations in [Design decisions](docs/DESIGN-DECISIONS.md) before using it outside a local environment.
 

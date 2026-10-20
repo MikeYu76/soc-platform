@@ -30,4 +30,4 @@ The SQLite database is kept in the soc-data Docker volume. Stopping or recreatin
    docker compose down -v
 
 NOTES
-This Compose file is for local development. OpenSearch and Dashboards are included as services for the planned SOC stack; the current API code does not yet send data to OpenSearch. This setup does not configure production TLS or production secrets.
+Processed events are indexed to the OpenSearch security-events index after the relational database commit. In OpenSearch Dashboards, open Discover, create a data view named security-events, and choose timestamp as the time field. Indexing is best-effort: an OpenSearch failure is logged while the relational event-processing result remains successful. A durable retry queue is not configured. This Compose file is for local development and does not configure production TLS or production secrets.

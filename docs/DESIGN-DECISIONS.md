@@ -42,13 +42,13 @@ This document records the current implementation choices and their practical cos
 
 **Cost:** Adding plugins dynamically or configuring tenants independently would need additional loading/configuration infrastructure.
 
-## OpenSearch services are present but not wired to event indexing
+## Relational persistence plus an OpenSearch event index
 
-**Choice:** Compose starts OpenSearch and Dashboards as part of the SOC environment.
+**Choice:** Processed events are committed to the selected relational database and then indexed in OpenSearch using the stable event ID. The relational database remains authoritative; OpenSearch supports event search and Dashboards exploration. OpenSearch indexing is optional outside Compose through `SOC_OPENSEARCH_ENABLED`.
 
-**Benefit:** The development stack is ready for future search/analytics integration.
+**Benefit:** Operators can search full-text event messages and filter on mapped event fields in OpenSearch Dashboards.
 
-**Cost:** The current event pipeline persists operational data through SQLite/PostgreSQL and does not index events in OpenSearch. Dashboards therefore do not automatically show application events. Credentials and TLS settings are for local development only.
+**Cost / follow-up:** The database and search index cannot share one transaction. Indexing runs synchronously after the database commit; an OpenSearch failure is logged while the already-committed processing request succeeds. A durable outbox/retry worker is needed if eventual indexing must be guaranteed. Credentials and disabled certificate verification in Compose are for local development only.
 
 ## React console served by Nginx
 

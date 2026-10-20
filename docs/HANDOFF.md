@@ -38,7 +38,7 @@ SQLite is the default for a directly launched API. Configure `SOC_JWT_SECRET`, `
 5. Use `http://localhost:3000` for the console, `http://localhost:8000/docs` for API docs, and `http://localhost:5601` for OpenSearch Dashboards.
 6. Stop with `docker compose down`. Avoid `docker compose down -v` unless deleting persistent database/search data is intentional.
 
-The Compose setup uses PostgreSQL. The API code currently does not index events into OpenSearch.
+The Compose setup uses PostgreSQL and enables best-effort indexing of processed events to OpenSearch. In OpenSearch Dashboards, create a `security-events` data view using `timestamp` as the time field. The relational database is authoritative; OpenSearch indexing failures are logged and are not retried durably.
 
 ## Quality checks
 
@@ -74,11 +74,11 @@ Expected at the last verified checkpoint: Ruff passes, mypy reports no issues, a
 
 ## Known limitations and next steps
 
-- OpenSearch is included in Compose but is not connected to event indexing.
+- OpenSearch indexing runs after the relational transaction commits; failures are logged, and no durable outbox/retry exists yet.
 - PostgreSQL schema management does not yet use a migration tool.
 - CI's mypy step is advisory (`continue-on-error: true`).
 - The API handles event processing synchronously; there is no durable work queue or retry mechanism.
 - Deployment settings are for local development and need a production security review before external exposure.
 - The health endpoint reports API liveness, not readiness of every dependency.
 
-Possible next work: wire event indexing into OpenSearch; add schema migrations; enforce mypy in CI; add operational logging/metrics and readiness checks; then harden deployment configuration.
+Possible next work: add a durable outbox/retry worker for OpenSearch indexing; add schema migrations; enforce mypy in CI; add operational metrics and dependency readiness checks; then harden deployment configuration.
