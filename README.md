@@ -11,6 +11,7 @@ A modular Security Operations Center (SOC) learning and portfolio project. The p
 - SQLite for local development/tests; PostgreSQL is configured for the Docker Compose stack.
 - React console at `http://localhost:3000` when Compose is running.
 - Processed events are indexed into OpenSearch for searching in OpenSearch Dashboards. A relational outbox retries indexing after temporary OpenSearch outages; the relational database remains the source of truth.
+- Administrators can inspect OpenSearch indexing queue health at `/operations/opensearch-indexing`.
 
 This is a development and portfolio project. Review the security and deployment limitations in [Design decisions](docs/DESIGN-DECISIONS.md) before using it outside a local environment.
 

@@ -12,6 +12,18 @@ class PendingEventIndex:
     attempts: int
 
 
+@dataclass(frozen=True, slots=True)
+class EventIndexOutboxStatus:
+    """Aggregate state for queued OpenSearch indexing work."""
+
+    pending_count: int
+    ready_count: int
+    retry_wait_count: int
+    retrying_count: int
+    oldest_created_at: str | None
+    max_attempts: int
+
+
 class EventIndexOutboxRepository(ABC):
     """Persistence port for durable OpenSearch indexing work."""
 
@@ -23,6 +35,11 @@ class EventIndexOutboxRepository(ABC):
     @abstractmethod
     def get_pending(self, limit: int) -> list[PendingEventIndex]:
         """Return due queue entries in creation order."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_status(self) -> EventIndexOutboxStatus:
+        """Return aggregate counts and age information for queued work."""
         raise NotImplementedError
 
     @abstractmethod

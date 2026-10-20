@@ -48,7 +48,7 @@ This document records the current implementation choices and their practical cos
 
 **Benefit:** Operators can search full-text event messages and filter on mapped event fields in OpenSearch Dashboards.
 
-**Cost / follow-up:** The database and search index cannot share one transaction, so search results may lag behind ingestion. The outbox makes retry durable across process restarts, but there is no dead-letter threshold or operator-facing queue monitor. Delivery is at least once: multiple workers may process the same pending row, and indexing by stable ID makes duplicate writes safe. A retry after OpenSearch success and before outbox deletion is also safe. Credentials and disabled certificate verification in Compose are for local development only.
+**Cost / follow-up:** The database and search index cannot share one transaction, so search results may lag behind ingestion. Administrators can inspect aggregate queue health at `GET /operations/opensearch-indexing`; there is no dead-letter threshold or per-event retry control. Delivery is at least once: multiple workers may process the same pending row, and indexing by stable ID makes duplicate writes safe. A retry after OpenSearch success and before outbox deletion is also safe. Credentials and disabled certificate verification in Compose are for local development only.
 
 ## React console served by Nginx
 

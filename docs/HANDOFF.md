@@ -74,11 +74,12 @@ Expected at the last verified checkpoint: Ruff passes, mypy reports no issues, a
 
 ## Known limitations and next steps
 
-- OpenSearch writes are asynchronous and may lag; the durable outbox retries failures but has no dead-letter threshold or monitoring endpoint.
+- OpenSearch writes are asynchronous and may lag; the durable outbox retries failures but has no dead-letter threshold.
+- OpenSearch outbox status is available to administrators at `GET /operations/opensearch-indexing`; it reports queue counts and age, but does not expose per-event contents or allow manual retry/deletion.
 - PostgreSQL schema management does not yet use a migration tool.
 - CI's mypy step is advisory (`continue-on-error: true`).
-- Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox. There is no dead-letter threshold or queue monitoring endpoint yet.
+- Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox. There is no dead-letter threshold yet.
 - Deployment settings are for local development and need a production security review before external exposure.
 - The health endpoint reports API liveness, not readiness of every dependency.
 
-Possible next work: add schema migrations; enforce mypy in CI; add operational metrics and an outbox monitoring view; then harden deployment configuration.
+Possible next work: add schema migrations; enforce mypy in CI; add metrics and alerts for sustained queue growth; then harden deployment configuration.

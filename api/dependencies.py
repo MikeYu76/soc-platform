@@ -17,8 +17,10 @@ from application.composition.dependencies import (
     login_service,
     process_security_event_service,
     resolve_case_service,
+    settings,
     start_alert_investigation_service,
     start_case_investigation_service,
+    unit_of_work_factory,
 )
 from application.services.acknowledge_alert import AcknowledgeAlertService
 from application.services.add_case_comment import AddCaseCommentService
@@ -32,6 +34,9 @@ from application.services.get_alert import GetAlertService
 from application.services.get_case import GetCaseService
 from application.services.get_case_timeline import GetCaseTimelineService
 from application.services.get_event import GetEventService
+from application.services.get_event_index_outbox_status import (
+    GetEventIndexOutboxStatusService,
+)
 from application.services.list_alerts import ListAlertsService
 from application.services.list_cases import ListCasesService
 from application.services.list_events import ListEventsService
@@ -58,6 +63,13 @@ def get_get_event_service() -> GetEventService:
 
 def get_list_events_service() -> ListEventsService:
     return list_events_service
+
+
+def get_get_event_index_outbox_status_service() -> GetEventIndexOutboxStatusService:
+    return GetEventIndexOutboxStatusService(
+        unit_of_work_factory=unit_of_work_factory,
+        enabled=settings.opensearch_enabled,
+    )
 
 
 def get_get_alert_service() -> GetAlertService:

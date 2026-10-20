@@ -75,6 +75,14 @@ Case list defaults to `limit=50`, `offset=0`.
 
 The health endpoint does not authenticate. A healthy response confirms the API process responds; it is not a complete dependency-readiness report.
 
+## Operations
+
+| Method | Path | Description | Permission |
+|---|---|---|---|
+| `GET` | `/operations/opensearch-indexing` | Return OpenSearch outbox queue counts, oldest pending item age, and highest retry count. | Administrator |
+
+The response includes `enabled`, `pending_count`, `ready_count`, `retry_wait_count`, `retrying_count`, `oldest_pending_at`, `oldest_pending_age_seconds`, and `max_attempts`. Event contents and credentials are not returned. An empty queue reports zero counts and null oldest-item fields.
+
 ## Errors and validation
 
 FastAPI validates request bodies and query parameters. Invalid inputs produce a `422` response. Authentication failures produce `401`, role failures `403`, missing entities normally `404`, and duplicate usernames `409`. Authentication configuration problems may produce `503`. Exact response schemas are documented in `/docs`.

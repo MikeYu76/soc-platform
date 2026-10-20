@@ -23,7 +23,7 @@ flowchart TB
     COMPOSE -. includes .-> OS[OpenSearch + Dashboards]
 ```
 
-Processed normalized events and an OpenSearch outbox row are committed together in the relational Unit of Work. A background worker sends due outbox events to OpenSearch, deletes successful entries, and reschedules failures with capped exponential backoff. The relational database remains authoritative. Indexing may lag while retries are pending; the API response does not wait for indexing.
+Processed normalized events and an OpenSearch outbox row are committed together in the relational Unit of Work. A background worker sends due outbox events to OpenSearch, deletes successful entries, and reschedules failures with capped exponential backoff. Administrators can inspect aggregate queue health at `GET /operations/opensearch-indexing`. The relational database remains authoritative. Indexing may lag while retries are pending; the API response does not wait for indexing.
 
 ## Event processing sequence
 

@@ -4,7 +4,13 @@ from threading import Event, Thread
 from fastapi import FastAPI
 
 from api.exception_handlers import register_exception_handlers
-from api.routes import alerts_router, auth_router, cases_router, events_router
+from api.routes import (
+    alerts_router,
+    auth_router,
+    cases_router,
+    events_router,
+    operations_router,
+)
 from application.composition.authentication import ensure_bootstrap_administrator
 from application.composition.dependencies import event_indexer, unit_of_work_factory
 from infrastructure.opensearch.outbox_worker import run_event_index_outbox_worker
@@ -47,6 +53,7 @@ app.include_router(events_router)
 app.include_router(alerts_router)
 app.include_router(cases_router)
 app.include_router(auth_router)
+app.include_router(operations_router)
 
 
 @app.get("/health")
