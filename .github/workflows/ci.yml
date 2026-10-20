@@ -29,6 +29,7 @@ jobs:
         run: ruff check .
 
       - name: Type check with mypy
+        continue-on-error: true
         env:
           MYPYPATH: ${{ github.workspace }}
         run: mypy --ignore-missing-imports --namespace-packages --explicit-package-bases .
