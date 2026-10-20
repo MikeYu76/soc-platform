@@ -86,6 +86,15 @@ services:
       opensearch:
         condition: service_healthy
 
+  frontend:
+    build: ./frontend
+    container_name: soc-platform-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      soc-platform:
+        condition: service_healthy
 volumes:
   postgres-data:
   opensearch-data:
