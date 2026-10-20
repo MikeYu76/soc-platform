@@ -1,0 +1,46 @@
+SOC Platform PostgreSQL Setup
+
+WHAT CHANGES
+Docker Compose will use PostgreSQL for the application database. Your local Python/test setup continues to use SQLite by default. PostgreSQL stores its data in a separate persistent Docker volume.
+
+FILES TO COPY
+Copy these into the top-level soc-platform project folder, replacing files when asked:
+- requirements.txt
+- compose.yaml
+- application/composition/settings.py
+- application/composition/dependencies.py
+- infrastructure/sqlite/mappers/user_mapper.py
+
+Create infrastructure/postgres if it does not exist. Copy all five files from infrastructure/postgres in the ZIP into that folder:
+- __init__.py
+- connection.py
+- postgres_unit_of_work.py
+- repositories.py
+- schema.py
+
+UPDATE .env WITHOUT OVERWRITING IT
+Keep your existing .env and add these three lines. Choose a strong, unique database password; do not paste it into chat:
+SOC_POSTGRES_DB=soc_platform
+SOC_POSTGRES_USER=soc_platform
+SOC_POSTGRES_PASSWORD=your-strong-postgres-password
+
+The app creates its tables and bootstrap admin account in PostgreSQL on startup. Existing SQLite data is not copied automatically. The old soc-data volume is left untouched.
+
+INSTALL AND RESTART
+After copying the files and updating .env, run:
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   docker compose down
+   docker compose up --build -d
+
+CHECK
+   docker compose ps
+   Invoke-RestMethod http://localhost:8000/health
+
+The postgres service should show healthy, and the API health request should return status healthy.
+
+STOP
+   docker compose down
+
+Do not run docker compose down -v unless you intend to permanently erase the PostgreSQL and OpenSearch data volumes.
+
+This development setup is not intended for production deployment.

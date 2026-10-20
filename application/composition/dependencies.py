@@ -91,24 +91,29 @@ from enrichment.ip_classification import (
 from enrichment.ip_context import (
     IPContextEnricher,
 )
-from infrastructure.sqlite.connection import (
-    SQLiteConnectionFactory,
-)
-from infrastructure.sqlite.sqlite_unit_of_work import (
-    SQLiteUnitOfWork,
-)
+from infrastructure.postgres.connection import PostgreSQLConnectionFactory
+from infrastructure.postgres.postgres_unit_of_work import PostgreSQLUnitOfWork
+from infrastructure.sqlite.connection import SQLiteConnectionFactory
+from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 
 settings: Settings = get_settings()
 
-connection_factory = SQLiteConnectionFactory(
-    settings.database_path,
-)
-
-
-def unit_of_work_factory() -> SQLiteUnitOfWork:
-    return SQLiteUnitOfWork(
-        connection_factory,
+if settings.database_backend == "postgresql":
+    connection_factory = PostgreSQLConnectionFactory(
+        host=settings.postgres_host,
+        port=settings.postgres_port,
+        dbname=settings.postgres_database,
+        user=settings.postgres_user,
+        password=settings.postgres_password.get_secret_value(),
     )
+else:
+    connection_factory = SQLiteConnectionFactory(settings.database_path)
+
+
+def unit_of_work_factory():
+    if settings.database_backend == "postgresql":
+        return PostgreSQLUnitOfWork(connection_factory)
+    return SQLiteUnitOfWork(connection_factory)
 
 
 ip_context: dict[str, dict[str, str]] = {
@@ -296,3 +301,4 @@ login_service = LoginService(
 create_user_service = CreateUserService(
     unit_of_work_factory=unit_of_work_factory,
 )
+

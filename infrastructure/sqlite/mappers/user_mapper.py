@@ -14,7 +14,7 @@ class UserMapper(BaseMapper):
             "id": str(user.user_id),
             "username": user.username,
             "role": user.role.value,
-            "is_active": int(user.is_active),
+            "is_active": user.is_active,
             "created_at": user.created_at.isoformat(),
             "data": cls.serialize(user),
         }
@@ -22,3 +22,4 @@ class UserMapper(BaseMapper):
     @classmethod
     def from_record(cls, record: Mapping[str, Any]) -> User:
         return cls.deserialize(User, record["data"])
+

@@ -1,0 +1,7 @@
+Add these lines to your existing .env file. Do not replace .env.
+
+SOC_POSTGRES_DB=soc_platform
+SOC_POSTGRES_USER=soc_platform
+SOC_POSTGRES_PASSWORD=replace_with_a_strong_postgres_password
+
+Choose a strong, unique password and keep it private.
