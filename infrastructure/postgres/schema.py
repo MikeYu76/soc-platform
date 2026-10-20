@@ -49,6 +49,13 @@ _SCHEMA_STATEMENTS = (
         is_active BOOLEAN NOT NULL, created_at TEXT NOT NULL, data TEXT NOT NULL
     )""",
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username_ci ON users(LOWER(username))",
+    """CREATE TABLE IF NOT EXISTS event_index_outbox (
+        event_id TEXT PRIMARY KEY, created_at TEXT NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0, next_attempt_at TEXT NOT NULL,
+        last_error TEXT
+    )""",
+    """CREATE INDEX IF NOT EXISTS idx_event_index_outbox_due
+        ON event_index_outbox(next_attempt_at, created_at)""",
 )
 
 

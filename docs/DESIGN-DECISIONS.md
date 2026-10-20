@@ -44,11 +44,11 @@ This document records the current implementation choices and their practical cos
 
 ## Relational persistence plus an OpenSearch event index
 
-**Choice:** Processed events are committed to the selected relational database and then indexed in OpenSearch using the stable event ID. The relational database remains authoritative; OpenSearch supports event search and Dashboards exploration. OpenSearch indexing is optional outside Compose through `SOC_OPENSEARCH_ENABLED`.
+**Choice:** The normalized event and its outbox entry are committed together in the selected relational database. A background worker indexes the event in OpenSearch using its stable ID, then removes the outbox entry. Failed writes remain queued and use capped exponential backoff. OpenSearch indexing is optional outside Compose through `SOC_OPENSEARCH_ENABLED`.
 
 **Benefit:** Operators can search full-text event messages and filter on mapped event fields in OpenSearch Dashboards.
 
-**Cost / follow-up:** The database and search index cannot share one transaction. Indexing runs synchronously after the database commit; an OpenSearch failure is logged while the already-committed processing request succeeds. A durable outbox/retry worker is needed if eventual indexing must be guaranteed. Credentials and disabled certificate verification in Compose are for local development only.
+**Cost / follow-up:** The database and search index cannot share one transaction, so search results may lag behind ingestion. The outbox makes retry durable across process restarts, but there is no dead-letter threshold or operator-facing queue monitor. Delivery is at least once: multiple workers may process the same pending row, and indexing by stable ID makes duplicate writes safe. A retry after OpenSearch success and before outbox deletion is also safe. Credentials and disabled certificate verification in Compose are for local development only.
 
 ## React console served by Nginx
 

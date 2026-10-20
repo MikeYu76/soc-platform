@@ -138,6 +138,21 @@ def initialize_schema(connection: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_users_username
             ON users(username);
+
+        --------------------------------------------------------------------
+        -- OpenSearch event indexing outbox
+        --------------------------------------------------------------------
+
+        CREATE TABLE IF NOT EXISTS event_index_outbox (
+            event_id TEXT PRIMARY KEY,
+            created_at TEXT NOT NULL,
+            attempts INTEGER NOT NULL DEFAULT 0,
+            next_attempt_at TEXT NOT NULL,
+            last_error TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_event_index_outbox_due
+            ON event_index_outbox(next_attempt_at, created_at);
         """)
 
     connection.commit()

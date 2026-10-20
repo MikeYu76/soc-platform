@@ -59,8 +59,10 @@ class ProcessSecurityEventService(
     ) -> ProcessSecurityEventResponse:
 
         with self._unit_of_work_factory() as uow:
-            # Persist event
+            # Persist the event and its search-index work atomically.
             uow.events.save(request.event)
+            if self._event_indexer is not None:
+                uow.event_index_outbox.enqueue(request.event.id)
 
             # Detection
             detections = self._detection_engine.process(
@@ -104,18 +106,6 @@ class ProcessSecurityEventService(
             uow.cases.save_all(cases)
 
             uow.commit()
-
-        # The relational database remains the source of truth. OpenSearch is
-        # an auxiliary search index, so an indexing outage must not undo a
-        # successfully committed event-processing result.
-        if self._event_indexer is not None:
-            try:
-                self._event_indexer.index(request.event)
-            except Exception:
-                logger.exception(
-                    "Could not index processed event in OpenSearch",
-                    extra={"event_id": request.event.id},
-                )
 
         return ProcessSecurityEventResponse(
             event=request.event,

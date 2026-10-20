@@ -12,6 +12,9 @@ flowchart TB
     APP --> PORTS[Repository and Unit of Work interfaces]
     PORTS --> SQLITE[SQLite adapter]
     PORTS --> POSTGRES[PostgreSQL adapter]
+    APP -->|same transaction| OUTBOX[SQL event-index outbox]
+    OUTBOX --> WORKER[Background retry worker]
+    WORKER --> OS
     API --> AUTH[JWT authentication and role checks]
     AUTH --> APP
     COMPOSE[Docker Compose] -. runs .-> UI
@@ -20,7 +23,7 @@ flowchart TB
     COMPOSE -. includes .-> OS[OpenSearch + Dashboards]
 ```
 
-Processed normalized events are sent to OpenSearch after the relational Unit of Work commits. The relational database remains the source of truth for operational entities; OpenSearch is an auxiliary event-search index. If indexing fails, the API logs the failure and returns the successfully committed processing result. This best-effort path does not include a durable retry queue.
+Processed normalized events and an OpenSearch outbox row are committed together in the relational Unit of Work. A background worker sends due outbox events to OpenSearch, deletes successful entries, and reschedules failures with capped exponential backoff. The relational database remains authoritative. Indexing may lag while retries are pending; the API response does not wait for indexing.
 
 ## Event processing sequence
 
@@ -35,6 +38,8 @@ sequenceDiagram
     participant Alert as Alert + processors
     participant Case as Case factory + processors
     participant UoW as Unit of Work / repositories
+    participant Outbox as SQL outbox
+    participant Worker as Background retry worker
     participant Search as OpenSearch indexer
     Analyst->>API: POST /events (bearer token)
     API->>UseCase: validated event request
@@ -48,11 +53,21 @@ sequenceDiagram
     Alert-->>UseCase: alerts
     UseCase->>Case: create/process investigation cases
     Case-->>UseCase: cases
-    UseCase->>UoW: persist results and commit
+    UseCase->>UoW: persist event, detections, alerts, and cases
+    UseCase->>Outbox: enqueue event ID in same transaction
+    UseCase->>UoW: commit transaction
     UoW-->>UseCase: relational commit succeeds
-    UseCase->>Search: index normalized event (best-effort)
-    Search-->>UseCase: indexed or logged failure
-    UseCase-->>API: response DTO
+    UseCase-->>API: processing response
+    Worker->>Outbox: poll due entries
+    Outbox-->>Worker: event ID + retry metadata
+    Worker->>UoW: load persisted event by ID
+    UoW-->>Worker: event document
+    Worker->>Search: index using stable event ID
+    alt indexed
+        Worker->>Outbox: delete delivered entry
+    else indexing failed
+        Worker->>Outbox: schedule retry with backoff
+    end
     API-->>Analyst: JSON response
 ```
 
@@ -104,4 +119,4 @@ sequenceDiagram
 
 ## Runtime selection
 
-`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. When `SOC_OPENSEARCH_ENABLED=true`, it also creates an OpenSearch client and injects an event indexer into the processing service. PostgreSQL schema setup is currently managed by the application adapter; a separate migration framework is not configured.
+`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. When `SOC_OPENSEARCH_ENABLED=true`, it also creates an OpenSearch client and injects the event indexer into the processing service and background outbox worker. PostgreSQL schema setup is currently managed by the application adapter; a separate migration framework is not configured.

@@ -10,7 +10,7 @@ A modular Security Operations Center (SOC) learning and portfolio project. The p
 - REST API for events, alerts, cases, and authentication.
 - SQLite for local development/tests; PostgreSQL is configured for the Docker Compose stack.
 - React console at `http://localhost:3000` when Compose is running.
-- Processed events are indexed into OpenSearch for searching in OpenSearch Dashboards. The relational database remains the source of truth.
+- Processed events are indexed into OpenSearch for searching in OpenSearch Dashboards. A relational outbox retries indexing after temporary OpenSearch outages; the relational database remains the source of truth.
 
 This is a development and portfolio project. Review the security and deployment limitations in [Design decisions](docs/DESIGN-DECISIONS.md) before using it outside a local environment.
 
@@ -59,7 +59,22 @@ The GitHub Actions workflow runs Ruff, mypy, and pytest with coverage. Mypy is c
 - [Design decisions and trade-offs](docs/DESIGN-DECISIONS.md)
 - [Developer handoff](docs/HANDOFF.md)
 
-## Project layout`r`n`r`n```text`r`napi/                  FastAPI routes, security, and exception mapping`r`napplication/          Use cases, DTOs, settings, dependency composition`r`nalert/, case/,        Security domain models, rules, and processing`r`ncorrelation/,`r`ndetection/, enrichment/`r`ninfrastructure/        SQLite and PostgreSQL adapters, schemas, mappers`r`nrepositories/          Repository and Unit of Work abstractions`r`nnormalization/         Raw event normalization`r`nfrontend/              React SOC console`r`nDockerfile, compose.yaml  Local multi-service development environment`r`ntests/                  Unit, API, and persistence tests`r`ndocs/                   Architecture, API, decisions, and handoff`r`n```
+## Project layout
+
+```text
+api/                    FastAPI routes, security, and exception mapping
+application/            Use cases, DTOs, settings, dependency composition
+alert/, case/           Security domain models, rules, and processing
+correlation/, detection/
+enrichment/             Enrichment behavior
+infrastructure/         SQLite, PostgreSQL, and OpenSearch adapters
+repositories/            Repository and Unit of Work abstractions
+normalization/           Raw event normalization
+frontend/                React SOC console
+Dockerfile, compose.yaml Local multi-service development environment
+tests/                   Unit, API, and persistence tests
+docs/                    Architecture, API, decisions, and handoff
+```
 
 ## License
 

@@ -4,6 +4,7 @@ from typing import Self
 from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
 from repositories.detection_repository import DetectionRepository
+from repositories.event_index_outbox import EventIndexOutboxRepository
 from repositories.event_repository import EventRepository
 from repositories.user_repository import UserRepository
 
@@ -20,6 +21,11 @@ class UnitOfWork(ABC):
     @property
     @abstractmethod
     def events(self) -> EventRepository:
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def event_index_outbox(self) -> EventIndexOutboxRepository:
         raise NotImplementedError
 
     @property

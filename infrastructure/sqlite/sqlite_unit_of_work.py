@@ -10,11 +10,15 @@ from infrastructure.sqlite.sqlite_case_repository import SQLiteCaseRepository
 from infrastructure.sqlite.sqlite_detection_repository import (
     SQLiteDetectionRepository,
 )
+from infrastructure.sqlite.sqlite_event_index_outbox_repository import (
+    SQLiteEventIndexOutboxRepository,
+)
 from infrastructure.sqlite.sqlite_event_repository import SQLiteEventRepository
 from infrastructure.sqlite.sqlite_user_repository import SQLiteUserRepository
 from repositories.alert_repository import AlertRepository
 from repositories.case_repository import CaseRepository
 from repositories.detection_repository import DetectionRepository
+from repositories.event_index_outbox import EventIndexOutboxRepository
 from repositories.event_repository import EventRepository
 from repositories.unit_of_work import UnitOfWork
 from repositories.user_repository import UserRepository
@@ -39,6 +43,7 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._connection: sqlite3.Connection | None = None
 
         self._events: SQLiteEventRepository | None = None
+        self._event_index_outbox: SQLiteEventIndexOutboxRepository | None = None
         self._detections: SQLiteDetectionRepository | None = None
         self._alerts: SQLiteAlertRepository | None = None
         self._cases: SQLiteCaseRepository | None = None
@@ -48,6 +53,7 @@ class SQLiteUnitOfWork(UnitOfWork):
         self._connection = self._connection_factory.connect()
 
         self._events = SQLiteEventRepository(self._connection)
+        self._event_index_outbox = SQLiteEventIndexOutboxRepository(self._connection)
         self._detections = SQLiteDetectionRepository(self._connection)
         self._alerts = SQLiteAlertRepository(self._connection)
         self._cases = SQLiteCaseRepository(self._connection)
@@ -60,6 +66,12 @@ class SQLiteUnitOfWork(UnitOfWork):
         if self._events is None:
             raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._events
+
+    @property
+    def event_index_outbox(self) -> EventIndexOutboxRepository:
+        if self._event_index_outbox is None:
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
+        return self._event_index_outbox
 
     @property
     def detections(self) -> DetectionRepository:
@@ -103,6 +115,7 @@ class SQLiteUnitOfWork(UnitOfWork):
 
         self._connection = None
         self._events = None
+        self._event_index_outbox = None
         self._detections = None
         self._alerts = None
         self._cases = None

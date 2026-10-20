@@ -1,17 +1,38 @@
 from contextlib import asynccontextmanager
+from threading import Event, Thread
 
 from fastapi import FastAPI
 
 from api.exception_handlers import register_exception_handlers
 from api.routes import alerts_router, auth_router, cases_router, events_router
 from application.composition.authentication import ensure_bootstrap_administrator
+from application.composition.dependencies import event_indexer, unit_of_work_factory
+from infrastructure.opensearch.outbox_worker import run_event_index_outbox_worker
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not getattr(app.state, "testing", False):
+    is_testing = getattr(app.state, "testing", False)
+    if not is_testing:
         ensure_bootstrap_administrator()
-    yield
+
+    worker_stop = Event()
+    worker_thread: Thread | None = None
+    if not is_testing and event_indexer is not None:
+        worker_thread = Thread(
+            target=run_event_index_outbox_worker,
+            args=(unit_of_work_factory, event_indexer, worker_stop),
+            name="opensearch-outbox-worker",
+            daemon=True,
+        )
+        worker_thread.start()
+
+    try:
+        yield
+    finally:
+        if worker_thread is not None:
+            worker_stop.set()
+            worker_thread.join(timeout=20)
 
 
 app = FastAPI(

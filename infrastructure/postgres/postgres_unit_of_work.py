@@ -6,6 +6,9 @@ from infrastructure.postgres.connection import (
     PostgreSQLConnection,
     PostgreSQLConnectionFactory,
 )
+from infrastructure.postgres.postgres_event_index_outbox_repository import (
+    PostgreSQLEventIndexOutboxRepository,
+)
 from infrastructure.postgres.repositories import (
     PostgreSQLAlertRepository,
     PostgreSQLCaseRepository,
@@ -14,6 +17,7 @@ from infrastructure.postgres.repositories import (
     PostgreSQLUserRepository,
 )
 from infrastructure.sqlite.exceptions import UnitOfWorkNotActiveError
+from repositories.event_index_outbox import EventIndexOutboxRepository
 from repositories.unit_of_work import UnitOfWork
 
 
@@ -24,6 +28,7 @@ class PostgreSQLUnitOfWork(UnitOfWork):
         self._connection_factory = connection_factory
         self._connection: PostgreSQLConnection | None = None
         self._events: PostgreSQLEventRepository | None = None
+        self._event_index_outbox: PostgreSQLEventIndexOutboxRepository | None = None
         self._detections: PostgreSQLDetectionRepository | None = None
         self._alerts: PostgreSQLAlertRepository | None = None
         self._cases: PostgreSQLCaseRepository | None = None
@@ -32,6 +37,9 @@ class PostgreSQLUnitOfWork(UnitOfWork):
     def __enter__(self) -> Self:
         self._connection = self._connection_factory.connect()
         self._events = PostgreSQLEventRepository(self._connection)
+        self._event_index_outbox = PostgreSQLEventIndexOutboxRepository(
+            self._connection
+        )
         self._detections = PostgreSQLDetectionRepository(self._connection)
         self._alerts = PostgreSQLAlertRepository(self._connection)
         self._cases = PostgreSQLCaseRepository(self._connection)
@@ -43,6 +51,12 @@ class PostgreSQLUnitOfWork(UnitOfWork):
         if self._events is None:
             raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
         return self._events
+
+    @property
+    def event_index_outbox(self) -> EventIndexOutboxRepository:
+        if self._event_index_outbox is None:
+            raise UnitOfWorkNotActiveError("UnitOfWork has not been entered.")
+        return self._event_index_outbox
 
     @property
     def detections(self) -> PostgreSQLDetectionRepository:
@@ -83,6 +97,7 @@ class PostgreSQLUnitOfWork(UnitOfWork):
             self._connection.close()
         self._connection = None
         self._events = None
+        self._event_index_outbox = None
         self._detections = None
         self._alerts = None
         self._cases = None
