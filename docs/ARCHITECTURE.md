@@ -119,4 +119,4 @@ sequenceDiagram
 
 ## Runtime selection
 
-`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. When `SOC_OPENSEARCH_ENABLED=true`, it also creates an OpenSearch client and injects the event indexer into the processing service and background outbox worker. PostgreSQL schema setup is currently managed by the application adapter; a separate migration framework is not configured.
+`SOC_DATABASE_BACKEND` accepts `sqlite` or `postgresql`. The default is SQLite. Compose sets PostgreSQL and supplies its service hostname. The composition root selects the matching connection factory and Unit of Work. When `SOC_OPENSEARCH_ENABLED=true`, it also creates an OpenSearch client and injects the event indexer into the processing service and background outbox worker. PostgreSQL migrations are ordered SQL modules recorded in `soc_schema_migrations`; the connection factory applies pending versions before handing a connection to the application. SQLite continues to initialize its test/development schema directly.

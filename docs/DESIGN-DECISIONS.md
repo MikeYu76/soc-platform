@@ -16,7 +16,7 @@ This document records the current implementation choices and their practical cos
 
 **Benefit:** Fast isolated tests and a realistic relational database for the containerized stack.
 
-**Cost:** Both adapters must remain behaviorally aligned. SQLite data is not migrated automatically to PostgreSQL. PostgreSQL schema creation is currently adapter-managed; there is no migration history or rollback workflow.
+**Cost:** Both adapters must remain behaviorally aligned. SQLite data is not migrated automatically to PostgreSQL. PostgreSQL migrations are forward-only; rollback scripts and a migration authoring CLI are not provided.
 
 ## Synchronous request processing
 

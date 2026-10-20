@@ -11,12 +11,7 @@ Copy these into the top-level soc-platform project folder, replacing files when 
 - application/composition/dependencies.py
 - infrastructure/sqlite/mappers/user_mapper.py
 
-Create infrastructure/postgres if it does not exist. Copy all five files from infrastructure/postgres in the ZIP into that folder:
-- __init__.py
-- connection.py
-- postgres_unit_of_work.py
-- repositories.py
-- schema.py
+Create infrastructure/postgres if it does not exist. Copy all files and subfolders from infrastructure/postgres in the ZIP into that folder, keeping the directory structure. This includes the new migrations and versions folders.
 
 UPDATE .env WITHOUT OVERWRITING IT
 Keep your existing .env and add these three lines. Choose a strong, unique database password; do not paste it into chat:
@@ -24,7 +19,7 @@ SOC_POSTGRES_DB=soc_platform
 SOC_POSTGRES_USER=soc_platform
 SOC_POSTGRES_PASSWORD=your-strong-postgres-password
 
-The app creates its tables and bootstrap admin account in PostgreSQL on startup. Existing SQLite data is not copied automatically. The old soc-data volume is left untouched.
+The app applies versioned PostgreSQL schema migrations and creates the bootstrap admin account on startup. An existing PostgreSQL database with the current schema is adopted by the initial migration without dropping its tables or data. Existing SQLite data is not copied automatically. The old soc-data volume is left untouched.
 
 INSTALL AND RESTART
 After copying the files and updating .env, run:

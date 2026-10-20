@@ -9,6 +9,7 @@ A modular Security Operations Center (SOC) learning and portfolio project. The p
 - Case creation and investigation workflows, comments, evidence, priority changes, and a case activity timeline.
 - REST API for events, alerts, cases, and authentication.
 - SQLite for local development/tests; PostgreSQL is configured for the Docker Compose stack.
+- PostgreSQL schema changes are applied as versioned migrations and recorded in `soc_schema_migrations`.
 - React console at `http://localhost:3000` when Compose is running.
 - Processed events are indexed into OpenSearch for searching in OpenSearch Dashboards. A relational outbox retries indexing after temporary OpenSearch outages; the relational database remains the source of truth.
 - Administrators can inspect OpenSearch indexing queue health at `/operations/opensearch-indexing`.
