@@ -16,6 +16,8 @@ A modular Security Operations Center (SOC) learning and portfolio project. The p
 
 This is a development and portfolio project. Review the security and deployment limitations in [Design decisions](docs/DESIGN-DECISIONS.md) before using it outside a local environment.
 
+The Compose ports bind to localhost only. The API container runs as a non-root user with a read-only root filesystem and dropped Linux capabilities. The frontend adds browser security headers. These controls reduce accidental exposure in local development; they do not make the stack production-ready.
+
 ## Start the development stack
 
 1. Install Docker Desktop and start it.
@@ -52,7 +54,7 @@ python -m mypy --ignore-missing-imports --namespace-packages --explicit-package-
 python -m pytest -q
 ```
 
-The GitHub Actions workflow runs Ruff, mypy, and pytest with coverage. Mypy is currently advisory in CI (`continue-on-error`) while it is being adopted; keep it passing locally and update that workflow setting when the project decides to make it blocking.
+The GitHub Actions workflow runs Ruff, mypy, and pytest with coverage. All three checks must pass for the workflow to succeed.
 
 ## Documentation
 

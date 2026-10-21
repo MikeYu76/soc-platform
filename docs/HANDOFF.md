@@ -14,7 +14,7 @@ For the architecture, request flows, API endpoints, and design trade-offs, see:
 
 The implemented roadmap includes event processing, detection and correlation rules, enrichment, alerts, case management (including comments, evidence, priority changes, and timeline entries), JWT login/RBAC, Docker Compose, PostgreSQL persistence with versioned schema migrations, React console, and GitHub Actions quality checks.
 
-At the latest local verification, 222 pytest tests passed; Ruff passed; and mypy reported no issues in 248 source files. The PostgreSQL migration `0001_initial_schema` was verified in the running database. CI now treats mypy failures as workflow failures; confirm the next GitHub Actions run after applying this change.
+At the latest local verification, 222 pytest tests passed; Ruff passed; and mypy reported no issues in 249 source files. The PostgreSQL migration `0001_initial_schema` was verified in the running database. GitHub Actions passed after mypy became a required check and after outbox monitoring was added.
 
 ## Local development
 
@@ -37,6 +37,8 @@ SQLite is the default for a directly launched API. Configure `SOC_JWT_SECRET`, `
 4. Check service state with `docker compose ps` and API health at `http://localhost:8000/health`.
 5. Use `http://localhost:3000` for the console, `http://localhost:8000/docs` for API docs, and `http://localhost:5601` for OpenSearch Dashboards.
 6. Stop with `docker compose down`. Avoid `docker compose down -v` unless deleting persistent database/search data is intentional.
+
+The Compose setup binds published service ports to localhost only. The API runs as a non-root user with a read-only root filesystem, a restricted temporary filesystem, no Linux capabilities, and no-new-privileges. The frontend emits browser security headers. PostgreSQL is reachable only on the internal Compose network. The stack remains a local development setup, not a production deployment.
 
 The Compose setup uses PostgreSQL and enables durable outbox indexing of processed events to OpenSearch. In OpenSearch Dashboards, create a `security-events` data view using `timestamp` as the time field. Indexing runs asynchronously after database commit; failed writes remain queued and retry with capped exponential backoff. Administrators can inspect status at `/operations/opensearch-indexing` and scrape aggregate Prometheus metrics at `/operations/opensearch-indexing/metrics`. The worker logs a sustained-backlog alert and its recovery.
 
@@ -78,7 +80,7 @@ The GitHub Actions workflow runs Ruff, mypy, and pytest. All three checks must p
 - The sustained-backlog alert timer is in memory and restarts with the API process; metrics are aggregate only, and manual per-event retry/deletion is not available.
 - PostgreSQL schema changes use ordered SQL migrations tracked in `soc_schema_migrations`. Add new immutable version files and append them to the migration registry; there is no automatic downgrade workflow.
 - Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox.
-- Deployment settings are for local development and need a production security review before external exposure.
+- Deployment settings remain for local development; production would need TLS, managed secrets, resource limits, backup/restore, and a broader security review.
 - The health endpoint reports API liveness, not readiness of every dependency.
 
-Possible next work: harden deployment configuration for any deployment beyond the local development environment.
+Next focus: prepare a clear, repeatable project demonstration.

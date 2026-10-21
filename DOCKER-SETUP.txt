@@ -23,11 +23,13 @@ OpenSearch:       https://localhost:9200 (a self-signed certificate warning is e
 Dashboards:       http://localhost:5601
 OpenSearch login: admin and the OPENSEARCH_INITIAL_ADMIN_PASSWORD from .env
 
+All published Compose ports bind to localhost; other computers on the network cannot reach these services through the host ports.
+
 STOP
    docker compose down
 
-The SQLite database is kept in the soc-data Docker volume. Stopping or recreating the containers keeps it. To stop the services and permanently erase both stored database volumes, run:
+PostgreSQL data is kept in the postgres-data Docker volume, and OpenSearch data is kept in the opensearch-data volume. Stopping or recreating the containers keeps them. To stop the services and permanently erase both stored data volumes, run:
    docker compose down -v
 
 NOTES
-Processed events are indexed to the OpenSearch security-events index after the relational database commit. In OpenSearch Dashboards, open Discover, create a data view named security-events, and choose timestamp as the time field. Indexing is best-effort: an OpenSearch failure is logged while the relational event-processing result remains successful. A durable retry queue is not configured. This Compose file is for local development and does not configure production TLS or production secrets.
+Processed events are indexed to the OpenSearch security-events index after the relational database commit. In OpenSearch Dashboards, open Discover, create a data view named security-events, and choose timestamp as the time field. A durable relational outbox retries indexing failures. Administrators can inspect queue status and Prometheus-format aggregate metrics through the authenticated operations endpoints. A sustained backlog alert is logged using the threshold and duration settings in .env. The API container runs non-root with a read-only root filesystem and restricted capabilities. This Compose file is for local development and does not configure production TLS, managed secrets, or production operations.

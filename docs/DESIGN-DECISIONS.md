@@ -60,11 +60,11 @@ This document records the current implementation choices and their practical cos
 
 ## CI quality gates
 
-**Choice:** GitHub Actions runs Ruff, mypy, and pytest with coverage. Mypy currently uses `continue-on-error: true`.
+**Choice:** GitHub Actions runs Ruff, mypy, and pytest with coverage. Each check is required for workflow success.
 
-**Benefit:** Type-check feedback is visible while the project adopts strict typing without blocking every change.
+**Benefit:** Type errors and test/lint failures block a green CI result.
 
-**Cost / follow-up:** A green workflow does not guarantee mypy passed when that step is advisory. Local mypy currently passes; consider making it blocking after agreeing on the project's typing policy. Coverage is reported in CI, but no minimum threshold is enforced.
+**Cost / follow-up:** Coverage is reported in CI, but no minimum threshold is enforced.
 
 ## No external threat-intelligence dependency by default
 
@@ -76,4 +76,4 @@ This document records the current implementation choices and their practical cos
 
 ## Development deployment only
 
-Docker Compose is intended for local development. It does not provide production-grade TLS, secret rotation, backup/restore procedures, resource sizing, network segmentation, or high availability. The health endpoint is a liveness check and should not be treated as a full dependency readiness signal.
+Docker Compose is intended for local development. Published ports bind to localhost, the API runs non-root with a read-only root filesystem and dropped capabilities, and the frontend sets browser security headers. The stack still does not provide production-grade external TLS, managed secret rotation, backup/restore procedures, resource sizing, network segmentation, or high availability. The health endpoint is a liveness check and should not be treated as a full dependency readiness signal.
