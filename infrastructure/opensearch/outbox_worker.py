@@ -7,6 +7,7 @@ from threading import Event
 
 from opensearchpy.exceptions import OpenSearchException
 
+from infrastructure.opensearch.outbox_monitor import EventIndexOutboxMonitor
 from repositories.event_indexer import EventIndexer
 from repositories.unit_of_work import UnitOfWork
 
@@ -77,6 +78,7 @@ def run_event_index_outbox_worker(
     *,
     poll_interval_seconds: float = 2.0,
     batch_size: int = 25,
+    monitor: EventIndexOutboxMonitor | None = None,
 ) -> None:
     """Poll durable indexing work until the API asks this worker to stop."""
     while not stop_event.is_set():
@@ -86,6 +88,21 @@ def run_event_index_outbox_worker(
                 event_indexer,
                 batch_size=batch_size,
             )
+            if monitor is not None:
+                with unit_of_work_factory() as uow:
+                    status = uow.event_index_outbox.get_status()
+                transition = monitor.observe(status, enabled=True)
+                if transition == "alert":
+                    logger.error(
+                        "OpenSearch indexing outbox backlog remained above "
+                        "the configured threshold",
+                        extra=monitor.alert_log_context(),
+                    )
+                elif transition == "recovered":
+                    logger.info(
+                        "OpenSearch indexing outbox backlog recovered",
+                        extra=monitor.alert_log_context(),
+                    )
         except Exception:
             logger.exception("OpenSearch outbox worker iteration failed")
         stop_event.wait(poll_interval_seconds)

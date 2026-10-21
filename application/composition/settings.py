@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     opensearch_username: str = "admin"
     opensearch_password: SecretStr = SecretStr("")
     opensearch_verify_certs: bool = True
+    opensearch_outbox_alert_pending_threshold: int = Field(default=100, gt=0)
+    opensearch_outbox_alert_sustained_seconds: int = Field(default=300, gt=0)
     jwt_secret: SecretStr = Field(default=SecretStr(""))
     access_token_expire_minutes: int = Field(default=30, gt=0)
     bootstrap_admin_username: str | None = None

@@ -94,6 +94,7 @@ from enrichment.ip_context import (
     IPContextEnricher,
 )
 from infrastructure.opensearch.event_indexer import OpenSearchEventIndexer
+from infrastructure.opensearch.outbox_monitor import EventIndexOutboxMonitor
 from infrastructure.postgres.connection import PostgreSQLConnectionFactory
 from infrastructure.postgres.postgres_unit_of_work import PostgreSQLUnitOfWork
 from infrastructure.sqlite.connection import SQLiteConnectionFactory
@@ -101,6 +102,11 @@ from infrastructure.sqlite.sqlite_unit_of_work import SQLiteUnitOfWork
 from repositories.event_indexer import EventIndexer
 
 settings: Settings = get_settings()
+
+event_index_outbox_monitor = EventIndexOutboxMonitor(
+    pending_threshold=settings.opensearch_outbox_alert_pending_threshold,
+    sustained_seconds=settings.opensearch_outbox_alert_sustained_seconds,
+)
 
 connection_factory: PostgreSQLConnectionFactory | SQLiteConnectionFactory
 

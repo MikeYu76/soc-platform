@@ -38,7 +38,7 @@ SQLite is the default for a directly launched API. Configure `SOC_JWT_SECRET`, `
 5. Use `http://localhost:3000` for the console, `http://localhost:8000/docs` for API docs, and `http://localhost:5601` for OpenSearch Dashboards.
 6. Stop with `docker compose down`. Avoid `docker compose down -v` unless deleting persistent database/search data is intentional.
 
-The Compose setup uses PostgreSQL and enables durable outbox indexing of processed events to OpenSearch. In OpenSearch Dashboards, create a `security-events` data view using `timestamp` as the time field. Indexing runs asynchronously after database commit; failed writes remain queued and retry with capped exponential backoff.
+The Compose setup uses PostgreSQL and enables durable outbox indexing of processed events to OpenSearch. In OpenSearch Dashboards, create a `security-events` data view using `timestamp` as the time field. Indexing runs asynchronously after database commit; failed writes remain queued and retry with capped exponential backoff. Administrators can inspect status at `/operations/opensearch-indexing` and scrape aggregate Prometheus metrics at `/operations/opensearch-indexing/metrics`. The worker logs a sustained-backlog alert and its recovery.
 
 ## Quality checks
 
@@ -75,10 +75,10 @@ The GitHub Actions workflow runs Ruff, mypy, and pytest. All three checks must p
 ## Known limitations and next steps
 
 - OpenSearch writes are asynchronous and may lag; the durable outbox retries failures but has no dead-letter threshold.
-- OpenSearch outbox status is available to administrators at `GET /operations/opensearch-indexing`; it reports queue counts and age, but does not expose per-event contents or allow manual retry/deletion.
+- The sustained-backlog alert timer is in memory and restarts with the API process; metrics are aggregate only, and manual per-event retry/deletion is not available.
 - PostgreSQL schema changes use ordered SQL migrations tracked in `soc_schema_migrations`. Add new immutable version files and append them to the migration registry; there is no automatic downgrade workflow.
-- Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox. There is no dead-letter threshold yet.
+- Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox.
 - Deployment settings are for local development and need a production security review before external exposure.
 - The health endpoint reports API liveness, not readiness of every dependency.
 
-Possible next work: add metrics and alerts for sustained outbox queue growth; then harden deployment configuration.
+Possible next work: harden deployment configuration for any deployment beyond the local development environment.

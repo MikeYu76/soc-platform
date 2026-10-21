@@ -7,6 +7,7 @@ from application.composition.dependencies import (
     close_alert_service,
     close_case_service,
     create_user_service,
+    event_index_outbox_monitor,
     get_alert_service,
     get_case_service,
     get_case_timeline_service,
@@ -51,6 +52,7 @@ from application.services.start_alert_investigation import (
 from application.services.start_case_investigation import (
     StartCaseInvestigationService,
 )
+from infrastructure.opensearch.outbox_monitor import EventIndexOutboxMonitor
 
 
 def get_process_security_event_service() -> ProcessSecurityEventService:
@@ -70,6 +72,10 @@ def get_get_event_index_outbox_status_service() -> GetEventIndexOutboxStatusServ
         unit_of_work_factory=unit_of_work_factory,
         enabled=settings.opensearch_enabled,
     )
+
+
+def get_event_index_outbox_monitor() -> EventIndexOutboxMonitor:
+    return event_index_outbox_monitor
 
 
 def get_get_alert_service() -> GetAlertService:

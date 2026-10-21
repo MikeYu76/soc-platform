@@ -80,8 +80,11 @@ The health endpoint does not authenticate. A healthy response confirms the API p
 | Method | Path | Description | Permission |
 |---|---|---|---|
 | `GET` | `/operations/opensearch-indexing` | Return OpenSearch outbox queue counts, oldest pending item age, and highest retry count. | Administrator |
+| `GET` | `/operations/opensearch-indexing/metrics` | Return aggregate queue gauges in Prometheus text format. | Administrator |
 
-The response includes `enabled`, `pending_count`, `ready_count`, `retry_wait_count`, `retrying_count`, `oldest_pending_at`, `oldest_pending_age_seconds`, and `max_attempts`. Event contents and credentials are not returned. An empty queue reports zero counts and null oldest-item fields.
+The status response includes `enabled`, `pending_count`, `ready_count`, `retry_wait_count`, `retrying_count`, `oldest_pending_at`, `oldest_pending_age_seconds`, and `max_attempts`. The metrics endpoint returns aggregate queue depth, retry, age, and backlog alert gauges. Event contents and credentials are not returned. An empty queue reports zero counts and null oldest-item fields in the status response.
+
+The background worker logs a backlog alert when the pending count remains at or above `SOC_OPENSEARCH_OUTBOX_ALERT_PENDING_THRESHOLD` for `SOC_OPENSEARCH_OUTBOX_ALERT_SUSTAINED_SECONDS`. Defaults are 100 pending events for 300 seconds. The alert clears and logs recovery when the queue falls below the threshold. The alert timer is in memory and restarts with the API process.
 
 ## Errors and validation
 
