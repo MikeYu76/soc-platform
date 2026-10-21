@@ -12,9 +12,9 @@ For the architecture, request flows, API endpoints, and design trade-offs, see:
 
 ## Current status
 
-The implemented roadmap includes event processing, detection and correlation rules, enrichment, alerts, case management (including comments, evidence, priority changes, and timeline entries), JWT login/RBAC, Docker Compose, PostgreSQL persistence, React console, and GitHub Actions quality checks.
+The implemented roadmap includes event processing, detection and correlation rules, enrichment, alerts, case management (including comments, evidence, priority changes, and timeline entries), JWT login/RBAC, Docker Compose, PostgreSQL persistence with versioned schema migrations, React console, and GitHub Actions quality checks.
 
-At the previous verified checkpoint: 216 pytest tests passed; Ruff passed; local mypy passed. The GitHub Actions run for commit `3f43ec3` succeeded. CI's mypy step is currently advisory, so check its step result separately from the overall workflow status.
+At the latest local verification, 222 pytest tests passed; Ruff passed; and mypy reported no issues in 248 source files. The PostgreSQL migration `0001_initial_schema` was verified in the running database. CI now treats mypy failures as workflow failures; confirm the next GitHub Actions run after applying this change.
 
 ## Local development
 
@@ -48,7 +48,7 @@ python -m mypy --ignore-missing-imports --namespace-packages --explicit-package-
 python -m pytest -q
 ```
 
-Expected at the last verified checkpoint: Ruff passes, mypy reports no issues, and pytest reports 216 passing tests. Re-run these after changes because this handoff records a point-in-time state.
+The GitHub Actions workflow runs Ruff, mypy, and pytest. All three checks must pass for the workflow to succeed.
 
 ## Code navigation
 
@@ -77,9 +77,8 @@ Expected at the last verified checkpoint: Ruff passes, mypy reports no issues, a
 - OpenSearch writes are asynchronous and may lag; the durable outbox retries failures but has no dead-letter threshold.
 - OpenSearch outbox status is available to administrators at `GET /operations/opensearch-indexing`; it reports queue counts and age, but does not expose per-event contents or allow manual retry/deletion.
 - PostgreSQL schema changes use ordered SQL migrations tracked in `soc_schema_migrations`. Add new immutable version files and append them to the migration registry; there is no automatic downgrade workflow.
-- CI's mypy step is advisory (`continue-on-error: true`).
 - Event processing remains synchronous, while OpenSearch indexing runs asynchronously through a durable relational outbox. There is no dead-letter threshold yet.
 - Deployment settings are for local development and need a production security review before external exposure.
 - The health endpoint reports API liveness, not readiness of every dependency.
 
-Possible next work: enforce mypy in CI; add metrics and alerts for sustained queue growth; then harden deployment configuration.
+Possible next work: add metrics and alerts for sustained outbox queue growth; then harden deployment configuration.
