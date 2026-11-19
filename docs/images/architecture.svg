@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1960" height="640" viewBox="0 0 1960 640" role="img" aria-labelledby="title desc">
+  <title id="title">SOC Platform architecture</title>
+  <desc id="desc">A left-to-right security event workflow from telemetry through API, normalization, detection, correlation, alerts, cases, and analyst action. A lower data path shows relational storage, the durable outbox worker, and OpenSearch.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#53718f"/></marker>
+    <style>
+      .bg { fill: #f7fafc; }
+      .heading { font: 700 34px 'Segoe UI', Arial, sans-serif; fill: #132238; }
+      .subheading { font: 400 17px 'Segoe UI', Arial, sans-serif; fill: #53677e; }
+      .label { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #fff; text-anchor: middle; }
+      .small { font: 500 15px 'Segoe UI', Arial, sans-serif; fill: #40556e; text-anchor: middle; }
+      .edge { stroke: #53718f; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .branch { stroke: #7890a8; stroke-width: 3; fill: none; }
+      .node { stroke: rgba(19,34,56,.15); stroke-width: 2; rx: 16; }
+      .data { fill: #edf3f8; stroke: #b8c8d8; stroke-width: 2; rx: 16; }
+      .data-label { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #203750; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="bg" width="1960" height="640" rx="24"/>
+  <text class="heading" x="56" y="62">SOC Platform | Event-to-investigation workflow</text>
+  <text class="subheading" x="56" y="94">Synchronous event processing and relational writes; asynchronous, retryable OpenSearch indexing.</text>
+
+  <rect class="node" x="40" y="165" width="200" height="118" fill="#168b9a"/>
+  <text class="label" x="140" y="218"><tspan x="140">Security</tspan><tspan x="140" dy="25">telemetry</tspan></text>
+  <path class="edge" d="M244 224 H274"/>
+
+  <rect class="node" x="280" y="165" width="200" height="118" fill="#226a9c"/>
+  <text class="label" x="380" y="218"><tspan x="380">FastAPI</tspan><tspan x="380" dy="25">REST API</tspan></text>
+  <path class="edge" d="M484 224 H514"/>
+
+  <rect class="node" x="520" y="165" width="200" height="118" fill="#3378b8"/>
+  <text class="label" x="620" y="218"><tspan x="620">Event</tspan><tspan x="620" dy="25">normalization</tspan></text>
+  <path class="edge" d="M724 224 H754"/>
+
+  <rect class="node" x="760" y="165" width="200" height="118" fill="#5966b3"/>
+  <text class="label" x="860" y="218"><tspan x="860">Detection +</tspan><tspan x="860" dy="25">enrichment</tspan></text>
+  <path class="edge" d="M964 224 H994"/>
+
+  <rect class="node" x="1000" y="165" width="200" height="118" fill="#7654a8"/>
+  <text class="label" x="1100" y="230">Correlation</text>
+  <path class="edge" d="M1204 224 H1234"/>
+
+  <rect class="node" x="1240" y="165" width="200" height="118" fill="#bd6c27"/>
+  <text class="label" x="1340" y="218"><tspan x="1340">Alert</tspan><tspan x="1340" dy="25">triage</tspan></text>
+  <path class="edge" d="M1444 224 H1474"/>
+
+  <rect class="node" x="1480" y="165" width="200" height="118" fill="#ad4c55"/>
+  <text class="label" x="1580" y="218"><tspan x="1580">Case</tspan><tspan x="1580" dy="25">management</tspan></text>
+  <path class="edge" d="M1684 224 H1714"/>
+
+  <rect class="node" x="1720" y="165" width="200" height="118" fill="#278264"/>
+  <text class="label" x="1820" y="218"><tspan x="1820">Analyst</tspan><tspan x="1820" dy="25">investigation</tspan></text>
+
+  <text class="small" x="980" y="366">Durable event storage and search-index delivery</text>
+  <path class="branch" d="M620 283 V405 H650 V448"/>
+  <path class="edge" d="M785 505 H869"/>
+  <path class="edge" d="M1085 505 H1169"/>
+
+  <rect class="data" x="520" y="455" width="265" height="100"/>
+  <text class="data-label" x="652" y="496"><tspan x="652">PostgreSQL / SQLite</tspan><tspan class="small" x="652" dy="25">source of truth + outbox</tspan></text>
+
+  <rect class="data" x="870" y="455" width="215" height="100"/>
+  <text class="data-label" x="977" y="496"><tspan x="977">Outbox worker</tspan><tspan class="small" x="977" dy="25">retry indexing</tspan></text>
+
+  <rect class="data" x="1170" y="455" width="235" height="100"/>
+  <text class="data-label" x="1287" y="496"><tspan x="1287">OpenSearch</tspan><tspan class="small" x="1287" dy="25">event search</tspan></text>
+</svg>
