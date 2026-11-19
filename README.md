@@ -25,6 +25,20 @@ A Security Operations Center (SOC) platform built as a portfolio project to demo
 - [Project structure](#project-structure)
 - [License](#license)
 
+## Features
+
+- Security event ingestion and normalization
+- Detection rules, enrichment, risk context, and correlation
+- Alert creation, triage, acknowledgement, investigation, and closure
+- Case assignment and investigation workflows with comments, evidence, priorities, resolution summaries, and an activity timeline
+- Authentication with JWTs and role-based access control
+- PostgreSQL as the primary Compose database, with SQLite support for local development and tests
+- OpenSearch event indexing and search, backed by a durable relational outbox with retries
+- OpenSearch outbox status and Prometheus metrics endpoints
+- FastAPI REST API and interactive OpenAPI documentation
+- React analyst console
+- Docker Compose development environment
+
 ## Screenshots
 
 ### Overview
@@ -44,21 +58,6 @@ A Security Operations Center (SOC) platform built as a portfolio project to demo
 ![Normalized security event stream](docs/images/events.png)
 
 The screenshots show simulated portfolio data. They are interface examples, not live threat activity.
-
-
-## Features
-
-- Security event ingestion and normalization
-- Detection rules, enrichment, risk context, and correlation
-- Alert creation, triage, acknowledgement, investigation, and closure
-- Case assignment and investigation workflows with comments, evidence, priorities, resolution summaries, and an activity timeline
-- Authentication with JWTs and role-based access control
-- PostgreSQL as the primary Compose database, with SQLite support for local development and tests
-- OpenSearch event indexing and search, backed by a durable relational outbox with retries
-- OpenSearch outbox status and Prometheus metrics endpoints
-- FastAPI REST API and interactive OpenAPI documentation
-- React analyst console
-- Docker Compose development environment
 
 ## Architecture
 
@@ -169,6 +168,7 @@ docs/                   Architecture, API, decisions, and handoff
 ## License
 
 No license is currently declared. Contact the repository owner before reusing or distributing this project.
+
 
 
 
